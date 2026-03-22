@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completar Cadastro | Ninko's Cookies</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="conteudo-login">
+        <div class="login-box">
+            <h2>Quase lá! 🍪</h2>
+            <p>Conte-nos um pouco mais sobre você para facilitar suas entregas.</p>
+            <br>
+            
+            <input type="text" id="nome-completo" placeholder="Seu nome completo" required>
+            <input type="tel" id="telefone" placeholder="WhatsApp (DDD + Número)" required>
+            <input type="text" id="endereco" placeholder="Endereço de entrega (Rua, Nº, Bairro)" required>
+            
+            <button id="btn-salvar-dados" class="btn-auth" style="width: 100%; cursor: pointer;">Finalizar Cadastro</button>
+            
+            <p id="msg-status" style="margin-top: 15px; font-size: 0.85rem; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
+            authDomain: "ninkos-cookies.firebaseapp.com",
+            projectId: "ninkos-cookies",
+            storageBucket: "ninkos-cookies.firebasestorage.app",
+            messagingSenderId: "1065814927466",
+            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Proteção: Se não estiver logado, volta pro login
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = "login.html";
+        });
+
+        document.getElementById('btn-salvar-dados').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            const nome = document.getElementById('nome-completo').value.trim();
+            const tel = document.getElementById('telefone').value.trim();
+            const end = document.getElementById('endereco').value.trim();
+            const status = document.getElementById('msg-status');
+
+            if (!nome || !tel || !end) {
+                status.textContent = "⚠️ Por favor, preencha todos os campos.";
+                status.style.color = "red";
+                return;
+            }
+
+            try {
+                status.textContent = "⏳ Salvando seus dados...";
+                status.style.color = "#333";
+
+                // Salva no Firestore usando o UID do usuário como ID do documento
+                await setDoc(doc(db, "usuarios", user.uid), {
+                    nome: nome,
+                    telefone: tel,
+                    endereco: end,
+                    email: user.email,
+                    dataCadastro: new Date()
+                });
+
+                status.textContent = "✅ Tudo pronto! Redirecionando...";
+                status.style.color = "green";
+
+                setTimeout(() => {
+                    window.location.href = "perfil.html";
+                }, 1500);
+
+            } catch (error) {
+                console.error("Erro ao salvar:", error);
+                status.textContent = "❌ Erro ao salvar dados. Tente novamente.";
+                status.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Ninko's Cookies</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos específicos para o formulário de administração */
+        .admin-body { background-color: #fae5e7; }
+        
+        .form-admin { 
+            padding: 2rem; 
+            max-width: 500px; 
+            margin: 2rem auto; 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-admin h1 { 
+            margin-bottom: 1.5rem; 
+            font-size: 1.5rem; 
+            text-align: center; 
+            color: #000;
+        }
+        
+        input, textarea, select { 
+            width: 100%; 
+            padding: 0.8rem; 
+            margin-bottom: 1rem; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            font-family: 'keepcalm', sans-serif; 
+        }
+        
+        .btn-salvar { 
+            background: #fae5e7; 
+            border: 2px solid #5f5f5f; 
+            padding: 1rem; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-salvar:hover { 
+            background: #fff2f3; 
+            transform: translateY(-2px); 
+        }
+        
+        .link-voltar { 
+            text-align: center; 
+            display: block; 
+            margin-top: 1.5rem; 
+            text-decoration: none; 
+            color: #5f5f5f; 
+            font-size: 0.85rem; 
+        }
+
+        /* Bloqueio de interface enquanto verifica login */
+        #conteudo-protegido { display: none; }
+    </style>
+</head>
+<body class="admin-body">
+
+    <div class="menu-fixo">
+        <header>
+            <div class="logo-container">
+                <a href="index.html">
+                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
+                </a>
+            </div>
+        </header>
+        
+        <nav>
+            <h1>Painel Administrativo:</h1>
+            <ul>
+                <li><a href="index.html" class="botao-navegacao">Início</a></li>
+                <li><a href="cardapio.html" class="botao-navegacao">Cardápio</a></li>
+                
+                <li id="menu-login"><a href="login.html" class="botao-navegacao">Entrar</a></li>
+                <li id="menu-user" class="hidden"><a href="#" class="botao-navegacao ativo">Admin Ativo</a></li>
+                <li id="menu-logout" class="hidden"><a href="#" class="botao-navegacao">Sair</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main id="conteudo-protegido">
+        <div class="form-admin">
+            <h1>Adicionar Novo Sabor</h1>
+            <form id="form-produto">
+                <input type="text" id="nome" placeholder="Nome do Sabor (Ex: Pistacchio)" required>
+                <textarea id="descricao" placeholder="Descrição dos ingredientes..." required></textarea>
+                
+                <input type="text" id="preco" placeholder="Preço (Ex: 12.00)" required>
+                
+                <label for="categoria" style="font-size: 0.8rem; color: #555; display: block; margin-bottom: 5px;">Categoria:</label>
+                <select id="categoria">
+                    <option value="cookies">Cookies</option>
+                    <option value="milk-shakes">Milk Shakes</option>
+                </select>
+                
+                <input type="text" id="imagemUrl" placeholder="Link da Imagem (URL)">
+                
+                <button type="submit" class="btn-salvar">Salvar no Cardápio</button>
+            </form>
+            <a href="cardapio.html" class="link-voltar">← Voltar para o Cardápio</a>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
+            authDomain: "ninkos-cookies.firebaseapp.com",
+            projectId: "ninkos-cookies",
+            storageBucket: "ninkos-cookies.firebasestorage.app",
+            messagingSenderId: "1065814927466",
+            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- TRAVA DE SEGURANÇA ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Se estiver logado, libera o formulário
+                document.getElementById('conteudo-protegido').style.display = 'block';
+            } else {
+                // Se não estiver logado, redireciona para login após 1 segundo
+                alert("Acesso restrito! Por favor, faça login.");
+                window.location.href = "login.html";
+            }
+        });
+
+        // --- LÓGICA DE SALVAR PRODUTO ---
+        document.getElementById('form-produto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const precoInput = document.getElementById('preco').value.replace(',', '.');
+            const precoFinal = parseFloat(precoInput);
+
+            if (isNaN(precoFinal)) {
+                alert("Por favor, insira um preço válido (ex: 12.00)");
+                return;
+            }
+
+            const novoProduto = {
+                nome: document.getElementById('nome').value,
+                descricao: document.getElementById('descricao').value,
+                preco: precoFinal,
+                categoria: document.getElementById('categoria').value,
+                imagemUrl: document.getElementById('imagemUrl').value || "img/padrao.jpg",
+                dataCriacao: new Date()
+            };
+
+            try {
+                await addDoc(collection(db, "produtos"), novoProduto);
+                alert("Sabor '" + novoProduto.nome + "' adicionado com sucesso!");
+                e.target.reset();
+            } catch (error) {
+                console.error("Erro ao salvar: ", error);
+                alert("Erro ao salvar. Verifique se você tem permissão no Firebase.");
+            }
+        });
+    </script>
+
+    <script type="module" src="js/auth-control.js"></script>
+
+</body>
+</html>

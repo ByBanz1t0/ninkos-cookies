@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninko's Cookies | Home & Cardápio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <a href="carrinho.html" class="carrinho-flutuante" id="carrinho-btn">
+        <div class="carrinho-qtd" id="cart-count">0</div>
+        <div class="carrinho-info">
+            <span>Itens</span><br>
+            <span class="carrinho-valor" id="cart-total">R$ 0,00</span>
+        </div>
+    </a>
+    
+    <div class="menu-fixo">
+        <header>
+            <div class="header-side"></div> 
+
+            <div class="logo-container">
+                <a href="index.html">
+                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
+                </a>
+            </div>
+
+           <div class="header-side auth-area">
+                <div id="menu-login">
+                    <a href="login.html" class="btn-auth">Entrar</a>
+                </div>
+
+                <div id="menu-user" class="hidden"></div>
+
+                <div id="menu-logout" class="hidden">
+                    <a href="#" class="btn-auth-sair">Sair</a>
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <h1>Nossos produtos:</h1>
+            <ul>
+                <li><a href="#secao-cookies" class="botao-navegacao">Cookies</a></li>
+                <li><a href="#secao-shakes" class="botao-navegacao">Milk Shakes</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <section class="conteudo">
+            <h3>Para você se deliciar:</h3>
+            <p>Escolha uma categoria acima para conferir nossos sabores artesanais!</p>
+            
+            <div class="banner-inicial" style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
+                <img src="img/logos/ninkos_logo.png" alt="Cookies Artesanais" style="max-width: 40%; border-radius: 1rem;">
+            </div>
+        </section>
+
+        <section id="secao-cookies">
+            <h2>Sabores de Cookies:</h2>
+            <div id="container-cookies" class="container-produtos">
+                <p class="loading-msg">Preparando os cookies... 🍪</p>
+            </div>
+        </section>
+
+        <section id="secao-shakes">
+            <h2>Sabores de Milk Shakes:</h2>
+            <div id="container-shakes" class="container-produtos">
+                <p class="loading-msg">Batendo os shakes... 🥤</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="contato">
+            <h3>Redes sociais e contato:</h3>
+            <div class="social-link">
+                <img class="img-social" src="img/logos/instagramLogo.png" alt="Instagram">
+                <p>Siga-nos no <a href="http://instagram.com/ninkoscookies" target="_blank">@ninkoscookies</a></p>
+            </div>
+            <div class="social-link">
+                <img class="img-social" src="img/logos/whatsappLogo.png" alt="WhatsApp">
+                <p>Peça pelo <a href="https://wa.me/5582999608947" target="_blank">WhatsApp</a></p>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem;">&copy; 2026 Ninko's Cookies</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
+            authDomain: "ninkos-cookies.firebaseapp.com",
+            projectId: "ninkos-cookies",
+            storageBucket: "ninkos-cookies.firebasestorage.app",
+            messagingSenderId: "1065814927466",
+            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 1. RENDERIZAÇÃO EM TEMPO REAL
+        const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
+
+        onSnapshot(q, (snapshot) => {
+            const containerCookies = document.getElementById('container-cookies');
+            const containerShakes = document.getElementById('container-shakes');
+            
+            if(containerCookies) containerCookies.innerHTML = "";
+            if(containerShakes) containerShakes.innerHTML = "";
+
+            snapshot.forEach((doc) => {
+                const item = doc.data();
+                const precoNum = parseFloat(item.preco) || 0;
+                const precoFormatado = precoNum.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const imgUrl = item.imagemUrl || 'img/padrao.jpg';
+
+                const cardHTML = `
+                    <article class="sabor-item">
+                        <img src="${imgUrl}" class="sabor-foto" alt="${item.nome}">
+                        <div class="sabor-info">
+                            <h3>${item.nome}</h3>
+                            <p class="sabor-descricao">${item.descricao || 'Sem descrição disponível.'}</p>
+                            <p class="sabor-preco"><strong>R$ ${precoFormatado}</strong></p>
+                            <button class="btn-comprar" 
+                                data-id="${doc.id}" 
+                                data-nome="${item.nome}" 
+                                data-preco="${precoNum}"
+                                data-img="${imgUrl}">
+                                Adicionar ao Carrinho 🛒
+                            </button>
+                        </div>
+                    </article>
+                `;
+
+                if (item.categoria === "milk-shakes") {
+                    if(containerShakes) containerShakes.innerHTML += cardHTML;
+                } else {
+                    if(containerCookies) containerCookies.innerHTML += cardHTML;
+                }
+            });
+        });
+
+        // 2. LÓGICA DO CARRINHO
+        let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
+
+        function atualizarIconeCarrinho() {
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            
+            const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
+            const valorTotal = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+
+            if(cartCount) cartCount.innerText = totalItens;
+            if(cartTotal) cartTotal.innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        window.adicionarAoCarrinho = function(id, nome, preco, imagemUrl) {
+            const precoNum = parseFloat(preco);
+            const index = carrinho.findIndex(c => c.id === id);
+            
+            if (index > -1) {
+                carrinho[index].quantidade += 1;
+            } else {
+                carrinho.push({ id, nome, preco: precoNum, quantidade: 1, imagemUrl: imagemUrl });
+            }
+
+            localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
+            atualizarIconeCarrinho();
+            alert(`${nome} adicionado! 🍪`);
+        };
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-comprar')) {
+                const btn = e.target;
+                adicionarAoCarrinho(
+                    btn.getAttribute('data-id'),
+                    btn.getAttribute('data-nome'),
+                    btn.getAttribute('data-preco'),
+                    btn.getAttribute('data-img')
+                );
+            }
+        });
+
+        atualizarIconeCarrinho();
+    </script>
+
+    <script type="module" src="js/auth-control.js"></script>
+
+    <script>
+        // Scroll suave ao clicar no menu
+        document.querySelectorAll('.botao-navegacao').forEach(botao => {
+            botao.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 150, // Ajuste para não cobrir o título pelo menu fixo
+                    behavior: 'smooth'
+                });
+
+                document.querySelectorAll('.botao-navegacao').forEach(b => b.classList.remove('ativo'));
+                this.classList.add('ativo');
+            });
+        });
+    </script>
+</body>
+</html>
