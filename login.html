@@ -6,85 +6,41 @@
     <title>Login - Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Estilos para o feedback visual */
-        #auth-message {
-            transition: all 0.3s ease;
-            font-weight: bold;
-            text-align: center;
-            min-height: 24px;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-        }
-
-        .shake {
-            animation: shake-animation 0.3s;
-        }
-
-        @keyframes shake-animation {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
-
-        .login-box input {
-            transition: border-color 0.3s;
-        }
-
-        .input-erro {
-            border-color: #d63384 !important;
-            background-color: #fff0f1;
-        }
+        #auth-message { margin-top: 1rem; font-weight: bold; text-align: center; font-size: 0.85rem; }
+        .input-erro { border-color: #d63384 !important; background-color: #fff0f1; }
     </style>
 </head>
 <body class="admin-body">
-
     <div class="menu-fixo">
         <header>
             <div class="header-side"></div> 
-
             <div class="logo-container">
                 <a href="index.html">
                     <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
                 </a>
             </div>
-
             <div class="header-side auth-area">
-                <div id="menu-login" class="hidden">
-                    <a href="login.html" class="btn-auth">Entrar</a>
-                </div>
+                <div id="menu-login"><a href="login.html" class="btn-auth">Entrar</a></div>
                 <div id="menu-user" class="hidden"></div>
-                <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair">Sair</a>
-                </div>
+                <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair">Sair</a></div>
             </div>
         </header>
-
-        <nav>
-            <h1>Nossos produtos:</h1>
-            <ul>
-                <li><a href="cardapio.html#secao-cookies" class="botao-navegacao">Cookies</a></li>
-                <li><a href="cardapio.html#secao-shakes" class="botao-navegacao">Milk Shakes</a></li>
-            </ul>
-        </nav>
     </div>
 
     <main class="conteudo-login">
         <div class="login-box">
             <h2 id="auth-title">Entrar na Ninko's</h2>
-            
             <input type="email" id="email" placeholder="Seu e-mail" required>
             <input type="password" id="password" placeholder="Sua senha" required>
-            
-            <button id="btn-login" class="botao-navegacao ativo" style="width: 100%; margin-bottom: 10px; cursor: pointer;">Entrar</button>
-            <button id="btn-cadastro" class="botao-navegacao" style="width: 100%; cursor: pointer;">Criar Conta</button>
-            
+            <button id="btn-login" class="botao-navegacao ativo" style="width: 100%; margin-bottom: 10px;">Entrar</button>
+            <button id="btn-ir-cadastro" class="botao-navegacao" style="width: 100%;" onclick="location.href='cadastro.html'">Criar Conta</button>
             <p id="auth-message"></p>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
@@ -97,79 +53,25 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
         const msgArea = document.getElementById('auth-message');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
 
-        const mostrarAviso = (mensagem, cor = "#d63384") => {
-            msgArea.innerText = mensagem;
-            msgArea.style.color = cor;
-            msgArea.classList.remove('shake');
-            void msgArea.offsetWidth; 
-            msgArea.classList.add('shake');
-        };
-
-        const limparErros = () => {
-            emailInput.classList.remove('input-erro');
-            passwordInput.classList.remove('input-erro');
-            msgArea.innerText = "";
-        };
-
-        // --- LÓGICA DE LOGIN ---
         document.getElementById('btn-login').addEventListener('click', async () => {
-            limparErros();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-
-            if (!email || !password) {
-                mostrarAviso("⚠️ Preencha e-mail e senha para entrar.");
-                return;
-            }
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
             try {
-                mostrarAviso("⏳ Verificando...", "#555");
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = "index.html"; 
+                window.location.href = "perfil.html"; 
             } catch (error) {
-                mostrarAviso("❌ E-mail ou senha incorretos.");
-                emailInput.classList.add('input-erro');
-                passwordInput.classList.add('input-erro');
-            }
-        });
-
-        // --- LÓGICA DE CADASTRO ---
-        document.getElementById('btn-cadastro').addEventListener('click', async () => {
-            limparErros();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-
-            if (!email || !password) {
-                mostrarAviso("⚠️ Preencha e-mail e senha para começar.");
-                return;
-            }
-
-            if (password.length < 6) {
-                mostrarAviso("⚠️ A senha deve ter no mínimo 6 caracteres.");
-                passwordInput.classList.add('input-erro');
-                return;
-            }
-
-            try {
-                mostrarAviso("⏳ Criando conta...", "#555");
-                await createUserWithEmailAndPassword(auth, email, password);
-                window.location.href = "completar-cadastro.html"; 
-            } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    mostrarAviso("❌ Este e-mail já existe.");
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    msgArea.innerHTML = `❌ Conta não encontrada. <br><a href="cadastro.html" style="color:#d63384; text-decoration: underline;">Deseja criar uma conta agora?</a>`;
                 } else {
-                    mostrarAviso("❌ Erro ao iniciar cadastro.");
+                    msgArea.innerText = "❌ E-mail ou senha incorretos.";
+                    msgArea.style.color = "#d63384";
                 }
             }
         });
     </script>
-
     <script type="module" src="js/auth-control.js"></script>
-
 </body>
 </html>

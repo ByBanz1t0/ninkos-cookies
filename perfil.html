@@ -6,76 +6,30 @@
     <title>Meu Perfil | Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .perfil-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            background: #fff;
-            padding: 2rem;
-            border-radius: 1.5rem;
-            border: 1px solid #f7b2b7;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .user-info {
-            margin: 1.5rem 0;
-            padding: 1.5rem;
-            background: #fff2f3;
-            border-radius: 1rem;
-            text-align: left; /* Alinhado à esquerda para os dados */
-        }
-        .user-info p {
-            margin-bottom: 0.8rem;
-            color: #333;
-        }
-        .user-info strong {
-            color: #d63384;
-        }
-        .btn-acao {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.8rem 1.5rem;
-            background-color: #f7b2b7;
-            color: white;
-            text-decoration: none;
-            border-radius: 2rem;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .btn-acao:hover {
-            background-color: #d63384;
-        }
-        .loading-perfil {
-            font-style: italic;
-            color: #888;
-        }
+        .perfil-container { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 1.5rem; border: 1px solid #f7b2b7; text-align: center; }
+        .user-info { margin: 1.5rem 0; padding: 1.5rem; background: #fff2f3; border-radius: 1rem; text-align: left; }
+        .user-info label { font-weight: bold; color: #d63384; display: block; margin-top: 10px; }
+        .user-info input { width: 100%; padding: 8px; margin-bottom: 5px; border-radius: 5px; border: 1px solid #ddd; }
+        .btn-acao { display: inline-block; margin-top: 1rem; padding: 0.8rem 1.5rem; background-color: #f7b2b7; color: white; text-decoration: none; border-radius: 2rem; font-weight: bold; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="menu-fixo">
         <header>
             <div class="header-side"></div> 
             <div class="logo-container">
-                <a href="index.html">
-                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo Ninko's">
-                </a>
+                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo Ninko's"></a>
             </div>
             <div class="header-side auth-area">
-                <div id="menu-login" class="hidden">
-                    <a href="login.html" class="btn-auth">Entrar</a>
-                </div>
                 <div id="menu-user" class="hidden"></div>
-                <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair">Sair</a>
-                </div>
+                <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair">Sair</a></div>
             </div>
         </header>
-
         <nav>
             <h1>Minha Conta</h1>
             <ul>
                 <li><a href="index.html" class="botao-navegacao">Voltar ao Início</a></li>
-                <li><a href="cardapio.html" class="botao-navegacao">Ver Cardápio</a></li>
+                <li><a href="index.html" class="botao-navegacao">Ver Cardápio</a></li>
             </ul>
         </nav>
     </div>
@@ -83,79 +37,62 @@
     <main>
         <div class="perfil-container">
             <h2 id="saudacao">Bem-vindo(a)! 🍪</h2>
-            
             <div class="user-info" id="info-box">
-                <p class="loading-perfil">Carregando seus dados...</p>
+                <p>Carregando seus dados...</p>
             </div>
-
-            <p>Seus dados estão seguros na Ninko's!</p>
-            
-            <a href="cardapio.html" class="btn-acao">Ir para o Cardápio</a>
+            <button id="btn-salvar" class="btn-acao">Salvar Alterações</button>
+            <p style="margin-top: 15px;">Seus dados estão seguros na Ninko's!</p>
         </div>
     </main>
-
-    <footer>
-        <p style="text-align: center; margin-top: 2rem;">&copy; 2026 Ninko's Cookies</p>
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
-            authDomain: "ninkos-cookies.firebaseapp.com",
-            projectId: "ninkos-cookies",
-            storageBucket: "ninkos-cookies.firebasestorage.app",
-            messagingSenderId: "1065814927466",
-            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
-        };
-
+        const firebaseConfig = { /* ... mesma config ... */ };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                try {
-                    // Busca os dados adicionais no Firestore usando o UID
-                    const docRef = doc(db, "usuarios", user.uid);
-                    const docSnap = await getDoc(docRef);
+                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                const infoBox = document.getElementById('info-box');
+                const saudacao = document.getElementById('saudacao');
 
-                    const infoBox = document.getElementById('info-box');
-                    const saudacao = document.getElementById('saudacao');
-
-                    if (docSnap.exists()) {
-                        const dados = docSnap.data();
-                        
-                        saudacao.innerText = `Olá, ${dados.nome.split(' ')[0]}! 🍪`;
-                        
-                        infoBox.innerHTML = `
-                            <p><strong>Nome:</strong> ${dados.nome}</p>
-                            <p><strong>E-mail:</strong> ${user.email}</p>
-                            <p><strong>WhatsApp:</strong> ${dados.telefone}</p>
-                            <p><strong>Endereço:</strong> ${dados.endereco}</p>
-                        `;
-                    } else {
-                        // Caso o usuário esteja logado mas não tenha o doc no Firestore
-                        saudacao.innerText = `Bem-vindo(a)! 🍪`;
-                        infoBox.innerHTML = `
-                            <p><strong>E-mail:</strong> ${user.email}</p>
-                            <p style="color: #d63384; font-size: 0.9rem;">⚠️ Perfil incompleto.</p>
-                            <a href="completar-cadastro.html" style="font-size: 0.8rem;">Clique aqui para completar seus dados</a>
-                        `;
-                    }
-                } catch (error) {
-                    console.error("Erro ao carregar perfil:", error);
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    saudacao.innerText = `Olá, ${d.nome.split(' ')[0]}! 🍪`;
+                    infoBox.innerHTML = `
+                        <label>Nome:</label><input type="text" id="p-nome" value="${d.nome}">
+                        <label>WhatsApp:</label><input type="text" id="p-tel" value="${d.telefone}">
+                        <label>CEP:</label><input type="text" id="p-cep" value="${d.cep}">
+                        <label>Bairro:</label><input type="text" id="p-bairro" value="${d.bairro}">
+                        <label>Rua:</label><input type="text" id="p-rua" value="${d.rua}">
+                        <label>Nº:</label><input type="text" id="p-num" value="${d.numero}">
+                        <label>Complemento:</label><input type="text" id="p-comp" value="${d.complemento || ''}">
+                    `;
                 }
-            } else {
-                window.location.href = "login.html";
-            }
+            } else { window.location.href = "login.html"; }
+        });
+
+        document.getElementById('btn-salvar').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            try {
+                await updateDoc(doc(db, "usuarios", user.uid), {
+                    nome: document.getElementById('p-nome').value,
+                    telefone: document.getElementById('p-tel').value,
+                    cep: document.getElementById('p-cep').value,
+                    bairro: document.getElementById('p-bairro').value,
+                    rua: document.getElementById('p-rua').value,
+                    numero: document.getElementById('p-num').value,
+                    complemento: document.getElementById('p-comp').value
+                });
+                alert("Dados atualizados! 🍪");
+            } catch (e) { alert("Erro ao salvar."); }
         });
     </script>
-
     <script type="module" src="js/auth-control.js"></script>
-
 </body>
 </html>
