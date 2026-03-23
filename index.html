@@ -26,7 +26,7 @@
                 </a>
             </div>
 
-           <div class="header-side auth-area">
+            <div class="header-side auth-area">
                 <div id="menu-login">
                     <a href="login.html" class="btn-auth">Entrar</a>
                 </div>
@@ -34,7 +34,7 @@
                 <div id="menu-user" class="hidden"></div>
 
                 <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair">Sair</a>
+                    <a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a>
                 </div>
             </div>
         </header>
@@ -104,7 +104,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 1. RENDERIZAÇÃO EM TEMPO REAL
+        // 1. RENDERIZAÇÃO DOS PRODUTOS
         const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
 
         onSnapshot(q, (snapshot) => {
@@ -132,7 +132,7 @@
                                 data-nome="${item.nome}" 
                                 data-preco="${precoNum}"
                                 data-img="${imgUrl}">
-                                Adicionar ao Carrinho 🛒
+                                Adicionar 🛒
                             </button>
                         </div>
                     </article>
@@ -152,10 +152,8 @@
         function atualizarIconeCarrinho() {
             const cartCount = document.getElementById('cart-count');
             const cartTotal = document.getElementById('cart-total');
-            
             const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
             const valorTotal = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
-
             if(cartCount) cartCount.innerText = totalItens;
             if(cartTotal) cartTotal.innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
@@ -163,16 +161,13 @@
         window.adicionarAoCarrinho = function(id, nome, preco, imagemUrl) {
             const precoNum = parseFloat(preco);
             const index = carrinho.findIndex(c => c.id === id);
-            
             if (index > -1) {
                 carrinho[index].quantidade += 1;
             } else {
                 carrinho.push({ id, nome, preco: precoNum, quantidade: 1, imagemUrl: imagemUrl });
             }
-
             localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
             atualizarIconeCarrinho();
-            alert(`${nome} adicionado! 🍪`);
         };
 
         document.addEventListener('click', (e) => {
@@ -193,18 +188,16 @@
     <script type="module" src="js/auth-control.js"></script>
 
     <script>
-        // Scroll suave ao clicar no menu
+        // Scroll suave
         document.querySelectorAll('.botao-navegacao').forEach(botao => {
             botao.addEventListener('click', function(e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 const targetSection = document.querySelector(targetId);
-                
                 window.scrollTo({
-                    top: targetSection.offsetTop - 150, // Ajuste para não cobrir o título pelo menu fixo
+                    top: targetSection.offsetTop - 240, 
                     behavior: 'smooth'
                 });
-
                 document.querySelectorAll('.botao-navegacao').forEach(b => b.classList.remove('ativo'));
                 this.classList.add('ativo');
             });

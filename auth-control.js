@@ -1,48 +1,54 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
-    authDomain: "ninkos-cookies.firebaseapp.com",
-    projectId: "ninkos-cookies",
-    storageBucket: "ninkos-cookies.firebasestorage.app",
-    messagingSenderId: "1065814927466",
-    appId: "1:1065814927466:web:405c7357f761d98ea3c213"
-};
+// 1. Mapeia os elementos do seu Menu Fixo (conforme seu CSS de 644 linhas)
+const menuUser = document.getElementById('menu-user');
+const menuLogout = document.getElementById('menu-logout');
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-onAuthStateChanged(auth, (user) => {
-    const menuLogin = document.getElementById('menu-login');
-    const menuUser = document.getElementById('menu-user');
-    const menuLogout = document.getElementById('menu-logout');
-
+// 2. Monitora o estado do usuário (Logado ou Deslogado)
+onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // Usuário logado: mostra perfil e esconde login
-        if (menuLogin) menuLogin.style.display = 'none';
+        // Busca o nome do usuário no Firestore para exibir no menu
+        const docRef = doc(db, "usuarios", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        let nomeParaExibir = "Minha Conta";
+        if (docSnap.exists()) {
+            const dados = docSnap.data();
+            // Pega o primeiro nome (ex: "Ezequias")
+            nomeParaExibir = dados.nome ? dados.nome.split(' ')[0] : "Usuário";
+        }
+
+        // Atualiza o menu para mostrar o nome e o botão de Sair
         if (menuUser) {
+            menuUser.innerHTML = `<a href="perfil.html" class="btn-auth">Olá, ${nomeParaExibir}</a>`;
             menuUser.classList.remove('hidden');
-            menuUser.style.display = 'block';
-            menuUser.innerHTML = `<a href="perfil.html" class="btn-auth">👤 Meu Perfil</a>`;
         }
         if (menuLogout) {
             menuLogout.classList.remove('hidden');
-            menuLogout.style.display = 'block';
         }
+
     } else {
-        // Deslogado: mostra login e esconde perfil
-        if (menuLogin) menuLogin.style.display = 'block';
-        if (menuUser) menuUser.style.display = 'none';
-        if (menuLogout) menuLogout.style.display = 'none';
+        // Caso não esteja logado, mostra o botão padrão de Login
+        if (menuUser) {
+            menuUser.innerHTML = `<a href="login.html" class="btn-auth">Login / Cadastro</a>`;
+            menuUser.classList.remove('hidden');
+        }
+        if (menuLogout) {
+            menuLogout.classList.add('hidden');
+        }
     }
 });
 
-// Evento de Logout
+// 3. Configura o clique no botão "Sair"
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-auth-sair')) {
+        e.preventDefault();
         signOut(auth).then(() => {
             window.location.href = "index.html";
+        }).catch((error) => {
+            console.error("Erro ao deslogar:", error);
         });
     }
 });

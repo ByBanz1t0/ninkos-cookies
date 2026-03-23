@@ -1,86 +1,66 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil | Ninko's Cookies</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .perfil-container { max-width: 600px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 1.5rem; border: 1px solid #f7b2b7; text-align: center; }
-        .user-info { margin: 1.5rem 0; padding: 1.5rem; background: #fff2f3; border-radius: 1rem; text-align: left; }
-        .user-info label { font-weight: bold; color: #d63384; display: block; margin-top: 10px; }
-        .user-info input { width: 100%; padding: 8px; margin-bottom: 5px; border-radius: 5px; border: 1px solid #ddd; }
-        .btn-acao { display: inline-block; margin-top: 1rem; padding: 0.8rem 1.5rem; background-color: #f7b2b7; color: white; text-decoration: none; border-radius: 2rem; font-weight: bold; border: none; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="menu-fixo">
-        <header>
-            <div class="header-side"></div> 
-            <div class="logo-container">
-                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo Ninko's"></a>
-            </div>
-            <div class="header-side auth-area">
-                <div id="menu-user" class="hidden"></div>
-                <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair">Sair</a></div>
-            </div>
-        </header>
-        <nav>
-            <h1>Minha Conta</h1>
-            <ul>
-                <li><a href="index.html" class="botao-navegacao">Voltar ao Início</a></li>
-                <li><a href="index.html" class="botao-navegacao">Ver Cardápio</a></li>
-            </ul>
-        </nav>
-    </div>
+<script type="module">
+        // Importamos a conexão que você criou na raiz
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <main>
-        <div class="perfil-container">
-            <h2 id="saudacao">Bem-vindo(a)! 🍪</h2>
-            <div class="user-info" id="info-box">
-                <p>Carregando seus dados...</p>
-            </div>
-            <button id="btn-salvar" class="btn-acao">Salvar Alterações</button>
-            <p style="margin-top: 15px;">Seus dados estão seguros na Ninko's!</p>
-        </div>
-    </main>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = { /* ... mesma config ... */ };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // Variável global para controle
+        let usuarioLogado = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                usuarioLogado = user;
                 const docSnap = await getDoc(doc(db, "usuarios", user.uid));
                 const infoBox = document.getElementById('info-box');
                 const saudacao = document.getElementById('saudacao');
 
                 if (docSnap.exists()) {
                     const d = docSnap.data();
-                    saudacao.innerText = `Olá, ${d.nome.split(' ')[0]}! 🍪`;
+                    // Pega o primeiro nome para a saudação
+                    const primeiroNome = d.nome ? d.nome.split(' ')[0] : "Usuário";
+                    saudacao.innerText = `Olá, ${primeiroNome}! 🍪`;
+                    
                     infoBox.innerHTML = `
-                        <label>Nome:</label><input type="text" id="p-nome" value="${d.nome}">
-                        <label>WhatsApp:</label><input type="text" id="p-tel" value="${d.telefone}">
-                        <label>CEP:</label><input type="text" id="p-cep" value="${d.cep}">
-                        <label>Bairro:</label><input type="text" id="p-bairro" value="${d.bairro}">
-                        <label>Rua:</label><input type="text" id="p-rua" value="${d.rua}">
-                        <label>Nº:</label><input type="text" id="p-num" value="${d.numero}">
-                        <label>Complemento:</label><input type="text" id="p-comp" value="${d.complemento || ''}">
+                        <label>Nome Completo:</label>
+                        <input type="text" id="p-nome" value="${d.nome || ''}">
+                        
+                        <label>WhatsApp:</label>
+                        <input type="text" id="p-tel" value="${d.telefone || ''}">
+                        
+                        <label>CEP:</label>
+                        <input type="text" id="p-cep" value="${d.cep || ''}">
+                        
+                        <label>Bairro:</label>
+                        <input type="text" id="p-bairro" value="${d.bairro || ''}">
+                        
+                        <label>Rua:</label>
+                        <input type="text" id="p-rua" value="${d.rua || ''}">
+                        
+                        <label>Nº:</label>
+                        <input type="text" id="p-num" value="${d.numero || ''}">
+                        
+                        <label>Complemento:</label>
+                        <input type="text" id="p-comp" value="${d.complemento || ''}">
                     `;
+                } else {
+                    infoBox.innerHTML = "<p>Perfil não encontrado. Por favor, complete seu cadastro.</p>";
                 }
-            } else { window.location.href = "login.html"; }
+            } else { 
+                // Se não estiver logado, vai para o login
+                window.location.href = "login.html"; 
+            }
         });
 
+        // Lógica do botão Salvar
         document.getElementById('btn-salvar').addEventListener('click', async () => {
-            const user = auth.currentUser;
+            if (!usuarioLogado) return;
+
+            const btn = document.getElementById('btn-salvar');
+            btn.innerText = "Salvando...";
+            btn.disabled = true;
+
             try {
-                await updateDoc(doc(db, "usuarios", user.uid), {
+                await updateDoc(doc(db, "usuarios", usuarioLogado.uid), {
                     nome: document.getElementById('p-nome').value,
                     telefone: document.getElementById('p-tel').value,
                     cep: document.getElementById('p-cep').value,
@@ -89,10 +69,16 @@
                     numero: document.getElementById('p-num').value,
                     complemento: document.getElementById('p-comp').value
                 });
-                alert("Dados atualizados! 🍪");
-            } catch (e) { alert("Erro ao salvar."); }
+                alert("Dados atualizados com sucesso! 🍪");
+            } catch (e) {
+                console.error("Erro ao salvar:", e);
+                alert("Erro ao salvar as alterações. Tente novamente.");
+            } finally {
+                btn.innerText = "Salvar Alterações";
+                btn.disabled = false;
+            }
         });
     </script>
-    <script type="module" src="js/auth-control.js"></script>
+    <script type="module" src="auth-control.js"></script>
 </body>
 </html>
