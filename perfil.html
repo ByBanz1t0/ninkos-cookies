@@ -6,6 +6,52 @@
     <title>Ninko's Cookies | Meu Perfil</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Estilos do cabeçalho simplificado para páginas internas */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: 70px;
+        }
+
+        .header-side {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            flex: 1;
+            text-align: center;
+        }
+
+        #img-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .auth-area {
+            justify-content: flex-end;
+        }
+
+        .btn-voltar-clean {
+            text-decoration: none;
+            color: #d63384;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-voltar-clean:hover {
+            color: #f7b2b7;
+        }
+
         /* Unificando o design de todos os campos do formulário */
         .campo-perfil input, 
         .campo-perfil select {
@@ -13,7 +59,7 @@
             padding: 0.8rem;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-family: 'Keep Calm', sans-serif; /* Força a fonte Keep Calm */
+            font-family: 'Keep Calm', sans-serif; 
             font-size: 1rem;
             box-sizing: border-box;
             background-color: #fff;
@@ -27,7 +73,6 @@
             border-color: #f7b2b7;
         }
 
-        /* Ajuste específico para o select ter a setinha personalizada da Ninko's */
         .campo-perfil select {
             appearance: none;
             -webkit-appearance: none;
@@ -47,7 +92,10 @@
     <div class="menu-fixo">
         <header>
             <div class="header-side">
-                <a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a>
+                <a href="index.html" class="btn-voltar-clean">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Voltar
+                </a>
             </div> 
 
             <div class="logo-container">
@@ -57,11 +105,7 @@
             </div>
 
             <div class="header-side auth-area">
-                <div id="menu-user"></div>
-                <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a>
                 </div>
-            </div>
         </header>
     </div>
 
