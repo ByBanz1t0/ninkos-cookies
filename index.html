@@ -10,8 +10,10 @@
         .loading-msg { text-align: center; color: #888; padding: 20px; width: 100%; }
         .sabor-foto { object-fit: cover; }
         
-        /* Ajuste para compensar a retirada da barra de navegação */
-        #secao-cookies { margin-top: 130px; }
+        /* Ajuste de espaçamento para remover o branco entre o header e os produtos */
+        main { margin-top: 80px; } /* Ajuste este valor se o seu header for mais alto/baixo */
+        section { padding: 1rem 0; }
+        #secao-cookies, #secao-shakes { display: none; } /* Começam escondidas e aparecem via JS se houver itens */
     </style>
 </head>
 <body>
@@ -37,21 +39,17 @@
                 <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a></div>
             </div>
         </header>
-        </div>
+    </div>
 
     <main>
         <section id="secao-cookies">
             <h2>Sabores de Cookies:</h2>
-            <div id="container-cookies" class="container-produtos">
-                <p class="loading-msg">Preparando os cookies... 🍪</p>
-            </div>
+            <div id="container-cookies" class="container-produtos"></div>
         </section>
 
         <section id="secao-shakes">
             <h2>Sabores de Milk Shakes:</h2>
-            <div id="container-shakes" class="container-produtos">
-                <p class="loading-msg">Batendo os shakes... 🥤</p>
-            </div>
+            <div id="container-shakes" class="container-produtos"></div>
         </section>
     </main>
 
@@ -65,6 +63,12 @@
         onSnapshot(q, (snapshot) => {
             const containerCookies = document.getElementById('container-cookies');
             const containerShakes = document.getElementById('container-shakes');
+            const secCookies = document.getElementById('secao-cookies');
+            const secShakes = document.getElementById('secao-shakes');
+
+            let temCookies = false;
+            let temShakes = false;
+
             if(containerCookies) containerCookies.innerHTML = "";
             if(containerShakes) containerShakes.innerHTML = "";
 
@@ -85,11 +89,21 @@
                     </article>`;
 
                 if (item.categoria === "milk-shakes") {
-                    if(containerShakes) containerShakes.innerHTML += cardHTML;
+                    if(containerShakes) {
+                        containerShakes.innerHTML += cardHTML;
+                        temShakes = true;
+                    }
                 } else {
-                    if(containerCookies) containerCookies.innerHTML += cardHTML;
+                    if(containerCookies) {
+                        containerCookies.innerHTML += cardHTML;
+                        temCookies = true;
+                    }
                 }
             });
+
+            // Exibe ou esconde as seções baseado na existência de produtos
+            secCookies.style.display = temCookies ? "block" : "none";
+            secShakes.style.display = temShakes ? "block" : "none";
         });
 
         // Lógica do Carrinho
