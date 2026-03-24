@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ninko's Cookies | Meu Perfil</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Garante que o select tenha a mesma aparência dos inputs */
+        select, input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .conteudo-perfil { display: none; }
+    </style>
 </head>
 <body>
 
@@ -29,7 +42,7 @@
         </header>
     </div>
 
-    <main class="conteudo-perfil" style="margin-top: 100px; padding: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+    <main id="conteudo-perfil" class="conteudo-perfil" style="margin-top: 100px; padding: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
         <h2 id="saudacao" style="text-align: center; color: #d63384;">Carregando perfil...</h2>
         
         <div id="card-fidelidade" class="card-fidelidade" style="display: none;">
@@ -54,21 +67,23 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { doc, getDoc, setDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
         let usuarioLogado = null;
 
-        // Função para buscar os bairros cadastrados no Admin
+        // Função para buscar bairros (em ordem alfabética e sem exibir o frete)
         async function obterOpcoesBairros(bairroAtual) {
-            const snapshot = await getDocs(collection(db, "bairros"));
-            let html = `<select id="p-bairro" style="width: 100%; padding: 0.8rem; border-radius: 5px; border: 1px solid #ccc;">`;
+            const q = query(collection(db, "bairros"), orderBy("nome", "asc"));
+            const snapshot = await getDocs(q);
+            
+            let html = `<select id="p-bairro" required>`;
             html += `<option value="">Selecione seu bairro...</option>`;
             
             snapshot.forEach(doc => {
                 const b = doc.data();
                 const selecionado = b.nome === bairroAtual ? "selected" : "";
-                html += `<option value="${b.nome}" ${selecionado}>${b.nome} (Frete: R$ ${b.frete.toFixed(2)})</option>`;
+                html += `<option value="${b.nome}" ${selecionado}>${b.nome}</option>`;
             });
             
             html += `</select>`;
@@ -84,6 +99,7 @@
                     const saudacao = document.getElementById('saudacao');
                     const cardFid = document.getElementById('card-fidelidade');
                     const saldoPontos = document.getElementById('saldo-pontos');
+                    const mainContent = document.getElementById('conteudo-perfil');
 
                     const d = docSnap.exists() ? docSnap.data() : {};
                     
@@ -95,7 +111,6 @@
                         saldoPontos.innerText = d.pontos || 0;
                     }
 
-                    // Buscamos os bairros antes de montar o HTML
                     const selectBairrosHTML = await obterOpcoesBairros(d.bairro || "");
                     
                     infoBox.innerHTML = `
@@ -130,6 +145,7 @@
                             </div>
                         </div>
                     `;
+                    mainContent.style.display = "block";
                 } catch (error) {
                     console.error("Erro ao carregar perfil:", error);
                 }
