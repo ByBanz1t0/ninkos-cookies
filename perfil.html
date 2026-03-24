@@ -3,122 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil - Ninko's Cookies</title>
+    <title>Ninko's Cookies | Meu Perfil</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Apenas o necessário para o conteúdo não ficar por baixo do menu fixo */
-        #conteudo-perfil { display: none; margin-top: 150px; }
-    </style>
 </head>
 <body>
 
     <div class="menu-fixo">
         <header>
-            <div class="header-side">
-                <a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a>
-            </div> 
+            <div class="header-side"></div> 
 
             <div class="logo-container">
-                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
+                <a href="index.html">
+                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
+                </a>
             </div>
 
             <div class="header-side auth-area">
                 <div id="menu-user"></div>
                 <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold; margin-left: 10px;">Sair</a>
+                    <a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a>
                 </div>
             </div>
         </header>
     </div>
 
-    <main id="conteudo-perfil">
-        <div class="card-perfil">
-            <h1>Meus Dados</h1>
-            
-            <form id="form-perfil">
-                <label>Nome Completo:</label>
-                <input type="text" id="perfil-nome" placeholder="Seu nome" required>
+    <main class="conteudo-perfil" style="margin-top: 100px; padding: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h2 id="saudacao" style="text-align: center; color: #d63384;">Carregando perfil...</h2>
+        
+        <div id="card-fidelidade" class="card-fidelidade" style="display: none;">
+            <h3>✨ Seus Ninko Points</h3>
+            <p>Você tem <strong id="saldo-pontos">0</strong> pontos</p>
+            <small>Continue pedindo para ganhar mais cookies!</small>
+        </div>
 
-                <label>WhatsApp:</label>
-                <input type="text" id="perfil-telefone" placeholder="(00) 00000-0000" required>
+        <p style="text-align: center; margin-bottom: 2rem; font-size: 0.9rem; color: #666;">Mantenha seus dados atualizados para facilitar suas entregas!</p>
 
-                <label>Bairro:</label>
-                <select id="perfil-bairro" required>
-                    <option value="">Selecione seu bairro...</option>
-                </select>
+        <div id="info-box" class="perfil-container">
+            <p style="text-align: center; color: #f7b2b7;">Buscando seus dados no forno... 🍪</p>
+        </div>
 
-                <label>Rua e Número:</label>
-                <input type="text" id="perfil-rua" placeholder="Ex: Rua das Flores, 123" required>
-
-                <label>Ponto de Referência:</label>
-                <input type="text" id="perfil-referencia" placeholder="Perto de onde?">
-
-                <button type="submit" class="btn-finalizar-checkout">Salvar Alterações</button>
-                
-                </form>
+        <div style="text-align: center; margin-top: 2rem;">
+            <button id="btn-salvar" class="btn-comprar" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                Salvar Alterações
+            </button>
+            <br><br>
+            <a href="index.html" style="color: #d63384; text-decoration: none; font-size: 0.9rem; font-weight: bold;">← Voltar ao Cardápio</a>
         </div>
     </main>
 
     <script type="module">
-        import { db, auth } from "./firebase-config.js";
-        import { doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // Importamos a notificação que criamos no auth-control
+        import { mostrarNotificacao } from "./auth-control.js";
 
-        const form = document.getElementById('form-perfil');
-        const selectBairro = document.getElementById('perfil-bairro');
-        const conteudo = document.getElementById('conteudo-perfil');
+        let usuarioLogado = null;
 
-        async function carregarBairros() {
-            const querySnapshot = await getDocs(collection(db, "bairros"));
-            querySnapshot.forEach((doc) => {
-                const bairro = doc.data();
-                const option = document.createElement('option');
-                option.value = bairro.nome;
-                option.textContent = `${bairro.nome} (Taxa: R$ ${bairro.frete.toFixed(2)})`;
-                selectBairro.appendChild(option);
-            });
-        }
-
-        auth.onAuthStateChanged(async (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                conteudo.style.display = "block";
-                await carregarBairros();
-                
-                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-                if (userDoc.exists()) {
-                    const dados = userDoc.data();
-                    document.getElementById('perfil-nome').value = dados.nome || "";
-                    document.getElementById('perfil-telefone').value = dados.telefone || "";
-                    document.getElementById('perfil-bairro').value = dados.bairro || "";
-                    document.getElementById('perfil-rua').value = dados.rua || "";
-                    document.getElementById('perfil-referencia').value = dados.referencia || "";
+                usuarioLogado = user;
+                try {
+                    const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                    const infoBox = document.getElementById('info-box');
+                    const saudacao = document.getElementById('saudacao');
+                    const cardFid = document.getElementById('card-fidelidade');
+                    const saldoPontos = document.getElementById('saldo-pontos');
+
+                    const d = docSnap.exists() ? docSnap.data() : {};
+                    
+                    // Atualiza Saudação e Pontos
+                    const primeiroNome = d.nome ? d.nome.split(' ')[0] : "Usuário";
+                    saudacao.innerText = `Olá, ${primeiroNome}! 🍪`;
+                    
+                    if(cardFid) {
+                        cardFid.style.display = "block";
+                        saldoPontos.innerText = d.pontos || 0;
+                    }
+                    
+                    // Injeção dos inputs com as classes para o CSS pegar
+                    infoBox.innerHTML = `
+                        <div class="campo-perfil">
+                            <label>Nome Completo:</label>
+                            <input type="text" id="p-nome" value="${d.nome || ''}" placeholder="Seu nome completo">
+                        </div>
+                        <div class="campo-perfil">
+                            <label>WhatsApp:</label>
+                            <input type="text" id="p-tel" value="${d.telefone || ''}" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="campo-perfil">
+                            <label>CEP:</label>
+                            <input type="text" id="p-cep" value="${d.cep || ''}" placeholder="00000-000">
+                        </div>
+                        <div class="campo-perfil">
+                            <label>Bairro:</label>
+                            <input type="text" id="p-bairro" value="${d.bairro || ''}">
+                        </div>
+                        <div class="campo-perfil">
+                            <label>Rua:</label>
+                            <input type="text" id="p-rua" value="${d.rua || ''}">
+                        </div>
+                        <div class="grid-campos">
+                            <div class="campo-perfil">
+                                <label>Nº:</label>
+                                <input type="text" id="p-num" value="${d.numero || ''}">
+                            </div>
+                            <div class="campo-perfil">
+                                <label>Complemento:</label>
+                                <input type="text" id="p-comp" value="${d.complemento || ''}">
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error("Erro ao carregar perfil:", error);
                 }
-            } else {
-                window.location.href = "login.html";
+            } else { 
+                window.location.href = "login.html"; 
             }
         });
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const user = auth.currentUser;
-            if (user) {
-                const novosDados = {
-                    nome: document.getElementById('perfil-nome').value,
-                    telefone: document.getElementById('perfil-telefone').value,
-                    bairro: document.getElementById('perfil-bairro').value,
-                    rua: document.getElementById('perfil-rua').value,
-                    referencia: document.getElementById('perfil-referencia').value,
-                };
+        document.getElementById('btn-salvar').addEventListener('click', async () => {
+            if (!usuarioLogado) return;
 
-                try {
-                    await updateDoc(doc(db, "usuarios", user.uid), novosDados);
-                    alert("Dados atualizados com sucesso! 🍪");
-                } catch (error) {
-                    console.error(error);
-                    alert("Erro ao salvar.");
-                }
+            const btn = document.getElementById('btn-salvar');
+            btn.innerText = "Salvando...";
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, "usuarios", usuarioLogado.uid), {
+                    nome: document.getElementById('p-nome').value,
+                    telefone: document.getElementById('p-tel').value,
+                    cep: document.getElementById('p-cep').value,
+                    bairro: document.getElementById('p-bairro').value,
+                    rua: document.getElementById('p-rua').value,
+                    numero: document.getElementById('p-num').value,
+                    complemento: document.getElementById('p-comp').value,
+                    atualizadoEm: new Date()
+                }, { merge: true });
+
+                mostrarNotificacao("Perfil atualizado! 🍪", "✅");
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+
+            } catch (e) {
+                console.error("Erro ao salvar:", e);
+                mostrarNotificacao("Erro ao salvar dados.", "❌");
+            } finally {
+                btn.innerText = "Salvar Alterações";
+                btn.disabled = false;
             }
         });
     </script>
+
     <script type="module" src="auth-control.js"></script>
 </body>
 </html>
