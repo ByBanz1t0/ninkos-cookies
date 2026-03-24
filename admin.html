@@ -35,7 +35,7 @@
         .status-Entregue { color: #27ae60; font-weight: bold; }
         .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
         .btn-entregue { background: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; margin-top: 10px; }
-        .btn-acao-user { cursor: pointer; background: #fff; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; transition: 0.2s; }
+        .btn-acao-user { cursor: pointer; background: #fff; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; transition: 0.2s; margin-right: 5px; }
         .btn-acao-user:hover { background: #f9f9f9; border-color: #bbb; }
     </style>
 </head>
@@ -46,11 +46,9 @@
             <div class="header-side">
                 <a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a>
             </div> 
-
             <div class="logo-container">
                 <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
             </div>
-
             <div class="header-side auth-area">
                 <div id="menu-user"></div>
                 <div id="menu-logout" class="hidden">
@@ -82,9 +80,7 @@
         <div class="lista-admin">
             <h2>Sabores Atuais</h2>
             <table>
-                <thead>
-                    <tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr>
-                </thead>
+                <thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
                 <tbody id="tabela-produtos"></tbody>
             </table>
         </div>
@@ -109,6 +105,8 @@
                 <tbody id="tabela-bairros"></tbody>
             </table>
         </div>
+
+        <hr style="max-width: 800px; margin: 40px auto; border: 1px solid #f7b2b7; opacity: 0.3;">
 
         <div class="lista-admin">
             <h2>👥 Gerenciar Usuários</h2>
@@ -136,7 +134,7 @@
         const tabelaUsuarios = document.getElementById('tabela-usuarios');
         const conteudoProtegido = document.getElementById('conteudo-protegido');
 
-        // --- LÓGICA DE PRODUTOS ---
+        // --- PRODUTOS ---
         async function salvarProduto(e) {
             e.preventDefault();
             const id = document.getElementById('produto-id').value;
@@ -172,7 +170,7 @@
             });
         }
 
-        // --- LÓGICA DE BAIRROS ---
+        // --- BAIRROS ---
         formBairro.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('bairro-id').value;
@@ -204,18 +202,24 @@
             });
         }
 
-        // --- LÓGICA DE USUÁRIOS ---
+        // --- USUÁRIOS (COM CARGOS) ---
         function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
                 snapshot.forEach((docSnap) => {
                     const u = docSnap.data();
+                    const isAdmin = u.cargo === 'admin';
                     const tr = document.createElement('tr');
+                    
                     tr.innerHTML = `
-                        <td>${u.nome || '---'}</td>
+                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''}</td>
                         <td>${u.email || '---'}</td>
-                        <td>${u.cargo || 'Cliente'}</td>
+                        <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
+                            ${!isAdmin ? 
+                                `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : 
+                                `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`
+                            }
                             <button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>
                         </td>
                     `;
@@ -224,7 +228,14 @@
             });
         }
 
-        // --- LÓGICA DE PEDIDOS ---
+        window.alterarCargo = async (id, novoCargo) => {
+            const msg = novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?";
+            if(confirm(msg)) {
+                await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo });
+            }
+        };
+
+        // --- PEDIDOS ---
         function carregarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -249,9 +260,9 @@
             });
         }
 
-        // --- FUNÇÕES GLOBAIS ---
+        // --- GLOBAIS ---
         window.excluirDoc = async (pasta, id) => {
-            if(confirm(`Deseja excluir este item de ${pasta}?`)) await deleteDoc(doc(db, pasta, id));
+            if(confirm(`Tem certeza que deseja excluir de ${pasta}?`)) await deleteDoc(doc(db, pasta, id));
         };
 
         window.marcarEntregue = async (id) => {
@@ -302,12 +313,9 @@
                 carregarBairros();
                 carregarUsuarios();
                 carregarPedidos();
-            } else {
-                window.location.href = "login.html";
-            }
+            } else { window.location.href = "login.html"; }
         });
 
     </script>
-    <script type="module" src="auth-control.js"></script>
 </body>
 </html>
