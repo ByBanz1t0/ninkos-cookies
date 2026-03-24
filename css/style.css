@@ -42,6 +42,33 @@ body {
     align-items: center;
 }
 
+/* --- ESTILO DA LOJA FECHADA (NOVO) --- */
+#aviso-fechado {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 10001; /* Um nível acima do menu fixo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+#aviso-fechado h1 { 
+    color: #d63384; 
+    margin-bottom: 10px; 
+}
+
+#aviso-fechado p { 
+    color: #555; 
+    font-size: 1.1rem; 
+}
+
 /* ==========================================================================
    2. ESTRUTURA DO CABEÇALHO (HEADER & LOGO)
    ========================================================================== */
@@ -481,7 +508,7 @@ footer {
 }
 
 /* ==========================================================================
-   AJUSTES DE ESPAÇAMENTO (CARRINHO, ADMIN, PEDIDOS)
+   8. AJUSTES DE ESPAÇAMENTO (CARRINHO, ADMIN, PEDIDOS)
    ========================================================================== */
 
 /* Carrinho */
