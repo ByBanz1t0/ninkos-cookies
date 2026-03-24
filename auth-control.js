@@ -5,6 +5,31 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-
 const menuUser = document.getElementById('menu-user');
 const menuLogout = document.getElementById('menu-logout');
 
+// ==========================================================================
+// FUNÇÃO DE NOTIFICAÇÕES (TOASTS)
+// ==========================================================================
+export function mostrarNotificacao(mensagem, icone = '🍪') {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="toast-icon">${icone}</span> ${mensagem}`;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// ==========================================================================
+// CONTROLE DE AUTENTICAÇÃO
+// ==========================================================================
 onAuthStateChanged(auth, async (user) => {
     console.log("Status Auth:", user ? "Logado" : "Deslogado");
 
@@ -15,25 +40,28 @@ onAuthStateChanged(auth, async (user) => {
             
             let nomeParaExibir = "Minha Conta";
             let ehAdmin = false;
+            let pontos = 0; // Variável para o sistema de fidelidade
 
             if (docSnap.exists()) {
                 const dados = docSnap.data();
                 nomeParaExibir = dados.nome ? dados.nome.split(' ')[0] : "Usuário";
+                pontos = dados.pontos || 0; // Busca os pontos do banco
                 
                 if (dados.isAdmin === true || dados.regra === 'admin') {
                     ehAdmin = true;
                 }
             }
 
+            // Notificação de boas-vindas (opcional, remova se achar chato)
+            // mostrarNotificacao(`Bem-vindo, ${nomeParaExibir}!`, '👋');
+
             if (menuUser) {
-                // 1. Botão MEUS PEDIDOS (Para todos os logados)
                 let htmlMenu = `
                     <a href="meus-pedidos.html" class="btn-meus-pedidos">
                         📦 Meus Pedidos
                     </a>
                 `;
 
-                // 2. Botão PAINEL ADMIN (Apenas se for admin)
                 if (ehAdmin) {
                     htmlMenu += `
                         <a href="admin.html" class="btn-auth" style="background-color: #000; color: #fff; border-color: #000; margin-right: 10px;">
@@ -42,14 +70,16 @@ onAuthStateChanged(auth, async (user) => {
                     `;
                 }
 
-                // 3. Link do PERFIL (Nome do usuário)
+                // Exibe pontos no menu se quiser (Opcional)
+                // htmlMenu += `<span style="font-size: 0.8rem; color: #d63384;">✨ ${pontos} pts</span>`;
+
                 htmlMenu += `<a href="perfil.html" class="btn-auth">Olá, ${nomeParaExibir}</a>`;
 
                 menuUser.innerHTML = htmlMenu;
                 menuUser.classList.remove('hidden');
                 menuUser.style.display = "flex"; 
                 menuUser.style.alignItems = "center";
-                menuUser.style.gap = "5px"; // Espaçamento entre os botões
+                menuUser.style.gap = "5px";
             }
             
             if (menuLogout) {
@@ -78,7 +108,11 @@ document.addEventListener('click', (e) => {
     if (e.target.closest('.btn-auth-sair')) {
         e.preventDefault();
         signOut(auth).then(() => {
-            window.location.href = "index.html";
+            // Notifica antes de redirecionar
+            mostrarNotificacao('Até logo!', '👋');
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1000);
         }).catch((error) => {
             console.error("Erro ao deslogar:", error);
         });
