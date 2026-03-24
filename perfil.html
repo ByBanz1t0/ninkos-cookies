@@ -6,16 +6,39 @@
     <title>Ninko's Cookies | Meu Perfil</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Garante que o select tenha a mesma aparência dos inputs */
-        select, input {
+        /* Unificando o design de todos os campos do formulário */
+        .campo-perfil input, 
+        .campo-perfil select {
             width: 100%;
             padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: inherit;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Keep Calm', sans-serif; /* Força a fonte Keep Calm */
             font-size: 1rem;
             box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
         }
+
+        .campo-perfil input:focus, 
+        .campo-perfil select:focus {
+            border-color: #f7b2b7;
+        }
+
+        /* Ajuste específico para o select ter a setinha personalizada da Ninko's */
+        .campo-perfil select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d63384' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            cursor: pointer;
+        }
+
         .conteudo-perfil { display: none; }
     </style>
 </head>
@@ -72,7 +95,6 @@
 
         let usuarioLogado = null;
 
-        // Função para buscar bairros (em ordem alfabética e sem exibir o frete)
         async function obterOpcoesBairros(bairroAtual) {
             const q = query(collection(db, "bairros"), orderBy("nome", "asc"));
             const snapshot = await getDocs(q);
