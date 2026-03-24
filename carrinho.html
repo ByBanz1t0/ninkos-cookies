@@ -9,6 +9,21 @@
         .linha-resumo { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; color: #555; }
         .linha-total { border-top: 2px solid #f7b2b7; padding-top: 10px; margin-top: 10px; font-size: 1.2rem; }
         .frete-info { font-size: 0.85rem; color: #d63384; font-weight: bold; margin-bottom: 10px; }
+        
+        /* Estilo para campos bloqueados */
+        input[readonly] {
+            background-color: #f9f9f9;
+            color: #777;
+            cursor: not-allowed;
+            border: 1px solid #eee;
+        }
+        .aviso-perfil {
+            font-size: 0.75rem;
+            color: #d63384;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -56,9 +71,10 @@
 
                 <div class="checkout-form">
                     <h3>🏠 Dados para Entrega:</h3>
-                    <input type="text" id="cliente-nome" placeholder="Seu Nome Completo" required>
-                    <input type="tel" id="cliente-telefone" placeholder="Seu WhatsApp (ex: 82999999999)" required>
-                    <input type="text" id="cliente-endereco" placeholder="Endereço (Rua, Número, Bairro)" required>
+                    <input type="text" id="cliente-nome" placeholder="Seu Nome" readonly>
+                    <input type="tel" id="cliente-telefone" placeholder="Seu WhatsApp" readonly>
+                    <input type="text" id="cliente-endereco" placeholder="Endereço para entrega" readonly>
+                    <span class="aviso-perfil">* Para alterar os dados, acesse seu perfil.</span>
                     
                     <select id="cliente-pagamento" required>
                         <option value="">Forma de Pagamento</option>
@@ -92,6 +108,8 @@
                 const docSnap = await getDoc(doc(db, "usuarios", user.uid));
                 if (docSnap.exists()) {
                     const d = docSnap.data();
+                    
+                    // Preenche os campos bloqueados
                     if(d.nome) document.getElementById('cliente-nome').value = d.nome;
                     if(d.telefone) document.getElementById('cliente-telefone').value = d.telefone;
                     
@@ -112,6 +130,9 @@
                         }
                     }
                 }
+            } else {
+                // Se não estiver logado, redireciona para login (opcional, mas recomendado)
+                window.location.href = "login.html";
             }
             renderizarCarrinho();
         });
@@ -160,7 +181,6 @@
             });
 
             const totalComFrete = subtotalGeral + valorFreteGlobal;
-
             subtotalDisplay.innerText = subtotalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             freteDisplay.innerText = valorFreteGlobal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             totalDisplay.innerText = totalComFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -192,7 +212,6 @@
             }
         };
 
-        // --- SALVAMENTO NO FIREBASE E WHATSAPP ---
         document.getElementById('btn-finalizar').onclick = async () => {
             const nome = document.getElementById('cliente-nome').value.trim();
             const telefone = document.getElementById('cliente-telefone').value.trim();
@@ -200,7 +219,7 @@
             const pagamento = document.getElementById('cliente-pagamento').value;
 
             if (!nome || !telefone || !endereco || !pagamento) {
-                alert("Preencha todos os dados de entrega e contato! 🍪");
+                alert("Dados de entrega incompletos! Verifique seu perfil. 🍪");
                 return;
             }
 
@@ -211,7 +230,6 @@
             let mensagemProdutos = "";
             let subtotalCalculado = 0;
 
-            // Formata itens para o WhatsApp e calcula subtotal
             const itensParaBanco = carrinho.map(item => {
                 const sub = item.preco * item.quantidade;
                 subtotalCalculado += sub;
@@ -226,7 +244,6 @@
             const totalFinal = subtotalCalculado + valorFreteGlobal;
 
             try {
-                // 1. SALVA NO FIREBASE (Coleção 'pedidos')
                 await addDoc(collection(db, "pedidos"), {
                     clienteId: usuarioLogado ? usuarioLogado.uid : "anonimo",
                     clienteNome: nome,
@@ -242,7 +259,6 @@
                     data: serverTimestamp()
                 });
 
-                // 2. ABRE O WHATSAPP
                 const textoWhatsApp = encodeURIComponent(
                     `*NOVO PEDIDO - NINKO'S COOKIES* 🍪\n\n` +
                     `👤 *Cliente:* ${nome}\n` +
@@ -260,7 +276,6 @@
 
                 window.open(`https://wa.me/5582999608947?text=${textoWhatsApp}`, '_blank');
 
-                // 3. LIMPA TUDO
                 localStorage.removeItem('carrinhoNinkos');
                 carrinho = [];
                 renderizarCarrinho();
@@ -268,7 +283,7 @@
 
             } catch (error) {
                 console.error("Erro ao salvar pedido:", error);
-                alert("Houve um problema ao processar seu pedido no banco de dados.");
+                alert("Houve um problema ao processar seu pedido.");
             } finally {
                 btn.innerText = "Finalizar e Enviar para o WhatsApp 🚀";
                 btn.disabled = false;
