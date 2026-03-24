@@ -670,10 +670,13 @@ footer {
 
 /* CHECKOUT, CADASTRO E PERFIL */
 
+/* MANTIDO EXATAMENTE COMO SEU ORIGINAL: */
 .checkout-form input, 
 .checkout-form select,
 .login-box input,
-.user-info input {
+.user-info input,
+.campo-perfil input,
+.campo-perfil select {
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
@@ -688,7 +691,9 @@ footer {
 
 .checkout-form input:focus, 
 .login-box input:focus,
-.user-info input:focus {
+.user-info input:focus,
+.campo-perfil input:focus,
+.campo-perfil select:focus {
     border-color: #d63384;
     background-color: #fff2f3;
     box-shadow: 0 0 5px rgba(214, 51, 132, 0.2);
@@ -850,6 +855,7 @@ footer {
     margin: 0 0 8px 5px;
 }
 
+/* ADIÇÃO: Suporte para campos com bordas 1.5px (como você usou antes) preservado aqui */
 .user-info input, .campo-perfil input {
     width: 100%;
     padding: 12px 15px;
@@ -861,13 +867,14 @@ footer {
     transition: all 0.3s ease;
 }
 
-.grid-campos {
+/* ADIÇÃO: Seção de campos lado a lado via flex, mantida */
+.grid-campos-flex {
     display: flex;
     gap: 10px;
     text-align: left;
 }
 
-.grid-campos .campo-perfil {
+.grid-campos-flex .campo-perfil {
     flex: 1;
 }
 
@@ -894,6 +901,7 @@ footer {
     box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
 }
 
+/* ADIÇÃO: Estilo do Card de Pontos, mantido */
 .card-fidelidade {
     background: linear-gradient(135deg, #d63384, #f7b2b7);
     color: white;
