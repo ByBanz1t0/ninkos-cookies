@@ -90,6 +90,80 @@ header {
     transform: scale(1.1);
 }
 
+
+/* ==========================================================================
+   2.1. RODAPÉ
+   ========================================================================== */
+
+.footer-site {
+    background-color: #fff;
+    border-top: 1px solid #f7b2b7;
+    padding: 3rem 1rem 1rem;
+    margin-top: 4rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.footer-logo-img {
+    max-width: 150px;
+    margin-bottom: 1rem;
+}
+
+.footer-info p {
+    color: #888;
+    font-size: 0.9rem;
+    max-width: 250px;
+}
+
+.footer-social h3 {
+    color: #d63384;
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.social-icons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #555;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.social-link:hover {
+    color: #d63384;
+}
+
+.icon-social {
+    width: 24px;
+    height: 24px;
+}
+
+.footer-copyright {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+
 /* ==========================================================================
    3. ÁREA DE AUTENTICAÇÃO (LOGIN / MINHA CONTA)
    ========================================================================== */
