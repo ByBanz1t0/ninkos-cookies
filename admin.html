@@ -202,25 +202,30 @@
             });
         }
 
-        // --- USUÁRIOS (COM CARGOS) ---
+        // --- USUÁRIOS (COM TRAVA DE SEGURANÇA) ---
         function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
+                const currentUser = auth.currentUser;
+
                 snapshot.forEach((docSnap) => {
                     const u = docSnap.data();
                     const isAdmin = u.cargo === 'admin';
+                    const isMe = currentUser && currentUser.uid === docSnap.id;
                     const tr = document.createElement('tr');
                     
                     tr.innerHTML = `
-                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''}</td>
+                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''} ${isMe ? '<strong>(Você)</strong>' : ''}</td>
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isAdmin ? 
+                            ${!isMe ? (
+                                !isAdmin ? 
                                 `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : 
                                 `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`
-                            }
-                            <button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>
+                            ) : '<span style="color: #888; font-size: 0.8rem;">Dono do Painel</span>'}
+                            
+                            ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>` : ''}
                         </td>
                     `;
                     tabelaUsuarios.appendChild(tr);
