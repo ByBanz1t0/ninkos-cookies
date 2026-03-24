@@ -48,16 +48,32 @@
             <button id="btn-salvar" class="btn-comprar" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
                 Salvar Alterações
             </button>
-            </div>
+        </div>
     </main>
 
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
         let usuarioLogado = null;
+
+        // Função para buscar os bairros cadastrados no Admin
+        async function obterOpcoesBairros(bairroAtual) {
+            const snapshot = await getDocs(collection(db, "bairros"));
+            let html = `<select id="p-bairro" style="width: 100%; padding: 0.8rem; border-radius: 5px; border: 1px solid #ccc;">`;
+            html += `<option value="">Selecione seu bairro...</option>`;
+            
+            snapshot.forEach(doc => {
+                const b = doc.data();
+                const selecionado = b.nome === bairroAtual ? "selected" : "";
+                html += `<option value="${b.nome}" ${selecionado}>${b.nome} (Frete: R$ ${b.frete.toFixed(2)})</option>`;
+            });
+            
+            html += `</select>`;
+            return html;
+        }
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -78,6 +94,9 @@
                         cardFid.style.display = "block";
                         saldoPontos.innerText = d.pontos || 0;
                     }
+
+                    // Buscamos os bairros antes de montar o HTML
+                    const selectBairrosHTML = await obterOpcoesBairros(d.bairro || "");
                     
                     infoBox.innerHTML = `
                         <div class="campo-perfil">
@@ -94,7 +113,7 @@
                         </div>
                         <div class="campo-perfil">
                             <label>Bairro:</label>
-                            <input type="text" id="p-bairro" value="${d.bairro || ''}">
+                            ${selectBairrosHTML}
                         </div>
                         <div class="campo-perfil">
                             <label>Rua:</label>
@@ -122,6 +141,12 @@
         document.getElementById('btn-salvar').addEventListener('click', async () => {
             if (!usuarioLogado) return;
 
+            const bairroSelecionado = document.getElementById('p-bairro').value;
+            if (!bairroSelecionado) {
+                mostrarNotificacao("Por favor, selecione um bairro atendido.", "⚠️");
+                return;
+            }
+
             const btn = document.getElementById('btn-salvar');
             btn.innerText = "Salvando...";
             btn.disabled = true;
@@ -131,7 +156,7 @@
                     nome: document.getElementById('p-nome').value,
                     telefone: document.getElementById('p-tel').value,
                     cep: document.getElementById('p-cep').value,
-                    bairro: document.getElementById('p-bairro').value,
+                    bairro: bairroSelecionado,
                     rua: document.getElementById('p-rua').value,
                     numero: document.getElementById('p-num').value,
                     complemento: document.getElementById('p-comp').value,
