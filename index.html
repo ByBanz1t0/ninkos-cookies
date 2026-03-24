@@ -85,7 +85,7 @@
         import { collection, onSnapshot, query, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
-        // --- MONITORAMENTO DO STATUS DA LOJA ---
+        // --- MONITORAMENTO DO STATUS DA LOJA EM TEMPO REAL ---
         onSnapshot(doc(db, "configuracoes", "status_loja"), (docSnap) => {
             const aviso = document.getElementById('aviso-fechado');
             const btnCarrinho = document.getElementById('carrinho-btn');
@@ -94,10 +94,10 @@
                 const aberta = docSnap.data().aberta;
                 if (!aberta) {
                     aviso.classList.remove('hidden');
-                    if(btnCarrinho) btnCarrinho.style.display = 'none';
+                    if(btnCarrinho) btnCarrinho.classList.add('hidden');
                 } else {
                     aviso.classList.add('hidden');
-                    if(btnCarrinho) btnCarrinho.style.display = 'flex';
+                    if(btnCarrinho) btnCarrinho.classList.remove('hidden');
                 }
             }
         });
