@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         .admin-body { background-color: #fae5e7; padding-bottom: 50px; }
+        
         .form-admin, .lista-admin { 
             padding: 2rem; max-width: 800px; margin: 2rem auto; 
             background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -25,11 +26,12 @@
         th { background-color: #f9f9f9; }
         .img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
         .btn-excluir { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        
         #conteudo-protegido { display: none; }
         .hidden { display: none; }
+        
         .preview-foto { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 2px dashed #f7b2b7; margin-bottom: 10px; display: none; }
         
-        /* Estilos para Pedidos e Usuários */
         .card-pedido { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; border-left: 5px solid #d63384; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .status-Pendente { color: #f39c12; font-weight: bold; }
         .status-Entregue { color: #27ae60; font-weight: bold; }
@@ -43,28 +45,24 @@
 
     <div class="menu-fixo">
         <header>
-            <div class="header-side"></div>
+            <div class="header-side">
+                <a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a>
+            </div> 
+
             <div class="logo-container">
                 <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
             </div>
+
             <div class="header-side auth-area">
                 <div id="menu-user"></div>
                 <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold;">Sair</a>
+                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold; margin-left: 10px;">Sair</a>
                 </div>
             </div>
         </header>
-
-        <nav>
-            <h1>Painel Administrativo</h1>
-            <ul>
-                <li><a href="index.html" class="botao-navegacao">Início</a></li>
-                <li><a href="#" class="botao-navegacao ativo">Gerenciar Tudo</a></li>
-            </ul>
-        </nav>
     </div>
 
-    <main id="conteudo-protegido" style="margin-top: 240px;">
+    <main id="conteudo-protegido" style="margin-top: 150px;">
         
         <div class="form-admin">
             <h1 id="titulo-form">Adicionar Novo Sabor</h1>
@@ -77,11 +75,7 @@
                     <option value="cookies">Cookies</option>
                     <option value="milk-shakes">Milk Shakes</option>
                 </select>
-
-                <label style="font-weight: bold; font-size: 0.9rem;">Caminho da Imagem Local:</label>
-                <input type="text" id="imagemUrl" placeholder="Ex: img/produtos/cookie-ninho.jpg" required>
-                <img id="img-preview" class="preview-foto">
-                
+                <input type="text" id="imagemUrl" placeholder="Caminho da Imagem (Ex: img/produtos/cookie.jpg)" required>
                 <button type="submit" id="btn-submit" class="btn-salvar">Salvar no Cardápio</button>
                 <button type="button" id="btn-cancelar" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
             </form>
@@ -91,12 +85,7 @@
             <h2>Sabores Atuais</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Foto</th>
-                        <th>Nome</th>
-                        <th>Preço</th>
-                        <th>Ações</th>
-                    </tr>
+                    <tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr>
                 </thead>
                 <tbody id="tabela-produtos"></tbody>
             </table>
@@ -116,285 +105,142 @@
         <div class="lista-admin">
             <h2>Bairros Atendidos</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>Bairro</th>
-                        <th>Taxa de Entrega</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead>
                 <tbody id="tabela-bairros"></tbody>
             </table>
         </div>
 
         <div class="lista-admin">
-            <h2>👥 Gerenciar Usuários e Permissões</h2>
+            <h2>👥 Gerenciar Usuários</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Cargo</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-usuarios">
-                    <tr><td colspan="4" style="text-align:center;">Carregando usuários...</td></tr>
-                </tbody>
+                <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-usuarios"></tbody>
             </table>
         </div>
 
         <div class="lista-admin">
             <h2>📦 Pedidos Recentes</h2>
-            <div id="container-pedidos-admin">
-                <p style="text-align: center;">Buscando novos pedidos... 🍪</p>
-            </div>
+            <div id="container-pedidos-admin"></div>
         </div>
 
     </main>
 
-    <script type="module" src="auth-control.js"></script>
-
     <script type="module">
-        import { auth, db } from "./firebase-config.js";
-        import { collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { db, auth } from "./firebase-config.js";
+        import { collection, addDoc, getDocs, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        let usuarioLogadoId = "";
+        const formProduto = document.getElementById('form-produto');
+        const tabelaProdutos = document.getElementById('tabela-produtos');
+        const conteudoProtegido = document.getElementById('conteudo-protegido');
 
-        // 1. TRAVA DE SEGURANÇA
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                usuarioLogadoId = user.uid;
-                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-                const dados = docSnap.data();
-                if (dados && (dados.isAdmin === true || dados.regra === 'admin')) {
-                    document.getElementById('conteudo-protegido').style.display = 'block';
-                    carregarUsuarios(); // Inicia a carga de usuários após confirmar admin
-                } else {
-                    alert("Acesso negado!");
-                    window.location.href = "index.html";
-                }
+        // --- LÓGICA DE PRODUTOS ---
+        async function salvarProduto(e) {
+            e.preventDefault();
+            const id = document.getElementById('produto-id').value;
+            const dados = {
+                nome: document.getElementById('nome').value,
+                descricao: document.getElementById('descricao').value,
+                preco: parseFloat(document.getElementById('preco').value),
+                categoria: document.getElementById('categoria').value,
+                imagemUrl: document.getElementById('imagemUrl').value
+            };
+
+            if (id) {
+                await updateDoc(doc(db, "produtos", id), dados);
+                resetForm();
             } else {
-                window.location.href = "login.html";
+                await addDoc(collection(db, "produtos"), dados);
             }
-        });
+            formProduto.reset();
+        }
 
-        // --- LÓGICA DE USUÁRIOS ---
-        function carregarUsuarios() {
-            const tabelaU = document.getElementById('tabela-usuarios');
-            onSnapshot(collection(db, "usuarios"), (snapshot) => {
-                tabelaU.innerHTML = "";
-                snapshot.forEach((docUser) => {
-                    const u = docUser.data();
-                    const id = docUser.id;
-                    const isAdmin = u.isAdmin === true || u.regra === 'admin';
-                    const ehVoce = id === usuarioLogadoId;
-
+        function carregarProdutos() {
+            onSnapshot(collection(db, "produtos"), (snapshot) => {
+                tabelaProdutos.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${u.nome || 'Sem nome'}</td>
-                        <td>${u.email || '---'}</td>
+                        <td><img src="${p.imagemUrl}" class="img-tabela"></td>
+                        <td>${p.nome}</td>
+                        <td>R$ ${p.preco.toFixed(2)}</td>
                         <td>
-                            <span class="badge-status" style="background: ${isAdmin ? '#000' : '#eee'}; color: ${isAdmin ? '#fff' : '#333'}">
-                                ${isAdmin ? 'ADMIN' : 'CLIENTE'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn-acao-user" 
-                                onclick="toggleAdmin('${id}', ${isAdmin})" 
-                                ${ehVoce ? 'disabled title="Você não pode alterar seu próprio cargo"' : ''} 
-                                style="${ehVoce ? 'opacity:0.5; cursor:not-allowed;' : ''}">
-                                ${isAdmin ? 'Retirar Admin' : 'Tornar Admin'}
-                            </button>
+                            <button class="btn-acao-user" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')">Editar</button>
+                            <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">X</button>
                         </td>
                     `;
-                    tabelaU.appendChild(tr);
+                    tabelaProdutos.appendChild(tr);
                 });
             });
         }
 
-        window.toggleAdmin = async (uid, statusAtual) => {
-            const msg = statusAtual ? "remover o acesso de administrador?" : "tornar este usuário um administrador?";
-            if (confirm("Deseja realmente " + msg)) {
-                try {
-                    await updateDoc(doc(db, "usuarios", uid), {
-                        isAdmin: !statusAtual,
-                        regra: !statusAtual ? 'admin' : 'cliente'
-                    });
-                    alert("Permissão atualizada!");
-                } catch (e) { alert("Erro ao atualizar."); }
-            }
-        };
-
         // --- LÓGICA DE PEDIDOS ---
-        const qPed = query(collection(db, "pedidos"), orderBy("data", "desc"));
-        onSnapshot(qPed, (snapshot) => {
-            const container = document.getElementById('container-pedidos-admin');
-            if (snapshot.empty) {
-                container.innerHTML = "<p style='text-align:center;'>Nenhum pedido recebido ainda.</p>";
-                return;
-            }
-            container.innerHTML = "";
-            snapshot.forEach((docPed) => {
-                const p = docPed.data();
-                const id = docPed.id;
-                const dataPedido = p.data ? p.data.toDate().toLocaleString('pt-BR') : 'Agora';
-
-                let itensList = p.itens.map(i => `• ${i.quantidade}x ${i.nome}`).join('<br>');
-
-                const card = document.createElement('div');
-                card.className = 'card-pedido';
-                card.innerHTML = `
-                    <div style="font-size:0.8rem; margin-bottom:5px; display:flex; justify-content:space-between;">
-                        <span>📅 ${dataPedido}</span>
-                        <span class="badge-status status-${p.status}">${p.status}</span>
-                    </div>
-                    <strong>👤 ${p.clienteNome}</strong><br>
-                    <small>📍 ${p.endereco}</small><br>
-                    <div style="background:#f9f9f9; padding:8px; margin:8px 0; border-radius:4px; font-size:0.85rem;">
-                        ${itensList}
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong>Total: R$ ${p.total.toFixed(2)}</strong>
-                        ${p.status === 'Pendente' ? `<button class="btn-entregue" onclick="marcarComoEntregue('${id}')">Finalizar ✅</button>` : ''}
-                    </div>
-                `;
-                container.appendChild(card);
+        function carregarPedidos() {
+            const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('container-pedidos-admin');
+                container.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const pedido = docSnap.data();
+                    const data = pedido.data?.toDate().toLocaleString('pt-BR') || '---';
+                    const div = document.createElement('div');
+                    div.className = 'card-pedido';
+                    div.innerHTML = `
+                        <div style="display:flex; justify-content:space-between">
+                            <strong>Pedido #${docSnap.id.slice(0,5)}</strong>
+                            <span class="badge-status status-${pedido.status}">${pedido.status}</span>
+                        </div>
+                        <p>Cliente: ${pedido.clienteNome} | ${data}</p>
+                        <p>Total: R$ ${pedido.total.toFixed(2)}</p>
+                        ${pedido.status === 'Pendente' ? `<button class="btn-entregue" onclick="marcarEntregue('${docSnap.id}')">Marcar como Entregue</button>` : ''}
+                    `;
+                    container.appendChild(div);
+                });
             });
-        });
+        }
 
-        window.marcarComoEntregue = async (id) => {
-            if(confirm("Deseja marcar como entregue?")) {
-                await updateDoc(doc(db, "pedidos", id), { status: "Entregue" });
-            }
+        // Funções Globais para os botões inline
+        window.excluirDoc = async (pasta, id) => {
+            if(confirm("Deseja excluir?")) await deleteDoc(doc(db, pasta, id));
         };
 
-        // --- LÓGICA DE PRODUTOS ---
-        document.getElementById('imagemUrl').addEventListener('input', (e) => {
-            const preview = document.getElementById('img-preview');
-            if (e.target.value) {
-                preview.src = e.target.value;
-                preview.style.display = 'block';
-                preview.onerror = () => { preview.style.display = 'none'; };
-            }
-        });
-
-        const qProd = query(collection(db, "produtos"), orderBy("nome", "asc"));
-        onSnapshot(qProd, (snapshot) => {
-            const tbody = document.getElementById('tabela-produtos');
-            tbody.innerHTML = "";
-            snapshot.forEach((res) => {
-                const p = res.data();
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${p.imagemUrl || 'img/logos/ninkos_logo.png'}" class="img-tabela"></td>
-                        <td>${p.nome}</td>
-                        <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
-                        <td>
-                            <button onclick="prepararEdicao('${res.id}', '${p.nome}', '${p.descricao.replace(/'/g, "\\'")}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')" style="cursor:pointer; background: #eee; border:1px solid #999; padding: 5px;">✏️</button>
-                            <button class="btn-excluir" onclick="excluirProduto('${res.id}', '${p.nome}')">🗑️</button>
-                        </td>
-                    </tr>`;
-            });
-        });
-
-        document.getElementById('form-produto').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-submit');
-            const id = document.getElementById('produto-id').value;
-            btn.innerText = "Processando... 🍪";
-            btn.disabled = true;
-
-            try {
-                const dados = {
-                    nome: document.getElementById('nome').value,
-                    descricao: document.getElementById('descricao').value,
-                    preco: parseFloat(document.getElementById('preco').value.replace(',', '.')),
-                    categoria: document.getElementById('categoria').value,
-                    imagemUrl: document.getElementById('imagemUrl').value || "img/logos/ninkos_logo.png"
-                };
-
-                if (id) await updateDoc(doc(db, "produtos", id), dados);
-                else await addDoc(collection(db, "produtos"), dados);
-                
-                resetarForm();
-                alert("Salvo com sucesso!");
-            } catch (err) { alert("Erro ao salvar."); } 
-            finally {
-                btn.innerText = id ? "Salvar Alterações" : "Salvar no Cardápio";
-                btn.disabled = false;
-            }
+        window.marcarEntregue = async (id) => {
+            await updateDoc(doc(db, "pedidos", id), { status: "Entregue" });
         };
 
-        window.excluirProduto = async (id, nome) => {
-            if (confirm(`Deseja remover "${nome}"?`)) await deleteDoc(doc(db, "produtos", id));
-        };
-
-        window.prepararEdicao = (id, nome, desc, preco, cat, img) => {
+        window.editarProduto = (id, nome, desc, preco, cat, img) => {
             document.getElementById('produto-id').value = id;
             document.getElementById('nome').value = nome;
             document.getElementById('descricao').value = desc;
             document.getElementById('preco').value = preco;
             document.getElementById('categoria').value = cat;
             document.getElementById('imagemUrl').value = img;
-            const preview = document.getElementById('img-preview');
-            preview.src = img || 'img/logos/ninkos_logo.png';
-            preview.style.display = 'block';
             document.getElementById('titulo-form').innerText = "Editando Sabor";
-            document.getElementById('btn-submit').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        function resetarForm() {
-            document.getElementById('form-produto').reset();
+        function resetForm() {
             document.getElementById('produto-id').value = "";
-            document.getElementById('img-preview').style.display = 'none';
             document.getElementById('titulo-form').innerText = "Adicionar Novo Sabor";
-            document.getElementById('btn-submit').innerText = "Salvar no Cardápio";
             document.getElementById('btn-cancelar').classList.add('hidden');
+            formProduto.reset();
         }
-        window.resetarForm = resetarForm;
-        document.getElementById('btn-cancelar').onclick = resetarForm;
 
-        // --- LÓGICA DE BAIRROS ---
-        const formBairro = document.getElementById('form-bairro');
-        formBairro.onsubmit = async (e) => {
-            e.preventDefault();
-            const btnB = document.getElementById('btn-bairro');
-            const nome = document.getElementById('bairro-nome').value;
-            const frete = parseFloat(document.getElementById('bairro-frete').value.replace(',', '.'));
-            btnB.innerText = "Adicionando...";
-            btnB.disabled = true;
-            try {
-                await addDoc(collection(db, "bairros"), { nome: nome, frete: frete });
-                formBairro.reset();
-            } catch (err) { alert("Erro ao salvar bairro."); } 
-            finally {
-                btnB.innerText = "Adicionar Bairro";
-                btnB.disabled = false;
+        formProduto.addEventListener('submit', salvarProduto);
+        document.getElementById('btn-cancelar').addEventListener('click', resetForm);
+
+        // Inicialização
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                conteudoProtegido.style.display = "block";
+                carregarProdutos();
+                carregarPedidos();
+            } else {
+                window.location.href = "login.html";
             }
-        };
-
-        onSnapshot(query(collection(db, "bairros"), orderBy("nome", "asc")), (snapshot) => {
-            const tbB = document.getElementById('tabela-bairros');
-            tbB.innerHTML = "";
-            snapshot.forEach((res) => {
-                const b = res.data();
-                tbB.innerHTML += `
-                    <tr>
-                        <td>${b.nome}</td>
-                        <td>R$ ${parseFloat(b.frete).toFixed(2)}</td>
-                        <td><button class="btn-excluir" onclick="excluirBairro('${res.id}', '${b.nome}')">🗑️</button></td>
-                    </tr>`;
-            });
         });
 
-        window.excluirBairro = async (id, nome) => {
-            if (confirm(`Remover bairro "${nome}"?`)) await deleteDoc(doc(db, "bairros", id));
-        };
-
     </script>
+    <script type="module" src="auth-control.js"></script>
 </body>
 </html>
