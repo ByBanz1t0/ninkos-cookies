@@ -10,7 +10,6 @@
         .linha-total { border-top: 2px solid #f7b2b7; padding-top: 10px; margin-top: 10px; font-size: 1.2rem; }
         .frete-info { font-size: 0.85rem; color: #d63384; font-weight: bold; margin-bottom: 10px; }
         
-        /* Estilo para campos bloqueados */
         input[readonly] {
             background-color: #f9f9f9;
             color: #777;
@@ -85,7 +84,7 @@
                 </div>
                 
                 <button class="btn-prosseguir" id="btn-finalizar">
-                    Finalizar e Enviar para o WhatsApp 🚀
+                    Confirmar Pedido 🍪
                 </button>
                 <button class="btn-limpar" id="btn-limpar-cart">Limpar Carrinho</button>
             </div>
@@ -108,8 +107,6 @@
                 const docSnap = await getDoc(doc(db, "usuarios", user.uid));
                 if (docSnap.exists()) {
                     const d = docSnap.data();
-                    
-                    // Preenche os campos bloqueados
                     if(d.nome) document.getElementById('cliente-nome').value = d.nome;
                     if(d.telefone) document.getElementById('cliente-telefone').value = d.telefone;
                     
@@ -121,17 +118,14 @@
                     if(d.bairro) {
                         bairroUsuario = d.bairro;
                         document.getElementById('nome-bairro-frete').innerText = bairroUsuario;
-                        
                         const qBairro = query(collection(db, "bairros"), where("nome", "==", d.bairro));
                         const queryBairroSnap = await getDocs(qBairro);
-                        
                         if (!queryBairroSnap.empty) {
                             valorFreteGlobal = queryBairroSnap.docs[0].data().frete;
                         }
                     }
                 }
             } else {
-                // Se não estiver logado, redireciona para login (opcional, mas recomendado)
                 window.location.href = "login.html";
             }
             renderizarCarrinho();
@@ -212,6 +206,7 @@
             }
         };
 
+        // --- FUNÇÃO FINALIZAR MODIFICADA ---
         document.getElementById('btn-finalizar').onclick = async () => {
             const nome = document.getElementById('cliente-nome').value.trim();
             const telefone = document.getElementById('cliente-telefone').value.trim();
@@ -224,16 +219,12 @@
             }
 
             const btn = document.getElementById('btn-finalizar');
-            btn.innerText = "Processando Pedido...";
+            btn.innerText = "Enviando Pedido...";
             btn.disabled = true;
 
-            let mensagemProdutos = "";
             let subtotalCalculado = 0;
-
             const itensParaBanco = carrinho.map(item => {
-                const sub = item.preco * item.quantidade;
-                subtotalCalculado += sub;
-                mensagemProdutos += `• *${item.quantidade}x* ${item.nome} (R$ ${sub.toFixed(2)})\n`;
+                subtotalCalculado += (item.preco * item.quantidade);
                 return {
                     nome: item.nome,
                     quantidade: item.quantidade,
@@ -244,6 +235,7 @@
             const totalFinal = subtotalCalculado + valorFreteGlobal;
 
             try {
+                // SALVA NO FIREBASE
                 await addDoc(collection(db, "pedidos"), {
                     clienteId: usuarioLogado ? usuarioLogado.uid : "anonimo",
                     clienteNome: nome,
@@ -255,37 +247,23 @@
                     subtotal: subtotalCalculado,
                     frete: valorFreteGlobal,
                     total: totalFinal,
-                    status: "Pendente",
+                    status: "realizado", // Status padrão para o admin ver
                     data: serverTimestamp()
                 });
 
-                const textoWhatsApp = encodeURIComponent(
-                    `*NOVO PEDIDO - NINKO'S COOKIES* 🍪\n\n` +
-                    `👤 *Cliente:* ${nome}\n` +
-                    `📱 *WhatsApp:* ${telefone}\n` +
-                    `📍 *Bairro:* ${bairroUsuario}\n` +
-                    `📍 *Endereço:* ${endereco}\n` +
-                    `💳 *Pagamento:* ${pagamento}\n\n` +
-                    `*ÍTENS:*\n${mensagemProdutos}\n` +
-                    `--------------------------\n` +
-                    `💰 *Subtotal:* R$ ${subtotalCalculado.toFixed(2)}\n` +
-                    `🚚 *Frete:* R$ ${valorFreteGlobal.toFixed(2)}\n` +
-                    `✅ *TOTAL:* R$ ${totalFinal.toFixed(2)}\n\n` +
-                    `_Pedido enviado via site Ninko's Cookies_`
-                );
-
-                window.open(`https://wa.me/5582999608947?text=${textoWhatsApp}`, '_blank');
-
+                // LIMPA O CARRINHO
                 localStorage.removeItem('carrinhoNinkos');
                 carrinho = [];
-                renderizarCarrinho();
-                alert("Pedido confirmado e enviado! 🍪✨");
+                
+                alert("Pedido confirmado com sucesso! 🍪✨");
+                
+                // REDIRECIONA PARA O HISTÓRICO
+                window.location.href = "meus-pedidos.html";
 
             } catch (error) {
                 console.error("Erro ao salvar pedido:", error);
                 alert("Houve um problema ao processar seu pedido.");
-            } finally {
-                btn.innerText = "Finalizar e Enviar para o WhatsApp 🚀";
+                btn.innerText = "Confirmar Pedido 🍪";
                 btn.disabled = false;
             }
         };
