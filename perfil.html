@@ -6,10 +6,8 @@
     <title>Ninko's Cookies | Meu Perfil</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Mantenha apenas o essencial para o funcionamento da lógica de exibição */
+        /* Apenas o essencial para o controle de exibição do JS */
         .conteudo-perfil { display: none; }
-        
-        /* O seu CSS completo que você enviará entrará aqui ou no style.css */
     </style>
 </head>
 <body>
@@ -17,8 +15,8 @@
     <div class="menu-fixo">
         <header>
             <div class="header-side">
-                <a href="index.html" class="btn-voltar-clean">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <a href="index.html" class="btn-auth" style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                     Voltar
                 </a>
             </div> 
@@ -29,13 +27,11 @@
                 </a>
             </div>
 
-            <div class="header-side auth-area">
-                </div>
+            <div class="header-side auth-area"></div>
         </header>
     </div>
 
-    <main id="conteudo-perfil" class="conteudo-perfil" style="margin-top: 100px; padding: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-        <h2 id="saudacao" style="text-align: center; color: #d63384;">Carregando perfil...</h2>
+    <main id="conteudo-perfil" class="conteudo-perfil">
         
         <div id="card-fidelidade" class="card-fidelidade" style="display: none;">
             <h3>✨ Seus Ninko Points</h3>
@@ -43,14 +39,14 @@
             <small>Continue pedindo para ganhar mais cookies!</small>
         </div>
 
-        <p style="text-align: center; margin-bottom: 2rem; font-size: 0.9rem; color: #666;">Mantenha seus dados atualizados para facilitar suas entregas!</p>
+        <div class="perfil-container">
+            <h2 id="saudacao">Carregando...</h2>
+            <p style="text-align: center; margin-bottom: 2rem; font-size: 0.85rem; color: #666;">Mantenha seus dados atualizados!</p>
 
-        <div id="info-box" class="perfil-container">
-            <p style="text-align: center; color: #f7b2b7;">Buscando seus dados no forno... 🍪</p>
-        </div>
+            <div id="info-box">
+                </div>
 
-        <div style="text-align: center; margin-top: 2rem;">
-            <button id="btn-salvar" class="btn-comprar" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+            <button id="btn-salvar" class="btn-comprar" style="width: 100%; margin-top: 10px;">
                 Salvar Alterações
             </button>
         </div>
@@ -67,16 +63,13 @@
         async function obterOpcoesBairros(bairroAtual) {
             const q = query(collection(db, "bairros"), orderBy("nome", "asc"));
             const snapshot = await getDocs(q);
-            
             let html = `<select id="p-bairro" required>`;
             html += `<option value="">Selecione seu bairro...</option>`;
-            
             snapshot.forEach(doc => {
                 const b = doc.data();
                 const selecionado = b.nome === bairroAtual ? "selected" : "";
                 html += `<option value="${b.nome}" ${selecionado}>${b.nome}</option>`;
             });
-            
             html += `</select>`;
             return html;
         }
@@ -93,7 +86,6 @@
                     const mainContent = document.getElementById('conteudo-perfil');
 
                     const d = docSnap.exists() ? docSnap.data() : {};
-                    
                     const primeiroNome = d.nome ? d.nome.split(' ')[0] : "Usuário";
                     saudacao.innerText = `Olá, ${primeiroNome}! 🍪`;
                     
@@ -107,15 +99,15 @@
                     infoBox.innerHTML = `
                         <div class="campo-perfil">
                             <label>Nome Completo:</label>
-                            <input type="text" id="p-nome" value="${d.nome || ''}" placeholder="Seu nome completo">
+                            <input type="text" id="p-nome" value="${d.nome || ''}">
                         </div>
                         <div class="campo-perfil">
                             <label>WhatsApp:</label>
-                            <input type="text" id="p-tel" value="${d.telefone || ''}" placeholder="(00) 00000-0000">
+                            <input type="text" id="p-tel" value="${d.telefone || ''}">
                         </div>
                         <div class="campo-perfil">
                             <label>CEP:</label>
-                            <input type="text" id="p-cep" value="${d.cep || ''}" placeholder="00000-000">
+                            <input type="text" id="p-cep" value="${d.cep || ''}">
                         </div>
                         <div class="campo-perfil">
                             <label>Bairro:</label>
@@ -137,23 +129,12 @@
                         </div>
                     `;
                     mainContent.style.display = "block";
-                } catch (error) {
-                    console.error("Erro ao carregar perfil:", error);
-                }
-            } else { 
-                window.location.href = "login.html"; 
-            }
+                } catch (error) { console.error(error); }
+            } else { window.location.href = "login.html"; }
         });
 
         document.getElementById('btn-salvar').addEventListener('click', async () => {
             if (!usuarioLogado) return;
-
-            const bairroSelecionado = document.getElementById('p-bairro').value;
-            if (!bairroSelecionado) {
-                mostrarNotificacao("Por favor, selecione um bairro atendido.", "⚠️");
-                return;
-            }
-
             const btn = document.getElementById('btn-salvar');
             btn.innerText = "Salvando...";
             btn.disabled = true;
@@ -163,7 +144,7 @@
                     nome: document.getElementById('p-nome').value,
                     telefone: document.getElementById('p-tel').value,
                     cep: document.getElementById('p-cep').value,
-                    bairro: bairroSelecionado,
+                    bairro: document.getElementById('p-bairro').value,
                     rua: document.getElementById('p-rua').value,
                     numero: document.getElementById('p-num').value,
                     complemento: document.getElementById('p-comp').value,
@@ -171,16 +152,9 @@
                 }, { merge: true });
 
                 mostrarNotificacao("Perfil atualizado! 🍪", "✅");
-                
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-
+                setTimeout(() => window.location.reload(), 1500);
             } catch (e) {
-                console.error("Erro ao salvar:", e);
-                mostrarNotificacao("Erro ao salvar dados.", "❌");
-            } finally {
-                btn.innerText = "Salvar Alterações";
+                mostrarNotificacao("Erro ao salvar.", "❌");
                 btn.disabled = false;
             }
         });
