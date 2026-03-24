@@ -814,3 +814,111 @@ footer {
 @keyframes fadeOut {
     to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
 }
+
+/* ==========================================================================
+   10. PÁGINA DE PERFIL DO USUÁRIO (PADRONIZADA)
+   ========================================================================== */
+
+.perfil-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    border: 2px solid #f7b2b7;
+    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);
+    text-align: center;
+}
+
+.perfil-container h2 {
+    color: #d63384;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+/* Estilo para os grupos de inputs */
+.user-info, .campo-perfil {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.user-info label, .campo-perfil label {
+    display: block;
+    font-size: 0.85rem;
+    color: #d63384;
+    font-weight: bold;
+    margin: 0 0 8px 5px;
+}
+
+.user-info input, .campo-perfil input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #f7b2b7;
+    border-radius: 12px;
+    font-family: 'keepcalm', sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.user-info input:focus, .campo-perfil input:focus {
+    outline: none;
+    border-color: #d63384;
+    background-color: #fff2f3;
+    box-shadow: 0 0 8px rgba(214, 51, 132, 0.1);
+}
+
+/* Botão de Salvar no estilo Ninko's */
+#btn-salvar, .btn-acao-perfil {
+    width: 100%;
+    padding: 15px;
+    background-color: #d63384;
+    color: white;
+    border: none;
+    border-radius: 50px; /* Formato pílula */
+    font-family: 'keepcalm', sans-serif;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
+}
+
+#btn-salvar:hover {
+    background-color: #f7b2b7;
+    transform: translateY(-2px);
+}
+
+#btn-salvar:active {
+    transform: scale(0.98);
+}
+
+/* Estilo para os Ninko Points dentro do perfil */
+.card-fidelidade {
+    background: linear-gradient(135deg, #d63384, #f7b2b7);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
+}
+
+.card-fidelidade h3 { 
+    font-size: 1rem;
+    margin-bottom: 5px; 
+}
+
+.card-fidelidade strong { 
+    font-size: 2rem; 
+    display: block;
+    margin: 5px 0;
+}
+
+/* Ajuste para inputs desativados (como o e-mail que não muda) */
+input:disabled {
+    background-color: #f9f9f9;
+    color: #999;
+    border-color: #eee;
+    cursor: not-allowed;
+}
