@@ -69,6 +69,8 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // Importando a função de notificação do seu auth-control
+        import { mostrarNotificacao } from "./auth-control.js";
 
         const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
 
@@ -107,22 +109,35 @@
         function atualizarIconeCarrinho() {
             const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
             const valorTotal = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
-            document.getElementById('cart-count').innerText = totalItens;
-            document.getElementById('cart-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const countElem = document.getElementById('cart-count');
+            const totalElem = document.getElementById('cart-total');
+            if(countElem) countElem.innerText = totalItens;
+            if(totalElem) totalElem.innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         window.adicionarAoCarrinho = function(id, nome, preco, imagemUrl) {
             const index = carrinho.findIndex(c => c.id === id);
-            if (index > -1) carrinho[index].quantidade += 1;
-            else carrinho.push({ id, nome, preco: parseFloat(preco), quantidade: 1, imagemUrl });
+            if (index > -1) {
+                carrinho[index].quantidade += 1;
+            } else {
+                carrinho.push({ id, nome, preco: parseFloat(preco), quantidade: 1, imagemUrl });
+            }
             localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
             atualizarIconeCarrinho();
+            
+            // Exibe a notificação visual ao adicionar
+            mostrarNotificacao(`${nome} no carrinho!`, '🛒');
         };
 
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-comprar')) {
                 const btn = e.target;
-                adicionarAoCarrinho(btn.getAttribute('data-id'), btn.getAttribute('data-nome'), btn.getAttribute('data-preco'), btn.getAttribute('data-img'));
+                adicionarAoCarrinho(
+                    btn.getAttribute('data-id'), 
+                    btn.getAttribute('data-nome'), 
+                    btn.getAttribute('data-preco'), 
+                    btn.getAttribute('data-img')
+                );
             }
         });
         atualizarIconeCarrinho();
@@ -142,7 +157,6 @@
                     </a>
                 </div>
             </div>
-        </div>
         <div class="footer-copyright">
             <p>&copy; 2026 Ninko's Cookies. Todos os direitos reservados.</p>
         </div>
