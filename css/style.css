@@ -915,3 +915,112 @@ footer {
     display: block;
     margin: 5px 0;
 }
+
+/* ==========================================================================
+   11. RESPONSIVIDADE (AJUSTES PARA CELULAR)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Ajuste do Corpo e Espaçamento Superior */
+    body {
+        padding-top: 140px; /* Reduz o espaço do topo no mobile */
+        font-size: 0.85rem;
+    }
+
+    /* Header: Empilha os elementos ou ajusta o tamanho */
+    header {
+        padding: 0.8rem 1rem;
+        flex-direction: row; /* Mantém na mesma linha, mas ajusta os lados */
+    }
+
+    #img-logo {
+        width: 5rem; /* Diminui a logo no celular */
+    }
+
+    .auth-area {
+        gap: 8px;
+    }
+
+    .btn-auth, #menu-user a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+
+    /* Navegação: Scroll horizontal para as categorias não quebrarem a página */
+    nav ul {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        gap: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .botao-navegacao {
+        white-space: nowrap; /* Impede que o texto do botão quebre linha */
+        padding: 0.5rem 1rem;
+    }
+
+    /* Itens do Cardápio: Transforma em coluna para ganhar espaço */
+    .sabor-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .sabor-foto {
+        width: 100%;
+        height: 200px;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    /* Carrinho: Ajusta os itens para não apertarem os textos */
+    .item-carrinho {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .item-visual {
+        width: 100%;
+    }
+
+    .item-controles {
+        width: 100%;
+        justify-content: space-between;
+        border-top: 1px dashed #f7b2b7;
+        padding-top: 10px;
+    }
+
+    /* Formulários e Inputs: Ocupar a largura total real */
+    .login-box, .perfil-container, .secao-checkout {
+        width: 95%;
+        margin: 10px auto;
+        padding: 1.2rem;
+    }
+
+    .grid-checkout, .grid-campos {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Botão de Finalizar Flutuante no Mobile (Opcional, mas ajuda) */
+    .btn-prosseguir {
+        position: sticky;
+        bottom: 10px;
+        z-index: 100;
+    }
+}
+
+/* Ajuste fino para telas muito pequenas (iPhone SE, etc) */
+@media (max-width: 400px) {
+    #img-logo {
+        width: 4rem;
+    }
+    
+    header {
+        padding: 0.5rem;
+    }
+}
