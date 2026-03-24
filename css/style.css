@@ -27,7 +27,6 @@ body {
     line-height: 1.6;
     font-size: 1rem;
     overflow-x: hidden;
-    /* AJUSTE: Padronizado para 170px */
     padding-top: 170px; 
 }
 
@@ -36,7 +35,6 @@ body {
     display: none !important;
 }
 
-/* Força a exibição correta quando o JS remove a classe .hidden */
 #menu-login:not(.hidden),
 #menu-user:not(.hidden),
 #menu-logout:not(.hidden) {
@@ -91,7 +89,6 @@ header {
     transform: scale(1.1);
 }
 
-
 /* ==========================================================================
    2.1. RODAPÉ
    ========================================================================== */
@@ -99,8 +96,8 @@ header {
 .footer-site {
     background-color: #fae5e7;
     border-top: 1px solid #f7b2b7;
-    padding: 2rem 1rem 1rem; /* AJUSTE: Reduzido para aproximar o conteúdo */
-    margin-top: 2rem; /* AJUSTE: Reduzido para aproximar o conteúdo */
+    padding: 2rem 1rem 1rem;
+    margin-top: 2rem;
 }
 
 .footer-container {
@@ -164,7 +161,6 @@ header {
     font-size: 0.8rem;
 }
 
-
 /* ==========================================================================
    3. ÁREA DE AUTENTICAÇÃO (LOGIN / MINHA CONTA)
    ========================================================================== */
@@ -176,7 +172,6 @@ header {
     gap: 15px;
 }
 
-/* Estilo para botões de login e o link injetado no menu-user */
 .btn-auth, #menu-user a {
     text-decoration: none;
     color: #000;
@@ -219,7 +214,7 @@ header {
 }
 
 /* ==========================================================================
-   4. NAVEGAÇÃO (MENU DE CATEGORIAS) - PADRONIZADO (PÍLULA)
+   4. NAVEGAÇÃO (MENU DE CATEGORIAS)
    ========================================================================== */
 
 nav {
@@ -232,7 +227,7 @@ nav {
 }
 
 nav h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem; /* AJUSTE: Diminuído de 1.5rem para 1.3rem */
     margin-bottom: 0.8rem;
 }
 
@@ -244,10 +239,6 @@ nav ul {
     flex-wrap: wrap;
 }
 
-nav li {
-    display: inline-block;
-}
-
 .botao-navegacao {
     text-decoration: none;
     color: #000;
@@ -255,7 +246,7 @@ nav li {
     font-weight: bold;
     padding: 0.6rem 1.5rem;
     border: 2px solid #f7b2b7;
-    border-radius: 2rem; /* Formato Pílula */
+    border-radius: 2rem; 
     background-color: #ffffff;
     transition: all 0.3s ease;
     display: inline-block;
@@ -288,15 +279,18 @@ main {
 section {
     padding: 1rem 1.5rem;
     margin-bottom: 1rem;
-    /* AJUSTE: Para a rolagem parar exatamente no menu fixo */
     scroll-margin-top: 180px; 
+}
+
+section h2 {
+    font-size: 1.3rem; /* AJUSTE: Diminuído para títulos como "Cookies" ou "Nossos Produtos" */
+    margin-bottom: 1rem;
 }
 
 .conteudo-login {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* AJUSTE: Reduzido o cálculo para centralizar melhor sem excessos */
     min-height: calc(100vh - 300px); 
     padding: 2rem;
 }
@@ -314,7 +308,7 @@ section {
 
 .login-box h2 {
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.25rem; /* Ajuste leve */
     color: #333;
 }
 
@@ -372,7 +366,7 @@ section {
 
 footer {
     text-align: center;
-    padding: 2rem 1.5rem; /* Ajustado */
+    padding: 2rem 1.5rem;
     background-color: #fae5e7;
     border-top: 1px solid rgba(247, 178, 183, 0.3);
 }
@@ -404,7 +398,7 @@ footer {
 .btn-comprar {
     margin-top: 1rem;
     padding: 0.6rem 1.2rem;
-    background-color: #d63384; /* Rosa padrão da marca */
+    background-color: #d63384;
     color: white;
     border: none;
     border-radius: 2rem;
@@ -424,7 +418,6 @@ footer {
     transform: scale(0.95);
 }
 
-/* Estilo para destacar o preço no card */
 .sabor-preco {
     color: #d63384;
     font-weight: bold;
@@ -478,17 +471,22 @@ footer {
     font-size: 0.9rem;
 }
 
-/* --- ESTILOS DA TELA DE CARRINHO --- */
+/* ==========================================================================
+   AJUSTES DE ESPAÇAMENTO (CARRINHO, ADMIN, PEDIDOS)
+   ========================================================================== */
+
+/* Carrinho */
 .conteudo-carrinho {
-    padding-top: 10px; /* Ajustado */
+    padding-top: 0 !important;
+    margin-top: -10px;
 }
 
 .secao-checkout {
     background: white;
-    padding: 2rem;
+    padding: 1.5rem; 
     border-radius: 1.5rem;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-top: 1rem; /* Ajustado */
+    margin-top: 0.5rem;
 }
 
 .item-carrinho {
@@ -563,8 +561,6 @@ footer {
     color: #5f5f5f;
 }
 
-/* --- ESTILOS PARA FOTOS NO CARRINHO --- */
-
 .item-visual {
     display: flex;
     align-items: center;
@@ -620,7 +616,7 @@ footer {
     text-align: right;
 }
 
-/* --- FORMULÁRIO DE CHECKOUT --- */
+/* FORMULÁRIO DE CHECKOUT */
 .checkout-form {
     text-align: left;
     margin-bottom: 2rem;
@@ -631,13 +627,11 @@ footer {
 
 .checkout-form h3 {
     color: #d63384;
-    font-size: 1.1rem;
+    font-size: 1rem; /* Ajustado */
     margin-bottom: 0.5rem;
 }
 
-/* ==========================================================================
-   ADIÇÕES OBRIGATÓRIAS: CHECKOUT, CADASTRO E PERFIL
-   ========================================================================== */
+/* CHECKOUT, CADASTRO E PERFIL */
 
 .checkout-form input, 
 .checkout-form select,
@@ -688,19 +682,20 @@ footer {
     margin-top: 1rem;
 }
 
-/* ==========================================================================
-   8. PAINEL ADMINISTRATIVO (ADMIN.HTML)
-   ========================================================================== */
-
-.admin-body { background-color: #fae5e7; padding-bottom: 50px; }
+/* Admin */
+.admin-body { 
+    background-color: #fae5e7; 
+    padding-bottom: 50px;
+    padding-top: 0 !important; 
+}
 
 .form-admin, .lista-admin { 
-    padding: 2rem; max-width: 800px; margin: 2rem auto; 
+    padding: 1.5rem; max-width: 800px; margin: 1rem auto; 
     background: white; border-radius: 1.5rem; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #f7b2b7;
 }
 
-.form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+.form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; font-size: 1.4rem;}
 
 .form-admin input, .form-admin textarea, .form-admin select { 
     width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
@@ -726,7 +721,13 @@ footer {
 .status-Pendente { color: #f39c12; background: #fff9e6; }
 .status-Entregue { color: #27ae60; background: #e6ffed; }
 
-.card-pedido { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #d63384; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+/* Pedidos */
+.container-pedidos {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.card-pedido { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 6px solid #d63384; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
 .preview-foto { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px dashed #f7b2b7; margin: 10px auto; display: none; }
 
@@ -774,7 +775,7 @@ footer {
 }
 
 /* ==========================================================================
-   10. PÁGINA DE PERFIL DO USUÁRIO (AJUSTES DE ESPAÇAMENTO)
+   10. PÁGINA DE PERFIL DO USUÁRIO
    ========================================================================== */
 
 .conteudo-perfil {
@@ -784,7 +785,7 @@ footer {
 
 .perfil-container {
     max-width: 600px;
-    margin: 5px auto 40px; /* AJUSTE: Reduzido para 5px */
+    margin: 5px auto 40px; 
     background: #ffffff;
     padding: 30px;
     border-radius: 20px;
@@ -796,7 +797,7 @@ footer {
 .perfil-container h2 {
     color: #d63384;
     margin-bottom: 25px;
-    font-size: 1.8rem;
+    font-size: 1.6rem; /* Ajustado */
 }
 
 .user-info, .campo-perfil {
@@ -834,9 +835,10 @@ footer {
 }
 
 #saudacao {
-    margin-bottom: 2px !important; /* AJUSTE: Mínimo possível */
+    margin-bottom: 2px !important; 
     color: #d63384;
     text-align: center;
+    font-size: 1.4rem;
 }
 
 #btn-salvar, .btn-acao-perfil {
@@ -860,7 +862,7 @@ footer {
     color: white;
     padding: 20px;
     border-radius: 15px;
-    margin: 0 auto 5px; /* AJUSTE: Reduzido para 5px */
+    margin: 0 auto 5px; 
     max-width: 600px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
