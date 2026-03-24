@@ -20,7 +20,6 @@
 
             <div class="header-side auth-area">
                 <div id="menu-user"></div>
-
                 <div id="menu-logout" class="hidden">
                     <a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a>
                 </div>
@@ -28,28 +27,36 @@
         </header>
     </div>
 
-    <main class="conteudo-perfil" style="margin-top: 180px; padding: 2rem;">
-        <h2 id="saudacao">Carregando perfil...</h2>
-        <p>Mantenha seus dados atualizados para facilitar suas entregas!</p>
+    <main class="conteudo-perfil" style="margin-top: 220px; padding: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h2 id="saudacao" style="text-align: center; color: #d63384;">Carregando perfil...</h2>
+        
+        <div id="card-fidelidade" class="card-fidelidade" style="display: none;">
+            <h3>✨ Seus Ninko Points</h3>
+            <p>Você tem <strong id="saldo-pontos">0</strong> pontos</p>
+            <small>Continue pedindo para ganhar mais cookies!</small>
+        </div>
+
+        <p style="text-align: center; margin-bottom: 2rem; font-size: 0.9rem; color: #666;">Mantenha seus dados atualizados para facilitar suas entregas!</p>
 
         <div id="info-box" class="perfil-container">
             <p style="text-align: center; color: #f7b2b7;">Buscando seus dados no forno... 🍪</p>
         </div>
 
         <div style="text-align: center; margin-top: 2rem;">
-            <button id="btn-salvar" class="btn-comprar" style="width: 100%; max-width: 400px; padding: 1rem;">
+            <button id="btn-salvar" class="btn-comprar" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
                 Salvar Alterações
             </button>
             <br><br>
-            <a href="index.html" style="color: #5b3c11; text-decoration: none; font-size: 0.9rem;">← Voltar ao Cardápio</a>
+            <a href="index.html" style="color: #d63384; text-decoration: none; font-size: 0.9rem; font-weight: bold;">← Voltar ao Cardápio</a>
         </div>
     </main>
 
     <script type="module">
-        // Importamos a conexão e as funções necessárias (Adicionei o setDoc)
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // Importamos a notificação que criamos no auth-control
+        import { mostrarNotificacao } from "./auth-control.js";
 
         let usuarioLogado = null;
 
@@ -60,14 +67,21 @@
                     const docSnap = await getDoc(doc(db, "usuarios", user.uid));
                     const infoBox = document.getElementById('info-box');
                     const saudacao = document.getElementById('saudacao');
+                    const cardFid = document.getElementById('card-fidelidade');
+                    const saldoPontos = document.getElementById('saldo-pontos');
 
-                    // Preparamos os dados (se não existirem, ficam vazios)
                     const d = docSnap.exists() ? docSnap.data() : {};
                     
+                    // Atualiza Saudação e Pontos
                     const primeiroNome = d.nome ? d.nome.split(' ')[0] : "Usuário";
                     saudacao.innerText = `Olá, ${primeiroNome}! 🍪`;
                     
-                    // Injeção dos inputs com os IDs corretos para o salvamento
+                    if(cardFid) {
+                        cardFid.style.display = "block";
+                        saldoPontos.innerText = d.pontos || 0;
+                    }
+                    
+                    // Injeção dos inputs com as classes para o CSS pegar
                     infoBox.innerHTML = `
                         <div class="campo-perfil">
                             <label>Nome Completo:</label>
@@ -89,12 +103,12 @@
                             <label>Rua:</label>
                             <input type="text" id="p-rua" value="${d.rua || ''}">
                         </div>
-                        <div class="campo-perfil" style="display: flex; gap: 10px;">
-                            <div style="flex: 1;">
+                        <div class="grid-campos">
+                            <div class="campo-perfil">
                                 <label>Nº:</label>
                                 <input type="text" id="p-num" value="${d.numero || ''}">
                             </div>
-                            <div style="flex: 2;">
+                            <div class="campo-perfil">
                                 <label>Complemento:</label>
                                 <input type="text" id="p-comp" value="${d.complemento || ''}">
                             </div>
@@ -108,7 +122,6 @@
             }
         });
 
-        // Lógica do botão Salvar (CORRIGIDA COM SETDOC + MERGE)
         document.getElementById('btn-salvar').addEventListener('click', async () => {
             if (!usuarioLogado) return;
 
@@ -117,7 +130,6 @@
             btn.disabled = true;
 
             try {
-                // setDoc com { merge: true } cria o documento se ele não existir
                 await setDoc(doc(db, "usuarios", usuarioLogado.uid), {
                     nome: document.getElementById('p-nome').value,
                     telefone: document.getElementById('p-tel').value,
@@ -129,14 +141,15 @@
                     atualizadoEm: new Date()
                 }, { merge: true });
 
-                alert("Dados atualizados com sucesso! 🍪");
+                mostrarNotificacao("Perfil atualizado! 🍪", "✅");
                 
-                // Opcional: recarrega para atualizar o nome no menu caso tenha mudado
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
 
             } catch (e) {
                 console.error("Erro ao salvar:", e);
-                alert("Erro ao salvar. Verifique se você preencheu tudo corretamente.");
+                mostrarNotificacao("Erro ao salvar dados.", "❌");
             } finally {
                 btn.innerText = "Salvar Alterações";
                 btn.disabled = false;
