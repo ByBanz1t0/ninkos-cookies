@@ -18,8 +18,7 @@
 html {
     scroll-behavior: smooth;
     overflow-y: scroll; 
-    /* Ajuste para 1rem = 10px (Acessibilidade e facilidade de cálculo) */
-    font-size: 62.5%; 
+    font-size: 62.5%; /* 1rem = 10px */
 }
 
 body {
@@ -27,9 +26,9 @@ body {
     background-color: #fae5e7;
     color: #000;
     line-height: 1.6;
-    font-size: 1.6rem; /* Equivale a 16px padrão */
+    font-size: 1.6rem; 
     overflow-x: hidden;
-    padding-top: 17rem; 
+    padding-top: 170px; 
 }
 
 /* Utilitários */
@@ -56,8 +55,8 @@ body {
     z-index: 10000; 
     background-color: #fae5e7; 
     padding-bottom: 0.8rem;
-    box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,0.1); 
-    border-bottom: 0.2rem solid #f7b2b7;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    border-bottom: 2px solid #f7b2b7;
 }
 
 header {
@@ -92,18 +91,18 @@ header {
 }
 
 /* ==========================================================================
-   2.1. RODAPÉ
+   2.1. RODAPÉ COMPLETO
    ========================================================================== */
 
 .footer-site {
     background-color: #fae5e7;
-    border-top: 0.1rem solid #f7b2b7;
+    border-top: 1px solid #f7b2b7;
     padding: 2rem 1rem 1rem;
     margin-top: 2rem;
 }
 
 .footer-container {
-    max-width: 120rem;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -120,7 +119,7 @@ header {
 .footer-info p {
     color: #888;
     font-size: 0.9rem;
-    max-width: 25rem;
+    max-width: 250px;
 }
 
 .footer-social h3 {
@@ -138,7 +137,7 @@ header {
 .social-link {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 10px;
     text-decoration: none;
     color: #555;
     font-size: 0.9rem;
@@ -150,15 +149,15 @@ header {
 }
 
 .icon-social {
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 24px;
+    height: 24px;
 }
 
 .footer-copyright {
     text-align: center;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 0.1rem solid #eee;
+    border-top: 1px solid #eee;
     color: #aaa;
     font-size: 0.8rem;
 }
@@ -171,7 +170,7 @@ header {
     justify-content: flex-end; 
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 15px;
 }
 
 .btn-auth, #menu-user a {
@@ -180,7 +179,7 @@ header {
     font-size: 0.85rem;
     font-weight: bold;
     padding: 0.5rem 1.2rem;
-    border: 0.2rem solid #f7b2b7;
+    border: 2px solid #f7b2b7;
     border-radius: 2rem;
     background-color: #ffffff;
     transition: all 0.3s ease;
@@ -197,35 +196,35 @@ header {
     text-decoration: none;
     color: #5f5f5f;
     font-size: 0.75rem;
-    border-bottom: 0.1rem solid transparent;
+    border-bottom: 1px solid transparent;
     transition: all 0.2s;
 }
 
 .btn-auth-sair:hover {
-    border-bottom: 0.1rem solid #5f5f5f;
+    border-bottom: 1px solid #5f5f5f;
     color: #d63384;
 }
 
 .user-icon {
     font-size: 1.2rem;
     background: #fff;
-    padding: 0.5rem;
+    padding: 5px;
     border-radius: 50%;
-    border: 0.1rem solid #f7b2b7;
-    margin-right: 0.5rem;
+    border: 1px solid #f7b2b7;
+    margin-right: 5px;
 }
 
 /* ==========================================================================
-   4. NAVEGAÇÃO (MENU DE CATEGORIAS)
+   4. NAVEGAÇÃO E SEÇÕES
    ========================================================================== */
 
 nav {
     width: 100%;
-    max-width: 120rem; 
+    max-width: 1200px; 
     margin: 0.5rem auto 0;
     padding: 0.5rem 1.5rem;
     text-align: left;
-    border-top: 0.1rem solid rgba(247, 178, 183, 0.3);
+    border-top: 1px solid rgba(247, 178, 183, 0.3);
 }
 
 nav h1 {
@@ -237,7 +236,7 @@ nav ul {
     list-style: none;
     padding: 0;
     display: flex;
-    gap: 1.2rem;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
@@ -247,18 +246,13 @@ nav ul {
     font-size: 0.85rem;
     font-weight: bold;
     padding: 0.6rem 1.5rem;
-    border: 0.2rem solid #f7b2b7;
+    border: 2px solid #f7b2b7;
     border-radius: 2rem; 
     background-color: #ffffff;
     transition: all 0.3s ease;
     display: inline-block;
     cursor: pointer;
     font-family: 'keepcalm', sans-serif;
-}
-
-.botao-navegacao:hover {
-    background-color: #f7b2b7;
-    color: white;
 }
 
 .ativo {
@@ -268,20 +262,16 @@ nav ul {
     transform: scale(1.05);
 }
 
-/* ==========================================================================
-   5. CONTEÚDO PRINCIPAL E BOX DE LOGIN
-   ========================================================================== */
-
 main {
     width: 100%;
-    max-width: 120rem;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 section {
     padding: 1rem 1.5rem;
     margin-bottom: 1rem;
-    scroll-margin-top: 18rem; 
+    scroll-margin-top: 180px; 
 }
 
 section h2 {
@@ -289,11 +279,15 @@ section h2 {
     margin-bottom: 1rem;
 }
 
+/* ==========================================================================
+   5. LOGIN E PRODUTOS
+   ========================================================================== */
+
 .conteudo-login {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 30rem); 
+    min-height: calc(100vh - 300px); 
     padding: 2rem;
 }
 
@@ -301,11 +295,11 @@ section h2 {
     background: #ffffff;
     padding: 2.5rem;
     border-radius: 1.5rem;
-    box-shadow: 0 0.8rem 2.4rem rgba(0,0,0,0.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 40rem;
+    max-width: 400px;
     text-align: center;
-    border: 0.1rem solid #f7b2b7;
+    border: 1px solid #f7b2b7;
 }
 
 .login-box h2 {
@@ -314,34 +308,6 @@ section h2 {
     color: #333;
 }
 
-.login-box input {
-    width: 100%;
-    padding: 0.9rem;
-    margin-bottom: 1.2rem;
-    border: 0.1rem solid #ccc;
-    border-radius: 0.8rem;
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.login-box input:focus {
-    border-color: #f7b2b7;
-    background-color: #fff2f3;
-}
-
-#auth-message {
-    min-height: 1.2rem;
-    font-weight: bold;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-}
-
-/* ==========================================================================
-   6. ITENS DO CARDÁPIO (PRODUTOS)
-   ========================================================================== */
-
 .sabor-item {
     display: flex;
     align-items: flex-start;
@@ -349,8 +315,7 @@ section h2 {
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 0.6rem;
-    border: 0.1rem solid transparent;
-    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .sabor-foto {
@@ -362,9 +327,12 @@ section h2 {
     flex-shrink: 0;
 }
 
-/* ==========================================================================
-   7. BOTÕES E INTERAÇÃO
-   ========================================================================== */
+.sabor-preco {
+    color: #d63384;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
 
 .btn-comprar {
     margin-top: 1rem;
@@ -377,66 +345,23 @@ section h2 {
     font-size: 0.8rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-comprar:hover {
-    background-color: #f7b2b7; 
-    transform: scale(1.05);
-}
-
-.sabor-preco {
-    color: #d63384;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
-}
-
-/* --- ÍCONE FLUTUANTE DO CARRINHO --- */
-.carrinho-flutuante {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background-color: #ffffff;
-    border: 0.2rem solid #d63384;
-    border-radius: 5rem;
-    padding: 1rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.2);
-    cursor: pointer;
-    z-index: 9999;
-    transition: transform 0.3s ease;
-    text-decoration: none;
-    color: #333;
-}
-
-.carrinho-qtd {
-    background-color: #d63384;
-    color: white;
-    border-radius: 50%;
-    padding: 0.2rem 0.8rem;
-    font-size: 0.8rem;
-    margin-bottom: 0.2rem;
 }
 
 /* ==========================================================================
-   AJUSTES DE ESPAÇAMENTO (CARRINHO, ADMIN, PEDIDOS)
+   6. CARRINHO, ADMIN E PEDIDOS (AJUSTES DE ESPAÇO)
    ========================================================================== */
 
 /* Carrinho */
 .conteudo-carrinho {
     padding-top: 0 !important;
-    margin-top: -1rem;
+    margin-top: -10px;
 }
 
 .secao-checkout {
     background: white;
     padding: 1.5rem; 
     border-radius: 1.5rem;
-    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     margin-top: 0.5rem;
 }
 
@@ -445,47 +370,23 @@ section h2 {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 0.1rem solid #f7b2b7;
-}
-
-.qtd-botoes {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    border: 0.1rem solid #f7b2b7;
-    border-radius: 2rem;
-    padding: 0.2rem;
-}
-
-.qtd-botoes button {
-    background: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 2.5rem;
-    height: 2.5rem;
-    cursor: pointer;
-    font-weight: bold;
-    color: #d63384;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-bottom: 1px solid #f7b2b7;
 }
 
 /* Admin */
 .admin-body { 
     background-color: #fae5e7; 
-    padding-bottom: 5rem;
     padding-top: 0 !important; 
 }
 
 .form-admin, .lista-admin { 
     padding: 1.5rem; 
-    max-width: 80rem; 
+    max-width: 800px; 
     margin: 1rem auto; 
     background: white; 
     border-radius: 1.5rem; 
-    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.1); 
-    border: 0.1rem solid #f7b2b7;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    border: 1px solid #f7b2b7;
 }
 
 .form-admin h1, .lista-admin h2 { 
@@ -502,17 +403,17 @@ section h2 {
 }
 
 .lista-admin th, .lista-admin td { 
-    padding: 1.2rem; 
-    border-bottom: 0.1rem solid #eee; 
+    padding: 12px; 
+    border-bottom: 1px solid #eee; 
     text-align: left; 
 }
 
 .img-tabela { 
-    width: 5rem; 
-    height: 5rem; 
+    width: 50px; 
+    height: 50px; 
     object-fit: cover; 
-    border-radius: 0.5rem; 
-    border: 0.1rem solid #f7b2b7; 
+    border-radius: 5px; 
+    border: 1px solid #f7b2b7; 
 }
 
 /* Pedidos */
@@ -523,45 +424,83 @@ section h2 {
 
 .card-pedido { 
     background: #fff; 
-    border-radius: 1.2rem; 
-    padding: 1.5rem; 
-    margin-bottom: 1rem; 
-    border-left: 0.6rem solid #d63384; 
-    box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.05); 
+    border-radius: 12px; 
+    padding: 15px; 
+    margin-bottom: 10px; 
+    border-left: 6px solid #d63384; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
 }
 
 /* ==========================================================================
-   9. SISTEMA DE NOTIFICAÇÕES (TOASTS)
+   7. SISTEMA DE TOASTS E CARRINHO FLUTUANTE
    ========================================================================== */
+
+.carrinho-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ffffff;
+    border: 2px solid #d63384;
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    color: #333;
+}
+
+.carrinho-qtd {
+    background-color: #d63384;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
 
 .toast-container {
     position: fixed;
-    bottom: 3rem;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 20000;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 10px;
 }
 
 .toast {
     background: #ffffff;
     color: #333;
-    padding: 1.2rem 2.5rem;
-    border-radius: 5rem;
-    border: 0.2rem solid #d63384;
-    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.15);
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: 2px solid #d63384;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     font-family: 'keepcalm', sans-serif;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 10px;
     animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 2.5s forwards;
 }
 
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+}
+
 /* ==========================================================================
-   10. PÁGINA DE PERFIL E FIDELIDADE
+   8. PERFIL E FIDELIDADE
    ========================================================================== */
 
 .conteudo-perfil {
@@ -570,55 +509,58 @@ section h2 {
 }
 
 .perfil-container {
-    max-width: 60rem;
-    margin: 0.5rem auto 4rem; 
+    max-width: 600px;
+    margin: 5px auto 40px; 
     background: #ffffff;
-    padding: 3rem;
-    border-radius: 2rem;
-    border: 0.2rem solid #f7b2b7;
-    box-shadow: 0 1rem 2.5rem rgba(247, 178, 183, 0.2);
+    padding: 30px;
+    border-radius: 20px;
+    border: 2px solid #f7b2b7;
+    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);
     text-align: center;
 }
 
 .perfil-container h2 {
     color: #d63384;
-    margin-bottom: 2.5rem;
+    margin-bottom: 25px;
     font-size: 1.6rem;
 }
 
 .user-info input, .campo-perfil input, .checkout-form input {
     width: 100%;
-    padding: 1.2rem;
-    margin-bottom: 1.2rem;
-    border: 0.15rem solid #f7b2b7;
-    border-radius: 1.2rem;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1.5px solid #f7b2b7;
+    border-radius: 12px;
     font-family: 'keepcalm', sans-serif;
     font-size: 0.95rem;
-    color: #333;
+}
+
+#saudacao {
+    margin-bottom: 2px !important; 
+    color: #d63384;
+    text-align: center;
+    font-size: 1.4rem;
 }
 
 .card-fidelidade {
     background: linear-gradient(135deg, #d63384, #f7b2b7);
     color: white;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    margin: 0 auto 0.5rem; 
-    max-width: 60rem;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 0 auto 5px; 
+    max-width: 600px;
     text-align: center;
-    box-shadow: 0 0.4rem 1.5rem rgba(214, 51, 132, 0.2);
 }
 
 .card-fidelidade strong { 
     font-size: 2rem; 
     display: block;
-    margin: 0.5rem 0;
+    margin: 5px 0;
 }
 
-/* FINALIZAÇÃO WHATSAPP */
 .btn-finalizar-wpp {
     background-color: #25d366 !important;
     color: white !important;
-    border: none;
     padding: 1.2rem;
     border-radius: 2rem;
     font-family: 'keepcalm', sans-serif;
@@ -629,6 +571,6 @@ section h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 10px;
     margin-top: 1rem;
 }
