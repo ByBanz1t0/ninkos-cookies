@@ -10,20 +10,28 @@
         .card-historico { 
             background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee;
+            transition: transform 0.2s;
         }
+        .card-historico:hover { transform: translateY(-2px); }
         .header-pedido { display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; margin-bottom: 10px; align-items: center; }
         .data-pedido { font-size: 0.85rem; color: #888; }
         
-        /* Badges de Status Coloridas */
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
-        .status-Pendente { background: #fff3cd; color: #856404; }
-        .status-Preparando { background: #cfe2ff; color: #084298; }
-        .status-Enviado { background: #e0cffc; color: #6610f2; }
-        .status-Entregue { background: #d4edda; color: #155724; }
-        .status-Cancelado { background: #f8d7da; color: #842029; }
+        /* Badges de Status Sincronizadas com Admin */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: white; }
+        .status-realizado { background: #f39c12; }
+        .status-producao { background: #d63384; }
+        .status-rota { background: #3498db; }
+        .status-finalizado { background: #27ae60; }
+        .status-cancelado { background: #ff4d4d; }
 
         .item-pedido-discreto { font-size: 0.9rem; color: #555; margin-bottom: 3px; display: flex; justify-content: space-between; }
         .total-pedido-cliente { margin-top: 10px; text-align: right; font-weight: bold; color: #d63384; font-size: 1.1rem; border-top: 1px dashed #eee; padding-top: 8px; }
+        
+        /* Estilo para o motivo do cancelamento */
+        .motivo-cancelamento {
+            margin-top: 10px; padding: 8px; background: #fff1f1; border-radius: 6px;
+            border: 1px solid #ffcccc; color: #c62828; font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -54,6 +62,7 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // Consulta sincronizada com o ID do usuário logado
                 const q = query(
                     collection(db, "pedidos"), 
                     where("clienteId", "==", user.uid),
@@ -65,7 +74,7 @@
                         listaContainer.innerHTML = `
                             <div style="text-align: center; padding: 40px;">
                                 <p style="color:#888;">Você ainda não fez nenhum pedido. 😢</p>
-                                <a href="index.html" class="btn-comprar" style="display:inline-block; margin-top:15px; text-decoration:none; padding: 10px 20px;">Ver Cardápio</a>
+                                <a href="index.html" style="display:inline-block; margin-top:15px; text-decoration:none; color:#d63384; font-weight:bold;">Ver Cardápio</a>
                             </div>`;
                         return;
                     }
@@ -74,19 +83,21 @@
                     snapshot.forEach((doc) => {
                         const p = doc.data();
                         
-                        // Formatação de Data e Hora
-                        const dataFormatada = p.data ? p.data.toDate().toLocaleString('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }) : 'Processando...';
+                        // Formatação de Data
+                        const dataFormatada = p.data ? p.data.toDate().toLocaleString('pt-BR') : 'Processando...';
                         
+                        // Mapeamento de Status para as Classes CSS
+                        const statusClass = {
+                            'realizado': 'status-realizado',
+                            'em produção': 'status-producao',
+                            'em rota': 'status-rota',
+                            'finalizado': 'status-finalizado',
+                            'cancelado': 'status-cancelado'
+                        };
+
                         const card = document.createElement('div');
                         card.className = 'card-historico';
                         
-                        // Lista de itens com fallback de segurança
                         let itensHTML = "";
                         if (p.itens && Array.isArray(p.itens)) {
                             itensHTML = p.itens.map(i => `
@@ -100,20 +111,28 @@
                         card.innerHTML = `
                             <div class="header-pedido">
                                 <span class="data-pedido">📅 ${dataFormatada}</span>
-                                <span class="status-badge status-${p.status || 'Pendente'}">${p.status || 'Pendente'}</span>
+                                <span class="status-badge ${statusClass[p.status] || 'status-realizado'}">
+                                    ${p.status || 'Realizado'}
+                                </span>
                             </div>
                             <div class="corpo-pedido">
                                 ${itensHTML}
                             </div>
+                            
+                            ${p.status === 'cancelado' && p.motivoCancelamento ? `
+                                <div class="motivo-cancelamento">
+                                    <strong>Motivo do cancelamento:</strong><br>${p.motivoCancelamento}
+                                </div>
+                            ` : ''}
+
                             <div class="total-pedido-cliente">
-                                Total: ${p.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                Total: R$ ${p.total.toFixed(2)}
                             </div>
                         `;
                         listaContainer.appendChild(card);
                     });
                 }, (error) => {
-                    console.error("Erro no Snapshot:", error);
-                    // Se der erro de índice no Firebase, o link aparecerá aqui no console
+                    console.error("Erro ao carregar pedidos:", error);
                 });
             } else {
                 window.location.href = "login.html";
