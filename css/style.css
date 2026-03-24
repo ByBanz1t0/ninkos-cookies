@@ -27,7 +27,7 @@ body {
     line-height: 1.6;
     font-size: 1rem;
     overflow-x: hidden;
-    padding-top: 240px; /* Espaço para o menu fixo não cobrir o conteúdo */
+    padding-top: 180px; /* AJUSTE: Reduzido de 240px para 180px para diminuir o buraco no topo */
 }
 
 /* Utilitários - O segredo para o JS funcionar */
@@ -685,51 +685,6 @@ footer {
     margin-top: 1rem;
 }
 
-.perfil-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    border: 1px solid #f7b2b7;
-}
-
-.user-info label, .campo-perfil label {
-    display: block;
-    font-size: 0.8rem;
-    color: #d63384;
-    font-weight: bold;
-    margin: 10px 0 5px 5px;
-    text-align: left;
-}
-
-#btn-salvar {
-    background-color: #d63384 !important;
-    color: white !important;
-    border: none;
-    border-radius: 50px;
-    font-family: 'keepcalm', sans-serif;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(214, 51, 132, 0.2);
-    width: 100%;
-}
-
-.btn-meus-pedidos {
-    background-color: #f7b2b7;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-right: 10px;
-    transition: 0.3s;
-    display: inline-block;
-}
-
 /* ==========================================================================
    8. PAINEL ADMINISTRATIVO (ADMIN.HTML)
    ========================================================================== */
@@ -816,12 +771,18 @@ footer {
 }
 
 /* ==========================================================================
-   10. PÁGINA DE PERFIL DO USUÁRIO (PADRONIZADA)
+   10. PÁGINA DE PERFIL DO USUÁRIO (AJUSTES DE ESPAÇAMENTO)
    ========================================================================== */
+
+/* AJUSTE: Remove excesso de margem interna no main */
+.conteudo-perfil {
+    margin-top: 0 !important; 
+    padding-top: 0 !important;
+}
 
 .perfil-container {
     max-width: 600px;
-    margin: 40px auto;
+    margin: 10px auto 40px; /* AJUSTE: Reduzido para 10px para aproximar do card de pontos */
     background: #ffffff;
     padding: 30px;
     border-radius: 20px;
@@ -861,11 +822,21 @@ footer {
     transition: all 0.3s ease;
 }
 
-.user-info input:focus, .campo-perfil input:focus {
-    outline: none;
-    border-color: #d63384;
-    background-color: #fff2f3;
-    box-shadow: 0 0 8px rgba(214, 51, 132, 0.1);
+/* AJUSTE: Grade para Nº e Complemento alinhados */
+.grid-campos {
+    display: flex;
+    gap: 10px;
+    text-align: left;
+}
+
+.grid-campos .campo-perfil {
+    flex: 1;
+}
+
+#saudacao {
+    margin-bottom: 5px !important; /* AJUSTE: Aproxima o título do card de pontos */
+    color: #d63384;
+    text-align: center;
 }
 
 /* Botão de Salvar no estilo Ninko's */
@@ -875,7 +846,7 @@ footer {
     background-color: #d63384;
     color: white;
     border: none;
-    border-radius: 50px; /* Formato pílula */
+    border-radius: 50px;
     font-family: 'keepcalm', sans-serif;
     font-weight: bold;
     font-size: 1.1rem;
@@ -885,22 +856,15 @@ footer {
     box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
 }
 
-#btn-salvar:hover {
-    background-color: #f7b2b7;
-    transform: translateY(-2px);
-}
-
-#btn-salvar:active {
-    transform: scale(0.98);
-}
-
 /* Estilo para os Ninko Points dentro do perfil */
 .card-fidelidade {
     background: linear-gradient(135deg, #d63384, #f7b2b7);
     color: white;
     padding: 20px;
     border-radius: 15px;
-    margin-bottom: 30px;
+    margin: 0 auto 15px; /* AJUSTE: Reduzido para aproximar do container de baixo */
+    max-width: 600px;
+    text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
 }
 
@@ -913,12 +877,4 @@ footer {
     font-size: 2rem; 
     display: block;
     margin: 5px 0;
-}
-
-/* Ajuste para inputs desativados (como o e-mail que não muda) */
-input:disabled {
-    background-color: #f9f9f9;
-    color: #999;
-    border-color: #eee;
-    cursor: not-allowed;
 }
