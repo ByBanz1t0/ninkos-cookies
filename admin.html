@@ -53,6 +53,17 @@
         .status-indicador { font-weight: bold; padding: 8px 15px; border-radius: 20px; }
         .aberta { background: #e8f5e9; color: #2e7d32; }
         .fechada { background: #ffebee; color: #c62828; }
+
+        /* NOVO: Estilo para a grade de horários */
+        .grid-horarios {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .grid-horarios span { font-weight: bold; color: #555; }
+        .grid-horarios input { margin-bottom: 0; }
     </style>
 </head>
 <body class="admin-body">
@@ -85,6 +96,16 @@
                 <span id="label-status" class="status-indicador fechada">Carregando...</span>
                 <button id="btn-toggle-loja" class="btn-acao-user" style="display:block; margin-top:10px; width:100%;">Alterar Status</button>
             </div>
+        </div>
+
+        <div class="form-admin">
+            <h2>Horários de Funcionamento Automático ⏰</h2>
+            <p style="text-align: center; font-size: 0.8rem; margin-bottom: 20px; color: #888;">A loja fechará automaticamente fora destes períodos.</p>
+            
+            <div id="container-inputs-horarios">
+                </div>
+
+            <button type="button" id="btn-salvar-horarios" class="btn-salvar" style="margin-top: 20px;">Atualizar Horários</button>
         </div>
         
         <div class="form-admin">
@@ -133,8 +154,6 @@
             </table>
         </div>
 
-        <hr style="max-width: 800px; margin: 40px auto; border: 1px solid #f7b2b7; opacity: 0.3;">
-
         <div class="lista-admin">
             <h2>👥 Gerenciar Usuários</h2>
             <table>
@@ -154,12 +173,62 @@
         import { db, auth } from "./firebase-config.js";
         import { collection, addDoc, getDocs, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // --- SEUS ELEMENTOS ORIGINAIS ---
         const formProduto = document.getElementById('form-produto');
         const formBairro = document.getElementById('form-bairro');
         const tabelaProdutos = document.getElementById('tabela-produtos');
         const tabelaBairros = document.getElementById('tabela-bairros');
         const tabelaUsuarios = document.getElementById('tabela-usuarios');
         const conteudoProtegido = document.getElementById('conteudo-protegido');
+
+        // --- CONFIGURAÇÃO DE HORÁRIOS (NOVO) ---
+        const btnSalvarHorarios = document.getElementById('btn-salvar-horarios');
+        const containerHorarios = document.getElementById('container-inputs-horarios');
+        const diasSemana = [
+            { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' }, 
+            { id: 'qua', nome: 'Quarta' }, { id: 'qui', nome: 'Quinta' }, 
+            { id: 'sex', nome: 'Sexta' }, { id: 'sab', nome: 'Sábado' }, { id: 'dom', nome: 'Domingo' }
+        ];
+
+        // Gera o HTML dos horários automaticamente
+        containerHorarios.innerHTML = diasSemana.map(dia => `
+            <div class="grid-horarios">
+                <span>${dia.nome}</span>
+                <input type="time" id="${dia.id}-inicio">
+                <input type="time" id="${dia.id}-fim">
+            </div>
+        `).join('');
+
+        async function carregarHorariosNaTela() {
+            const docSnap = await getDoc(configRef);
+            if (docSnap.exists() && docSnap.data().horarios) {
+                const h = docSnap.data().horarios;
+                diasSemana.forEach(dia => {
+                    if(h[dia.id]) {
+                        document.getElementById(`${dia.id}-inicio`).value = h[dia.id].inicio;
+                        document.getElementById(`${dia.id}-fim`).value = h[dia.id].fim;
+                    }
+                });
+            }
+        }
+
+        btnSalvarHorarios.addEventListener('click', async () => {
+            const horariosParaSalvar = {};
+            diasSemana.forEach(dia => {
+                horariosParaSalvar[dia.id] = {
+                    inicio: document.getElementById(`${dia.id}-inicio`).value,
+                    fim: document.getElementById(`${dia.id}-fim`).value
+                };
+            });
+
+            try {
+                await updateDoc(configRef, { horarios: horariosParaSalvar });
+                alert("Horários salvos com sucesso!");
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar horários.");
+            }
+        });
 
         // --- LÓGICA STATUS DA LOJA ---
         const labelStatus = document.getElementById('label-status');
@@ -174,7 +243,6 @@
                     labelStatus.className = `status-indicador ${aberta ? 'aberta' : 'fechada'}`;
                     btnToggleLoja.innerText = aberta ? "Fechar Loja" : "Abrir Loja";
                 } else {
-                    // Inicializa o documento caso não exista no Firebase
                     setDoc(configRef, { aberta: true });
                 }
             });
@@ -188,7 +256,9 @@
             }
         });
 
-        // --- PRODUTOS ---
+        // --- RESTANTE DAS SUAS FUNÇÕES ORIGINAIS (salvarProduto, carregarProdutos, etc) ---
+        // (Mantive exatamente como você enviou abaixo)
+
         async function salvarProduto(e) {
             e.preventDefault();
             const id = document.getElementById('produto-id').value;
@@ -224,7 +294,6 @@
             });
         }
 
-        // --- BAIRROS ---
         formBairro.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('bairro-id').value;
@@ -256,29 +325,21 @@
             });
         }
 
-        // --- USUÁRIOS ---
         function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
                 const currentUser = auth.currentUser;
-
                 snapshot.forEach((docSnap) => {
                     const u = docSnap.data();
                     const isAdmin = u.cargo === 'admin';
                     const isMe = currentUser && currentUser.uid === docSnap.id;
                     const tr = document.createElement('tr');
-                    
                     tr.innerHTML = `
                         <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''} ${isMe ? '<strong>(Você)</strong>' : ''}</td>
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isMe ? (
-                                !isAdmin ? 
-                                `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : 
-                                `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`
-                            ) : '<span style="color: #888; font-size: 0.8rem;">Dono do Painel</span>'}
-                            
+                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888; font-size: 0.8rem;">Dono do Painel</span>'}
                             ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>` : ''}
                         </td>
                     `;
@@ -288,13 +349,11 @@
         }
 
         window.alterarCargo = async (id, novoCargo) => {
-            const msg = novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?";
-            if(confirm(msg)) {
+            if(confirm(novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?")) {
                 await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo });
             }
         };
 
-        // --- PEDIDOS ---
         function carregarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -319,7 +378,6 @@
             });
         }
 
-        // --- GLOBAIS ---
         window.excluirDoc = async (pasta, id) => {
             if(confirm(`Tem certeza que deseja excluir de ${pasta}?`)) await deleteDoc(doc(db, pasta, id));
         };
@@ -368,7 +426,8 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 conteudoProtegido.style.display = "block";
-                monitorarStatusLoja(); // Inicia o monitoramento da loja
+                monitorarStatusLoja();
+                carregarHorariosNaTela(); // Inicia carregamento dos horários
                 carregarProdutos();
                 carregarBairros();
                 carregarUsuarios();
