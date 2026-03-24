@@ -32,7 +32,7 @@
             padding: 20px;
         }
         #aviso-fechado h1 { color: #d63384; margin-bottom: 10px; }
-        #aviso-fechado p { color: #555; font-size: 1.1rem; }
+        #aviso-fechado p { color: #555; font-size: 1.1rem; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -40,8 +40,8 @@
     <div id="aviso-fechado" class="hidden">
         <img src="img/logos/ninkos_logo.png" alt="Logo" style="max-width: 180px; margin-bottom: 20px;">
         <h1>Loja Fechada no Momento! 😴</h1>
-        <p>Estamos preparando novos cookies artesanais para você.</p>
-        <p>Fique de olho no nosso Instagram para saber quando abrirmos!</p>
+        <p id="msg-principal">Estamos preparando novos cookies artesanais para você.</p>
+        <p id="msg-sub">Fique de olho no nosso Instagram para saber quando abrirmos!</p>
         <a href="https://www.instagram.com/ninkoscookies/" target="_blank" style="margin-top: 20px; color: #d63384; font-weight: bold; text-decoration: none;">@ninkoscookies</a>
     </div>
 
@@ -85,19 +85,76 @@
         import { collection, onSnapshot, query, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
+        // --- FUNÇÃO AUXILIAR: VERIFICAÇÃO DE HORÁRIO ---
+        function verificarStatusHorario(horarios) {
+            if (!horarios) return { aberto: true };
+
+            const agora = new Date();
+            const diasSemana = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+            const diaHoje = diasSemana[agora.getDay()];
+            const configHoje = horarios[diaHoje];
+
+            // Se não houver horário cadastrado para hoje
+            if (!configHoje || !configHoje.inicio || !configHoje.fim) {
+                return { aberto: false, titulo: "Fechado Hoje", msg: "Não abrimos hoje.", sub: "Confira nossa agenda no Instagram." };
+            }
+
+            const agoraMinutos = (agora.getHours() * 60) + agora.getMinutes();
+            const [hInicio, mInicio] = configHoje.inicio.split(':').map(Number);
+            const [hFim, mFim] = configHoje.fim.split(':').map(Number);
+            const inicioMinutos = (hInicio * 60) + mInicio;
+            const fimMinutos = (hFim * 60) + mFim;
+
+            if (agoraMinutos < inicioMinutos) {
+                return { 
+                    aberto: false, 
+                    titulo: "Abriremos em breve! ☀️", 
+                    msg: "Estamos preparando a primeira fornada do dia.",
+                    sub: `Iniciamos o atendimento às **${configHoje.inicio}**.` 
+                };
+            } else if (agoraMinutos > fimMinutos) {
+                return { 
+                    aberto: false, 
+                    titulo: "Encerramos por hoje! 😴", 
+                    msg: "Já vendemos todos os cookies de hoje.",
+                    sub: "Esperamos você na nossa próxima abertura!" 
+                };
+            }
+
+            return { aberto: true };
+        }
+
         // --- MONITORAMENTO DO STATUS DA LOJA EM TEMPO REAL ---
         onSnapshot(doc(db, "configuracoes", "status_loja"), (docSnap) => {
             const aviso = document.getElementById('aviso-fechado');
             const btnCarrinho = document.getElementById('carrinho-btn');
+            const tituloAviso = aviso.querySelector('h1');
+            const msgPrincipal = document.getElementById('msg-principal');
+            const msgSub = document.getElementById('msg-sub');
             
             if (docSnap.exists()) {
-                const aberta = docSnap.data().aberta;
-                if (!aberta) {
-                    aviso.classList.remove('hidden');
-                    if(btnCarrinho) btnCarrinho.classList.add('hidden');
-                } else {
+                const dados = docSnap.data();
+                const abertaManualmente = dados.aberta;
+                const statusHorario = verificarStatusHorario(dados.horarios);
+
+                // Só exibe a loja se o botão for TRUE E estiver no horário
+                if (abertaManualmente && statusHorario.aberto) {
                     aviso.classList.add('hidden');
                     if(btnCarrinho) btnCarrinho.classList.remove('hidden');
+                } else {
+                    aviso.classList.remove('hidden');
+                    if(btnCarrinho) btnCarrinho.classList.add('hidden');
+
+                    if (!abertaManualmente) {
+                        tituloAviso.innerText = "Loja Fechada no Momento! 🚫";
+                        msgPrincipal.innerText = "Estamos em pausa para organização da produção.";
+                        msgSub.innerText = "Voltaremos assim que possível!";
+                    } else {
+                        // Caso o fechamento seja automático pelo horário
+                        tituloAviso.innerText = statusHorario.titulo;
+                        msgPrincipal.innerText = statusHorario.msg;
+                        msgSub.innerHTML = statusHorario.sub; // innerHTML para aceitar o negrito (**)
+                    }
                 }
             }
         });
