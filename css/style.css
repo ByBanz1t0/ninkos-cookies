@@ -921,20 +921,20 @@ footer {
    ========================================================================== */
 
 @media (max-width: 768px) {
-    /* Ajuste do Corpo e Espaçamento Superior */
+    /* Ajuste do Corpo e Fonte Global */
     body {
-        padding-top: 140px; /* Reduz o espaço do topo no mobile */
-        font-size: 0.85rem;
+        padding-top: 140px; 
+        font-size: 0.8rem;
     }
 
-    /* Header: Empilha os elementos ou ajusta o tamanho */
+    /* Header Compacto */
     header {
         padding: 0.8rem 1rem;
-        flex-direction: row; /* Mantém na mesma linha, mas ajusta os lados */
+        flex-direction: row;
     }
 
     #img-logo {
-        width: 5rem; /* Diminui a logo no celular */
+        width: 4.5rem;
     }
 
     .auth-area {
@@ -946,7 +946,7 @@ footer {
         font-size: 0.7rem;
     }
 
-    /* Navegação: Scroll horizontal para as categorias não quebrarem a página */
+    /* Navegação por Categorias com Scroll Horizontal */
     nav ul {
         display: flex;
         flex-wrap: nowrap;
@@ -957,29 +957,67 @@ footer {
     }
 
     .botao-navegacao {
-        white-space: nowrap; /* Impede que o texto do botão quebre linha */
+        white-space: nowrap;
         padding: 0.5rem 1rem;
+        font-size: 0.7rem;
     }
 
-    /* Itens do Cardápio: Transforma em coluna para ganhar espaço */
+    /* --- LISTA DE COOKIES COMPACTA (FOTO NA LATERAL) --- */
     .sabor-item {
-        flex-direction: column;
+        flex-direction: row; 
         align-items: center;
-        text-align: center;
-        padding: 1.5rem;
+        padding: 0.8rem;
+        gap: 12px;
+        margin-bottom: 0.8rem;
     }
 
     .sabor-foto {
-        width: 100%;
-        height: 200px;
+        width: 5.5rem; 
+        height: 5.5rem;
         margin-right: 0;
-        margin-bottom: 1rem;
+        border-radius: 0.5rem;
     }
 
-    /* Carrinho: Ajusta os itens para não apertarem os textos */
+    .sabor-item div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .sabor-item h3 {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+        line-height: 1.2;
+    }
+
+    .sabor-item p {
+        font-size: 0.75rem;
+        line-height: 1.3;
+        color: #666;
+        /* Trava em 2 linhas com reticências */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .sabor-preco {
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+
+    .btn-comprar {
+        margin-top: 5px;
+        padding: 0.4rem 1rem;
+        font-size: 0.65rem;
+        width: fit-content;
+    }
+
+    /* Carrinho Ajustado */
     .item-carrinho {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
         align-items: flex-start;
     }
 
@@ -994,7 +1032,7 @@ footer {
         padding-top: 10px;
     }
 
-    /* Formulários e Inputs: Ocupar a largura total real */
+    /* Formulários Ocupando a Tela */
     .login-box, .perfil-container, .secao-checkout {
         width: 95%;
         margin: 10px auto;
@@ -1006,7 +1044,6 @@ footer {
         flex-direction: column;
     }
 
-    /* Botão de Finalizar Flutuante no Mobile (Opcional, mas ajuda) */
     .btn-prosseguir {
         position: sticky;
         bottom: 10px;
@@ -1014,7 +1051,7 @@ footer {
     }
 }
 
-/* Ajuste fino para telas muito pequenas (iPhone SE, etc) */
+/* Ajuste fino para telas mínimas */
 @media (max-width: 400px) {
     #img-logo {
         width: 4rem;
