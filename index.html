@@ -9,6 +9,9 @@
         .hidden { display: none !important; }
         .loading-msg { text-align: center; color: #888; padding: 20px; width: 100%; }
         .sabor-foto { object-fit: cover; }
+        
+        /* Ajuste para compensar a retirada da barra de navegação */
+        #secao-cookies { margin-top: 130px; }
     </style>
 </head>
 <body>
@@ -34,23 +37,9 @@
                 <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a></div>
             </div>
         </header>
-        <nav>
-            <h1>Nossos produtos:</h1>
-            <ul>
-                <li><a href="#secao-cookies" class="botao-navegacao">Cookies</a></li>
-                <li><a href="#secao-shakes" class="botao-navegacao">Milk Shakes</a></li>
-            </ul>
-        </nav>
-    </div>
+        </div>
 
     <main>
-        <section class="conteudo">
-            <h3>Para você se deliciar:</h3>
-            <div class="banner-inicial" style="text-align: center; margin-bottom: 3rem;">
-                <img src="img/logos/ninkos_logo.png" alt="Logo" style="max-width: 40%;">
-            </div>
-        </section>
-
         <section id="secao-cookies">
             <h2>Sabores de Cookies:</h2>
             <div id="container-cookies" class="container-produtos">
@@ -69,7 +58,6 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        // Importando a função de notificação do seu auth-control
         import { mostrarNotificacao } from "./auth-control.js";
 
         const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
@@ -124,8 +112,6 @@
             }
             localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
             atualizarIconeCarrinho();
-            
-            // Exibe a notificação visual ao adicionar
             mostrarNotificacao(`${nome} no carrinho!`, '🛒');
         };
 
