@@ -771,3 +771,46 @@ footer {
 .card-pedido { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 6px solid #d63384; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
 .preview-foto { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px dashed #f7b2b7; margin: 10px auto; display: none; }
+
+/* ==========================================================================
+   9. SISTEMA DE NOTIFICAÇÕES (TOASTS)
+   ========================================================================== */
+
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: #ffffff;
+    color: #333;
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: 2px solid #d63384;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    font-family: 'keepcalm', sans-serif;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 2.5s forwards;
+}
+
+.toast-icon {
+    font-size: 1.2rem;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+}
