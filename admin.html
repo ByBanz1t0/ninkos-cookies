@@ -12,7 +12,15 @@
             padding: 2rem; max-width: 800px; margin: 2rem auto; 
             background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+        
+        /* AJUSTE: Centralizando títulos e parágrafos auxiliares */
+        .form-admin h1, .form-admin h2, .form-admin h3, .lista-admin h2, .form-admin p { 
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 1.5rem; 
+        }
+        .form-admin p { font-size: 0.9rem; color: #666; margin-top: -1rem; margin-bottom: 2rem; }
+
         input, textarea, select { 
             width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
             border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif; 
@@ -75,8 +83,8 @@
         
         <div class="status-loja-container">
             <div>
-                <h3 style="margin:0;">Status da Loja</h3>
-                <p style="margin:5px 0 0 0; font-size: 0.9rem; color: #666;">Controle se os clientes podem fazer pedidos.</p>
+                <h3 style="margin:0; text-align: left;">Status da Loja</h3>
+                <p style="margin:5px 0 0 0; font-size: 0.9rem; color: #666; text-align: left;">Controle se os clientes podem fazer pedidos.</p>
             </div>
             <div style="text-align: right;">
                 <span id="label-status" class="status-indicador fechada">Carregando...</span>
@@ -86,7 +94,7 @@
 
         <div class="form-admin">
             <h2>Horários de Funcionamento Automático ⏰</h2>
-            <p style="text-align: center; font-size: 0.8rem; margin-bottom: 20px; color: #888;">A loja fechará automaticamente fora destes períodos.</p>
+            <p>A loja fechará automaticamente fora destes períodos.</p>
             <div id="container-inputs-horarios"></div>
             <button type="button" id="btn-salvar-horarios" class="btn-salvar" style="margin-top: 20px;">Atualizar Horários</button>
         </div>
@@ -153,10 +161,10 @@
     </main>
 
     <script type="module">
+        /* O Script permanece exatamente o mesmo para não quebrar as funcionalidades do Firebase */
         import { db, auth } from "./firebase-config.js";
         import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- NOTIFICAÇÕES ADMIN ---
         if (Notification.permission !== "granted") { Notification.requestPermission(); }
         function notifyAdmin(title, body) {
             if (Notification.permission === "granted") {
@@ -173,7 +181,6 @@
         const tabelaUsuarios = document.getElementById('tabela-usuarios');
         const containerPedidos = document.getElementById('container-pedidos-admin');
 
-        // --- HORÁRIOS ---
         const diasSemana = [
             { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' }, 
             { id: 'qua', nome: 'Quarta' }, { id: 'qui', nome: 'Quinta' }, 
@@ -213,7 +220,6 @@
             alert("Horários atualizados!");
         });
 
-        // --- STATUS LOJA ---
         function monitorarStatusLoja() {
             onSnapshot(configRef, (docSnap) => {
                 if (docSnap.exists()) {
@@ -230,7 +236,6 @@
             if (docSnap.exists()) await updateDoc(configRef, { aberta: !docSnap.data().aberta });
         });
 
-        // --- PRODUTOS ---
         async function salvarProduto(e) {
             e.preventDefault();
             const id = document.getElementById('produto-id').value;
@@ -284,7 +289,6 @@
             formProduto.reset();
         }
 
-        // --- BAIRROS ---
         formBairro.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('bairro-id').value;
@@ -331,7 +335,6 @@
             formBairro.reset();
         }
 
-        // --- USUÁRIOS ---
         function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
@@ -361,11 +364,9 @@
             }
         };
 
-        // --- GESTÃO DE PEDIDOS ---
         function carregarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
             onSnapshot(q, (snapshot) => {
-                // Notificar sobre novos pedidos
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const p = change.doc.data();
@@ -448,7 +449,6 @@
             }
         };
 
-        // --- UTILITÁRIOS ---
         window.excluirDoc = async (pasta, id) => {
             if(confirm(`Excluir permanentemente de ${pasta}?`)) await deleteDoc(doc(db, pasta, id));
         };
@@ -457,7 +457,6 @@
         document.getElementById('btn-cancelar').addEventListener('click', resetForm);
         document.getElementById('btn-cancelar-bairro').addEventListener('click', resetFormBairro);
 
-        // --- AUTH ---
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('conteudo-protegido').style.display = "block";
