@@ -6,36 +6,11 @@
     <title>Meu Perfil - Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Garantindo o layout do perfil condizente com o Admin */
-        .perfil-body { background-color: #fae5e7; padding-bottom: 50px; }
-        
-        .card-perfil { 
-            padding: 2.5rem; max-width: 600px; margin: 2rem auto; 
-            background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        
-        .card-perfil h1 { text-align: center; color: #d63384; margin-bottom: 1.5rem; font-size: 1.8rem; }
-        
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.9rem; }
-        
-        input, select { 
-            width: 100%; padding: 0.8rem; margin-bottom: 1.2rem; 
-            border: 1px solid #ddd; border-radius: 8px; font-family: sans-serif;
-            box-sizing: border-box;
-        }
-
-        .btn-salvar-perfil { 
-            background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
-            cursor: pointer; font-weight: bold; width: 100%; border-radius: 8px;
-            transition: 0.3s; font-size: 1rem; color: #333;
-        }
-
-        .btn-salvar-perfil:hover { background: #f4979f; transform: translateY(-2px); }
-        
-        #conteudo-perfil { display: none; } /* Só aparece após o login */
+        /* Apenas o necessário para o conteúdo não ficar por baixo do menu fixo */
+        #conteudo-perfil { display: none; margin-top: 150px; }
     </style>
 </head>
-<body class="perfil-body">
+<body>
 
     <div class="menu-fixo">
         <header>
@@ -56,32 +31,29 @@
         </header>
     </div>
 
-    <main id="conteudo-perfil" style="margin-top: 150px;">
+    <main id="conteudo-perfil">
         <div class="card-perfil">
-            <h1>📍 Meus Dados</h1>
-            <p style="text-align: center; color: #888; margin-top: -10px; margin-bottom: 25px; font-size: 0.9rem;">
-                Mantenha seu endereço atualizado para garantir o frete correto.
-            </p>
+            <h1>Meus Dados</h1>
             
             <form id="form-perfil">
                 <label>Nome Completo:</label>
-                <input type="text" id="perfil-nome" placeholder="Como quer ser chamado?" required>
+                <input type="text" id="perfil-nome" placeholder="Seu nome" required>
 
-                <label>WhatsApp (com DDD):</label>
+                <label>WhatsApp:</label>
                 <input type="text" id="perfil-telefone" placeholder="(00) 00000-0000" required>
 
-                <label>Seu Bairro:</label>
+                <label>Bairro:</label>
                 <select id="perfil-bairro" required>
                     <option value="">Selecione seu bairro...</option>
-                    </select>
+                </select>
 
                 <label>Rua e Número:</label>
                 <input type="text" id="perfil-rua" placeholder="Ex: Rua das Flores, 123" required>
 
                 <label>Ponto de Referência:</label>
-                <input type="text" id="perfil-referencia" placeholder="Ex: Próximo ao mercado central">
+                <input type="text" id="perfil-referencia" placeholder="Perto de onde?">
 
-                <button type="submit" class="btn-salvar-perfil">Salvar Alterações</button>
+                <button type="submit" class="btn-finalizar-checkout">Salvar Alterações</button>
                 
                 </form>
         </div>
@@ -95,7 +67,6 @@
         const selectBairro = document.getElementById('perfil-bairro');
         const conteudo = document.getElementById('conteudo-perfil');
 
-        // Carrega os bairros que você cadastrou no Admin para o cliente escolher
         async function carregarBairros() {
             const querySnapshot = await getDocs(collection(db, "bairros"));
             querySnapshot.forEach((doc) => {
@@ -107,7 +78,6 @@
             });
         }
 
-        // Verifica login e carrega os dados atuais do usuário
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 conteudo.style.display = "block";
@@ -127,7 +97,6 @@
             }
         });
 
-        // Salva as alterações
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
@@ -144,8 +113,8 @@
                     await updateDoc(doc(db, "usuarios", user.uid), novosDados);
                     alert("Dados atualizados com sucesso! 🍪");
                 } catch (error) {
-                    console.error("Erro ao salvar:", error);
-                    alert("Erro ao salvar dados.");
+                    console.error(error);
+                    alert("Erro ao salvar.");
                 }
             }
         });
