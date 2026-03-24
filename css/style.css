@@ -18,6 +18,8 @@
 html {
     scroll-behavior: smooth;
     overflow-y: scroll; 
+    /* Ajuste para 1rem = 10px (Acessibilidade e facilidade de cálculo) */
+    font-size: 62.5%; 
 }
 
 body {
@@ -25,12 +27,12 @@ body {
     background-color: #fae5e7;
     color: #000;
     line-height: 1.6;
-    font-size: 1rem;
+    font-size: 1.6rem; /* Equivale a 16px padrão */
     overflow-x: hidden;
-    padding-top: 170px; 
+    padding-top: 17rem; 
 }
 
-/* Utilitários - O segredo para o JS funcionar */
+/* Utilitários */
 .hidden {
     display: none !important;
 }
@@ -54,8 +56,8 @@ body {
     z-index: 10000; 
     background-color: #fae5e7; 
     padding-bottom: 0.8rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-    border-bottom: 2px solid #f7b2b7;
+    box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,0.1); 
+    border-bottom: 0.2rem solid #f7b2b7;
 }
 
 header {
@@ -95,13 +97,13 @@ header {
 
 .footer-site {
     background-color: #fae5e7;
-    border-top: 1px solid #f7b2b7;
+    border-top: 0.1rem solid #f7b2b7;
     padding: 2rem 1rem 1rem;
     margin-top: 2rem;
 }
 
 .footer-container {
-    max-width: 1200px;
+    max-width: 120rem;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -118,7 +120,7 @@ header {
 .footer-info p {
     color: #888;
     font-size: 0.9rem;
-    max-width: 250px;
+    max-width: 25rem;
 }
 
 .footer-social h3 {
@@ -136,7 +138,7 @@ header {
 .social-link {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 1rem;
     text-decoration: none;
     color: #555;
     font-size: 0.9rem;
@@ -148,15 +150,15 @@ header {
 }
 
 .icon-social {
-    width: 24px;
-    height: 24px;
+    width: 2.4rem;
+    height: 2.4rem;
 }
 
 .footer-copyright {
     text-align: center;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #eee;
+    border-top: 0.1rem solid #eee;
     color: #aaa;
     font-size: 0.8rem;
 }
@@ -169,7 +171,7 @@ header {
     justify-content: flex-end; 
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 1.5rem;
 }
 
 .btn-auth, #menu-user a {
@@ -178,7 +180,7 @@ header {
     font-size: 0.85rem;
     font-weight: bold;
     padding: 0.5rem 1.2rem;
-    border: 2px solid #f7b2b7;
+    border: 0.2rem solid #f7b2b7;
     border-radius: 2rem;
     background-color: #ffffff;
     transition: all 0.3s ease;
@@ -195,22 +197,22 @@ header {
     text-decoration: none;
     color: #5f5f5f;
     font-size: 0.75rem;
-    border-bottom: 1px solid transparent;
+    border-bottom: 0.1rem solid transparent;
     transition: all 0.2s;
 }
 
 .btn-auth-sair:hover {
-    border-bottom: 1px solid #5f5f5f;
+    border-bottom: 0.1rem solid #5f5f5f;
     color: #d63384;
 }
 
 .user-icon {
     font-size: 1.2rem;
     background: #fff;
-    padding: 5px;
+    padding: 0.5rem;
     border-radius: 50%;
-    border: 1px solid #f7b2b7;
-    margin-right: 5px;
+    border: 0.1rem solid #f7b2b7;
+    margin-right: 0.5rem;
 }
 
 /* ==========================================================================
@@ -219,15 +221,15 @@ header {
 
 nav {
     width: 100%;
-    max-width: 1200px; 
+    max-width: 120rem; 
     margin: 0.5rem auto 0;
     padding: 0.5rem 1.5rem;
     text-align: left;
-    border-top: 1px solid rgba(247, 178, 183, 0.3);
+    border-top: 0.1rem solid rgba(247, 178, 183, 0.3);
 }
 
 nav h1 {
-    font-size: 1.3rem; /* AJUSTE: Diminuído de 1.5rem para 1.3rem */
+    font-size: 1.3rem; 
     margin-bottom: 0.8rem;
 }
 
@@ -235,7 +237,7 @@ nav ul {
     list-style: none;
     padding: 0;
     display: flex;
-    gap: 12px;
+    gap: 1.2rem;
     flex-wrap: wrap;
 }
 
@@ -245,7 +247,7 @@ nav ul {
     font-size: 0.85rem;
     font-weight: bold;
     padding: 0.6rem 1.5rem;
-    border: 2px solid #f7b2b7;
+    border: 0.2rem solid #f7b2b7;
     border-radius: 2rem; 
     background-color: #ffffff;
     transition: all 0.3s ease;
@@ -272,18 +274,18 @@ nav ul {
 
 main {
     width: 100%;
-    max-width: 1200px;
+    max-width: 120rem;
     margin: 0 auto;
 }
 
 section {
     padding: 1rem 1.5rem;
     margin-bottom: 1rem;
-    scroll-margin-top: 180px; 
+    scroll-margin-top: 18rem; 
 }
 
 section h2 {
-    font-size: 1.3rem; /* AJUSTE: Diminuído para títulos como "Cookies" ou "Nossos Produtos" */
+    font-size: 1.3rem; 
     margin-bottom: 1rem;
 }
 
@@ -291,7 +293,7 @@ section h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 300px); 
+    min-height: calc(100vh - 30rem); 
     padding: 2rem;
 }
 
@@ -299,16 +301,16 @@ section h2 {
     background: #ffffff;
     padding: 2.5rem;
     border-radius: 1.5rem;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    box-shadow: 0 0.8rem 2.4rem rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 400px;
+    max-width: 40rem;
     text-align: center;
-    border: 1px solid #f7b2b7;
+    border: 0.1rem solid #f7b2b7;
 }
 
 .login-box h2 {
     margin-bottom: 1.5rem;
-    font-size: 1.25rem; /* Ajuste leve */
+    font-size: 1.25rem;
     color: #333;
 }
 
@@ -316,7 +318,7 @@ section h2 {
     width: 100%;
     padding: 0.9rem;
     margin-bottom: 1.2rem;
-    border: 1px solid #ccc;
+    border: 0.1rem solid #ccc;
     border-radius: 0.8rem;
     font-family: 'keepcalm', sans-serif;
     font-size: 0.9rem;
@@ -332,7 +334,7 @@ section h2 {
 #auth-message {
     min-height: 1.2rem;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 1rem;
     font-size: 0.85rem;
 }
 
@@ -347,7 +349,7 @@ section h2 {
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 0.6rem;
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     transition: all 0.2s ease;
 }
 
@@ -361,39 +363,8 @@ section h2 {
 }
 
 /* ==========================================================================
-   7. RODAPÉ (FOOTER)
+   7. BOTÕES E INTERAÇÃO
    ========================================================================== */
-
-footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    background-color: #fae5e7;
-    border-top: 1px solid rgba(247, 178, 183, 0.3);
-}
-
-.contato h3 {
-    margin-bottom: 1.5rem;
-}
-
-.social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.8rem;
-}
-
-.img-social {
-    width: 1.4rem;
-    margin-right: 0.5rem;
-}
-
-.social-link a {
-    color: #d63384;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* --- ADIÇÕES PARA O FUNCIONAMENTO DO CARRINHO E LOGIN --- */
 
 .btn-comprar {
     margin-top: 1rem;
@@ -414,10 +385,6 @@ footer {
     transform: scale(1.05);
 }
 
-.btn-comprar:active {
-    transform: scale(0.95);
-}
-
 .sabor-preco {
     color: #d63384;
     font-weight: bold;
@@ -428,17 +395,17 @@ footer {
 /* --- ÍCONE FLUTUANTE DO CARRINHO --- */
 .carrinho-flutuante {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 2rem;
+    right: 2rem;
     background-color: #ffffff;
-    border: 2px solid #d63384;
-    border-radius: 50px;
-    padding: 10px 20px;
+    border: 0.2rem solid #d63384;
+    border-radius: 5rem;
+    padding: 1rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.2);
     cursor: pointer;
     z-index: 9999;
     transition: transform 0.3s ease;
@@ -446,29 +413,13 @@ footer {
     color: #333;
 }
 
-.carrinho-flutuante:hover {
-    transform: scale(1.1);
-    background-color: #fff2f3;
-}
-
-.carrinho-info {
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-align: center;
-}
-
 .carrinho-qtd {
     background-color: #d63384;
     color: white;
     border-radius: 50%;
-    padding: 2px 8px;
+    padding: 0.2rem 0.8rem;
     font-size: 0.8rem;
-    margin-bottom: 2px;
-}
-
-.carrinho-valor {
-    color: #d63384;
-    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
 }
 
 /* ==========================================================================
@@ -478,14 +429,14 @@ footer {
 /* Carrinho */
 .conteudo-carrinho {
     padding-top: 0 !important;
-    margin-top: -10px;
+    margin-top: -1rem;
 }
 
 .secao-checkout {
     background: white;
     padding: 1.5rem; 
     border-radius: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.05);
     margin-top: 0.5rem;
 }
 
@@ -494,108 +445,24 @@ footer {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid #f7b2b7;
-}
-
-.item-nome {
-    display: block;
-    font-weight: bold;
-    color: #333;
-}
-
-.item-preco-unit {
-    font-size: 0.85rem;
-    color: #d63384;
-}
-
-.item-controles {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.item-controles button {
-    background: #fff;
-    border: 1px solid #f7b2b7;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.item-controles button:hover {
-    background: #f7b2b7;
-}
-
-.btn-remover {
-    border: none !important;
-    background: transparent !important;
-    margin-left: 10px;
-}
-
-.resumo-pedido {
-    margin-top: 1.5rem;
-    text-align: right;
-    border-top: 2px solid #d63384;
-    padding-top: 1rem;
-}
-
-.linha-total {
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-}
-
-.btn-limpar {
-    background: none;
-    border: none;
-    color: #5f5f5f;
-    text-decoration: underline;
-    margin-top: 0.5rem;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-
-.carrinho-vazio {
-    text-align: center;
-    padding: 3rem;
-    color: #5f5f5f;
-}
-
-.item-visual {
-    display: flex;
-    align-items: center;
-    gap: 15px; 
-    flex: 1; 
-}
-
-.item-foto-carrinho {
-    width: 80px; 
-    height: 80px;
-    object-fit: cover; 
-    border-radius: 10px; 
-    border: 1px solid #f7b2b7;
-}
-
-.item-info {
-    display: flex;
-    flex-direction: column;
+    border-bottom: 0.1rem solid #f7b2b7;
 }
 
 .qtd-botoes {
     display: flex;
     align-items: center;
-    gap: 8px;
-    border: 1px solid #f7b2b7;
-    border-radius: 20px;
-    padding: 2px;
+    gap: 0.8rem;
+    border: 0.1rem solid #f7b2b7;
+    border-radius: 2rem;
+    padding: 0.2rem;
 }
 
 .qtd-botoes button {
     background: #fff;
     border: none;
     border-radius: 50%;
-    width: 25px;
-    height: 25px;
+    width: 2.5rem;
+    height: 2.5rem;
     cursor: pointer;
     font-weight: bold;
     color: #d63384;
@@ -604,66 +471,151 @@ footer {
     justify-content: center;
 }
 
-.qtd-botoes button:hover {
-    background: #f7b2b7;
-    color: white;
+/* Admin */
+.admin-body { 
+    background-color: #fae5e7; 
+    padding-bottom: 5rem;
+    padding-top: 0 !important; 
 }
 
-.item-subtotal {
-    font-weight: bold;
-    color: #333;
-    min-width: 80px; 
-    text-align: right;
+.form-admin, .lista-admin { 
+    padding: 1.5rem; 
+    max-width: 80rem; 
+    margin: 1rem auto; 
+    background: white; 
+    border-radius: 1.5rem; 
+    box-shadow: 0 0.4rem 1.5rem rgba(0,0,0,0.1); 
+    border: 0.1rem solid #f7b2b7;
 }
 
-/* FORMULÁRIO DE CHECKOUT */
-.checkout-form {
-    text-align: left;
-    margin-bottom: 2rem;
+.form-admin h1, .lista-admin h2 { 
+    text-align: center; 
+    color: #333; 
+    margin-bottom: 1.5rem; 
+    font-size: 1.4rem;
+}
+
+.lista-admin table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 1rem; 
+}
+
+.lista-admin th, .lista-admin td { 
+    padding: 1.2rem; 
+    border-bottom: 0.1rem solid #eee; 
+    text-align: left; 
+}
+
+.img-tabela { 
+    width: 5rem; 
+    height: 5rem; 
+    object-fit: cover; 
+    border-radius: 0.5rem; 
+    border: 0.1rem solid #f7b2b7; 
+}
+
+/* Pedidos */
+.container-pedidos {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.card-pedido { 
+    background: #fff; 
+    border-radius: 1.2rem; 
+    padding: 1.5rem; 
+    margin-bottom: 1rem; 
+    border-left: 0.6rem solid #d63384; 
+    box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.05); 
+}
+
+/* ==========================================================================
+   9. SISTEMA DE NOTIFICAÇÕES (TOASTS)
+   ========================================================================== */
+
+.toast-container {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20000;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
 }
 
-.checkout-form h3 {
-    color: #d63384;
-    font-size: 1rem; /* Ajustado */
-    margin-bottom: 0.5rem;
-}
-
-/* CHECKOUT, CADASTRO E PERFIL */
-
-.checkout-form input, 
-.checkout-form select,
-.login-box input,
-.user-info input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #f7b2b7; 
-    border-radius: 8px;
+.toast {
+    background: #ffffff;
+    color: #333;
+    padding: 1.2rem 2.5rem;
+    border-radius: 5rem;
+    border: 0.2rem solid #d63384;
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.15);
     font-family: 'keepcalm', sans-serif;
-    font-size: 1rem;
-    outline: none;
-    background-color: #fff;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 2.5s forwards;
+}
+
+/* ==========================================================================
+   10. PÁGINA DE PERFIL E FIDELIDADE
+   ========================================================================== */
+
+.conteudo-perfil {
+    margin-top: 0 !important; 
+    padding-top: 0 !important;
+}
+
+.perfil-container {
+    max-width: 60rem;
+    margin: 0.5rem auto 4rem; 
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 2rem;
+    border: 0.2rem solid #f7b2b7;
+    box-shadow: 0 1rem 2.5rem rgba(247, 178, 183, 0.2);
+    text-align: center;
+}
+
+.perfil-container h2 {
+    color: #d63384;
+    margin-bottom: 2.5rem;
+    font-size: 1.6rem;
+}
+
+.user-info input, .campo-perfil input, .checkout-form input {
+    width: 100%;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    border: 0.15rem solid #f7b2b7;
+    border-radius: 1.2rem;
+    font-family: 'keepcalm', sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.card-fidelidade {
+    background: linear-gradient(135deg, #d63384, #f7b2b7);
+    color: white;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    margin: 0 auto 0.5rem; 
+    max-width: 60rem;
+    text-align: center;
+    box-shadow: 0 0.4rem 1.5rem rgba(214, 51, 132, 0.2);
+}
+
+.card-fidelidade strong { 
+    font-size: 2rem; 
     display: block;
+    margin: 0.5rem 0;
 }
 
-.checkout-form input:focus, 
-.login-box input:focus,
-.user-info input:focus {
-    border-color: #d63384;
-    background-color: #fff2f3;
-    box-shadow: 0 0 5px rgba(214, 51, 132, 0.2);
-}
-
-.grid-checkout, .grid-campos {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-}
-
-.btn-prosseguir, .btn-finalizar-wpp {
+/* FINALIZAÇÃO WHATSAPP */
+.btn-finalizar-wpp {
     background-color: #25d366 !important;
     color: white !important;
     border: none;
@@ -674,207 +626,9 @@ footer {
     font-size: 1.1rem;
     width: 100%;
     cursor: pointer;
-    transition: 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 1rem;
     margin-top: 1rem;
-}
-
-/* Admin */
-.admin-body { 
-    background-color: #fae5e7; 
-    padding-bottom: 50px;
-    padding-top: 0 !important; 
-}
-
-.form-admin, .lista-admin { 
-    padding: 1.5rem; max-width: 800px; margin: 1rem auto; 
-    background: white; border-radius: 1.5rem; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #f7b2b7;
-}
-
-.form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; font-size: 1.4rem;}
-
-.form-admin input, .form-admin textarea, .form-admin select { 
-    width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
-    border: 1px solid #ccc; border-radius: 8px; font-family: 'keepcalm', sans-serif; 
-}
-
-.btn-salvar-admin { 
-    background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
-    cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;
-    font-family: 'keepcalm', sans-serif; transition: 0.3s;
-}
-
-.btn-salvar-admin:hover { background-color: #d63384; color: white; }
-
-.lista-admin table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-.lista-admin th, .lista-admin td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-
-.img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; border: 1px solid #f7b2b7; }
-
-.btn-excluir { background: #ff4d4d; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 4px; }
-
-.badge-status { font-size: 0.7rem; padding: 4px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
-.status-Pendente { color: #f39c12; background: #fff9e6; }
-.status-Entregue { color: #27ae60; background: #e6ffed; }
-
-/* Pedidos */
-.container-pedidos {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-.card-pedido { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 6px solid #d63384; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-.preview-foto { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px dashed #f7b2b7; margin: 10px auto; display: none; }
-
-/* ==========================================================================
-   9. SISTEMA DE NOTIFICAÇÕES (TOASTS)
-   ========================================================================== */
-
-.toast-container {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.toast {
-    background: #ffffff;
-    color: #333;
-    padding: 12px 25px;
-    border-radius: 50px;
-    border: 2px solid #d63384;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 2.5s forwards;
-}
-
-.toast-icon {
-    font-size: 1.2rem;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(100%); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeOut {
-    to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
-}
-
-/* ==========================================================================
-   10. PÁGINA DE PERFIL DO USUÁRIO
-   ========================================================================== */
-
-.conteudo-perfil {
-    margin-top: 0 !important; 
-    padding-top: 0 !important;
-}
-
-.perfil-container {
-    max-width: 600px;
-    margin: 5px auto 40px; 
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 20px;
-    border: 2px solid #f7b2b7;
-    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);
-    text-align: center;
-}
-
-.perfil-container h2 {
-    color: #d63384;
-    margin-bottom: 25px;
-    font-size: 1.6rem; /* Ajustado */
-}
-
-.user-info, .campo-perfil {
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-.user-info label, .campo-perfil label {
-    display: block;
-    font-size: 0.85rem;
-    color: #d63384;
-    font-weight: bold;
-    margin: 0 0 8px 5px;
-}
-
-.user-info input, .campo-perfil input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1.5px solid #f7b2b7;
-    border-radius: 12px;
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.95rem;
-    color: #333;
-    transition: all 0.3s ease;
-}
-
-.grid-campos {
-    display: flex;
-    gap: 10px;
-    text-align: left;
-}
-
-.grid-campos .campo-perfil {
-    flex: 1;
-}
-
-#saudacao {
-    margin-bottom: 2px !important; 
-    color: #d63384;
-    text-align: center;
-    font-size: 1.4rem;
-}
-
-#btn-salvar, .btn-acao-perfil {
-    width: 100%;
-    padding: 15px;
-    background-color: #d63384;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-family: 'keepcalm', sans-serif;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
-}
-
-.card-fidelidade {
-    background: linear-gradient(135deg, #d63384, #f7b2b7);
-    color: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin: 0 auto 5px; 
-    max-width: 600px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
-}
-
-.card-fidelidade h3 { 
-    font-size: 1rem;
-    margin-bottom: 5px; 
-}
-
-.card-fidelidade strong { 
-    font-size: 2rem; 
-    display: block;
-    margin: 5px 0;
 }
