@@ -37,6 +37,22 @@
         .btn-entregue { background: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8rem; margin-top: 10px; }
         .btn-acao-user { cursor: pointer; background: #fff; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; transition: 0.2s; margin-right: 5px; }
         .btn-acao-user:hover { background: #f9f9f9; border-color: #bbb; }
+
+        /* Estilo para o Switch de Status da Loja */
+        .status-loja-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 2rem auto;
+            border: 2px solid #d63384;
+        }
+        .status-indicador { font-weight: bold; padding: 8px 15px; border-radius: 20px; }
+        .aberta { background: #e8f5e9; color: #2e7d32; }
+        .fechada { background: #ffebee; color: #c62828; }
     </style>
 </head>
 <body class="admin-body">
@@ -59,6 +75,17 @@
     </div>
 
     <main id="conteudo-protegido" style="margin-top: 150px;">
+        
+        <div class="status-loja-container">
+            <div>
+                <h3 style="margin:0;">Status da Loja</h3>
+                <p style="margin:5px 0 0 0; font-size: 0.9rem; color: #666;">Controle se os clientes podem fazer pedidos.</p>
+            </div>
+            <div style="text-align: right;">
+                <span id="label-status" class="status-indicador fechada">Carregando...</span>
+                <button id="btn-toggle-loja" class="btn-acao-user" style="display:block; margin-top:10px; width:100%;">Alterar Status</button>
+            </div>
+        </div>
         
         <div class="form-admin">
             <h1 id="titulo-form">Adicionar Novo Sabor</h1>
@@ -125,7 +152,7 @@
 
     <script type="module">
         import { db, auth } from "./firebase-config.js";
-        import { collection, addDoc, getDocs, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, getDocs, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const formProduto = document.getElementById('form-produto');
         const formBairro = document.getElementById('form-bairro');
@@ -133,6 +160,33 @@
         const tabelaBairros = document.getElementById('tabela-bairros');
         const tabelaUsuarios = document.getElementById('tabela-usuarios');
         const conteudoProtegido = document.getElementById('conteudo-protegido');
+
+        // --- LÓGICA STATUS DA LOJA ---
+        const labelStatus = document.getElementById('label-status');
+        const btnToggleLoja = document.getElementById('btn-toggle-loja');
+        const configRef = doc(db, "configuracoes", "status_loja");
+
+        function monitorarStatusLoja() {
+            onSnapshot(configRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const aberta = docSnap.data().aberta;
+                    labelStatus.innerText = aberta ? "LOJA ABERTA" : "LOJA FECHADA";
+                    labelStatus.className = `status-indicador ${aberta ? 'aberta' : 'fechada'}`;
+                    btnToggleLoja.innerText = aberta ? "Fechar Loja" : "Abrir Loja";
+                } else {
+                    // Inicializa o documento caso não exista no Firebase
+                    setDoc(configRef, { aberta: true });
+                }
+            });
+        }
+
+        btnToggleLoja.addEventListener('click', async () => {
+            const docSnap = await getDoc(configRef);
+            if (docSnap.exists()) {
+                const statusAtual = docSnap.data().aberta;
+                await updateDoc(configRef, { aberta: !statusAtual });
+            }
+        });
 
         // --- PRODUTOS ---
         async function salvarProduto(e) {
@@ -202,7 +256,7 @@
             });
         }
 
-        // --- USUÁRIOS (COM TRAVA DE SEGURANÇA) ---
+        // --- USUÁRIOS ---
         function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
@@ -314,6 +368,7 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 conteudoProtegido.style.display = "block";
+                monitorarStatusLoja(); // Inicia o monitoramento da loja
                 carregarProdutos();
                 carregarBairros();
                 carregarUsuarios();
