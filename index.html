@@ -10,13 +10,40 @@
         .loading-msg { text-align: center; color: #888; padding: 20px; width: 100%; }
         .sabor-foto { object-fit: cover; }
         
-        /* Ajuste de espaçamento para remover o branco entre o header e os produtos */
-        main { margin-top: 80px; } /* Ajuste este valor se o seu header for mais alto/baixo */
+        /* Ajuste de espaçamento para o conteúdo começar após o header */
+        main { margin-top: 80px; } 
         section { padding: 1rem 0; }
-        #secao-cookies, #secao-shakes { display: none; } /* Começam escondidas e aparecem via JS se houver itens */
+        #secao-cookies, #secao-shakes { display: none; }
+
+        /* Estilo da tela de Loja Fechada */
+        #aviso-fechado {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        #aviso-fechado h1 { color: #d63384; margin-bottom: 10px; }
+        #aviso-fechado p { color: #555; font-size: 1.1rem; }
     </style>
 </head>
 <body>
+
+    <div id="aviso-fechado" class="hidden">
+        <img src="img/logos/ninkos_logo.png" alt="Logo" style="max-width: 180px; margin-bottom: 20px;">
+        <h1>Loja Fechada no Momento! 😴</h1>
+        <p>Estamos preparando novos cookies artesanais para você.</p>
+        <p>Fique de olho no nosso Instagram para saber quando abrirmos!</p>
+        <a href="https://www.instagram.com/ninkoscookies/" target="_blank" style="margin-top: 20px; color: #d63384; font-weight: bold; text-decoration: none;">@ninkoscookies</a>
+    </div>
 
     <a href="carrinho.html" class="carrinho-flutuante" id="carrinho-btn">
         <div class="carrinho-qtd" id="cart-count">0</div>
@@ -55,9 +82,27 @@
 
     <script type="module">
         import { auth, db } from "./firebase-config.js";
-        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, onSnapshot, query, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
+        // --- MONITORAMENTO DO STATUS DA LOJA ---
+        onSnapshot(doc(db, "configuracoes", "status_loja"), (docSnap) => {
+            const aviso = document.getElementById('aviso-fechado');
+            const btnCarrinho = document.getElementById('carrinho-btn');
+            
+            if (docSnap.exists()) {
+                const aberta = docSnap.data().aberta;
+                if (!aberta) {
+                    aviso.classList.remove('hidden');
+                    if(btnCarrinho) btnCarrinho.style.display = 'none';
+                } else {
+                    aviso.classList.add('hidden');
+                    if(btnCarrinho) btnCarrinho.style.display = 'flex';
+                }
+            }
+        });
+
+        // --- CARREGAMENTO DE PRODUTOS ---
         const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
 
         onSnapshot(q, (snapshot) => {
@@ -72,8 +117,8 @@
             if(containerCookies) containerCookies.innerHTML = "";
             if(containerShakes) containerShakes.innerHTML = "";
 
-            snapshot.forEach((doc) => {
-                const item = doc.data();
+            snapshot.forEach((docSnap) => {
+                const item = docSnap.data();
                 const precoNum = parseFloat(item.preco) || 0;
                 const imgUrl = item.imagemUrl || 'img/logos/ninkos_logo.png';
 
@@ -84,29 +129,22 @@
                             <h3>${item.nome}</h3>
                             <p class="sabor-descricao">${item.descricao || 'Sem descrição.'}</p>
                             <p class="sabor-preco"><strong>R$ ${precoNum.toFixed(2)}</strong></p>
-                            <button class="btn-comprar" data-id="${doc.id}" data-nome="${item.nome}" data-preco="${precoNum}" data-img="${imgUrl}">Adicionar 🛒</button>
+                            <button class="btn-comprar" data-id="${docSnap.id}" data-nome="${item.nome}" data-preco="${precoNum}" data-img="${imgUrl}">Adicionar 🛒</button>
                         </div>
                     </article>`;
 
                 if (item.categoria === "milk-shakes") {
-                    if(containerShakes) {
-                        containerShakes.innerHTML += cardHTML;
-                        temShakes = true;
-                    }
+                    if(containerShakes) { containerShakes.innerHTML += cardHTML; temShakes = true; }
                 } else {
-                    if(containerCookies) {
-                        containerCookies.innerHTML += cardHTML;
-                        temCookies = true;
-                    }
+                    if(containerCookies) { containerCookies.innerHTML += cardHTML; temCookies = true; }
                 }
             });
 
-            // Exibe ou esconde as seções baseado na existência de produtos
-            secCookies.style.display = temCookies ? "block" : "none";
-            secShakes.style.display = temShakes ? "block" : "none";
+            if(secCookies) secCookies.style.display = temCookies ? "block" : "none";
+            if(secShakes) secShakes.style.display = temShakes ? "block" : "none";
         });
 
-        // Lógica do Carrinho
+        // --- LÓGICA DO CARRINHO ---
         let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
         function atualizarIconeCarrinho() {
             const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
@@ -144,19 +182,19 @@
     </script>
 
     <footer class="footer-site">
-            <div class="footer-social">
-                <h3>Nossas Redes</h3>
-                <div class="social-icons-container">
-                    <a href="https://www.instagram.com/ninkoscookies/" target="_blank" class="social-link">
-                        <img src="img/logos/instagramLogo.png" alt="Instagram" class="icon-social">
-                        <span>@ninkoscookies</span>
-                    </a>
-                    <a href="https://wa.me/+558299608947" target="_blank" class="social-link">
-                        <img src="img/logos/whatsappLogo.png" alt="WhatsApp" class="icon-social">
-                        <span>WhatsApp</span>
-                    </a>
-                </div>
+        <div class="footer-social">
+            <h3>Nossas Redes</h3>
+            <div class="social-icons-container">
+                <a href="https://www.instagram.com/ninkoscookies/" target="_blank" class="social-link">
+                    <img src="img/logos/instagramLogo.png" alt="Instagram" class="icon-social">
+                    <span>@ninkoscookies</span>
+                </a>
+                <a href="https://wa.me/+558299608947" target="_blank" class="social-link">
+                    <img src="img/logos/whatsappLogo.png" alt="WhatsApp" class="icon-social">
+                    <span>WhatsApp</span>
+                </a>
             </div>
+        </div>
         <div class="footer-copyright">
             <p>&copy; 2026 Ninko's Cookies. Todos os direitos reservados.</p>
         </div>
