@@ -733,3 +733,112 @@ footer {
     margin: 10px 0 5px 5px;
     text-align: left;
 }
+
+/* ==========================================================================
+   MELHORIAS VISUAIS EXCLUSIVAS PARA O PERFIL.HTML
+   ========================================================================== */
+
+/* Ajusta o título e a saudação */
+.conteudo-perfil h2 {
+    color: #d63384;
+    margin-bottom: 10px;
+}
+
+.conteudo-perfil p {
+    color: #5f5f5f;
+    margin-bottom: 20px;
+}
+
+/* O contêiner principal (info-box) */
+.perfil-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    border: 1px solid #f7b2b7;
+    box-shadow: 0 10px 25px rgba(214, 51, 132, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaço entre os campos */
+}
+
+/* Estiliza cada bloco de campo injetado pelo JS */
+.campo-perfil {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.campo-perfil label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #d63384;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    text-transform: uppercase;
+}
+
+/* Estiliza os inputs injetados */
+.campo-perfil input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #f7b2b7;
+    border-radius: 10px;
+    font-family: 'keepcalm', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Efeito de foco ao clicar no campo */
+.campo-perfil input:focus {
+    border-color: #d63384;
+    background-color: #fff2f3;
+    box-shadow: 0 0 0 4px rgba(214, 51, 132, 0.1);
+}
+
+/* Ajuste específico para os campos de Número e Complemento que estão na mesma linha */
+.campo-perfil[style*="display: flex"] {
+    gap: 10px;
+}
+
+.campo-perfil[style*="display: flex"] input {
+    margin-top: 0;
+}
+
+/* Estiliza o botão de salvar para combinar com o resto do site */
+#btn-salvar {
+    background-color: #d63384 !important;
+    color: white !important;
+    border: none;
+    border-radius: 50px;
+    font-family: 'keepcalm', sans-serif;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(214, 51, 132, 0.2);
+}
+
+#btn-salvar:hover:not(:disabled) {
+    background-color: #c02d76 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(214, 51, 132, 0.3);
+}
+
+#btn-salvar:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 600px) {
+    .perfil-container {
+        padding: 1.5rem;
+    }
+    
+    .campo-perfil[style*="display: flex"] {
+        flex-direction: column !important;
+    }
+}

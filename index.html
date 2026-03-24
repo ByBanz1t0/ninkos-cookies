@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ninko's Cookies | Home & Cardápio</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hidden { display: none !important; }
+        .loading-msg { text-align: center; color: #888; padding: 20px; width: 100%; }
+    </style>
 </head>
 <body>
 
@@ -27,11 +31,9 @@
             </div>
 
             <div class="header-side auth-area">
-                <div id="menu-login">
-                    <a href="login.html" class="btn-auth">Entrar</a>
+                <div id="menu-user">
+                    <p style="font-size: 0.7rem; color: #f7b2b7;">Carregando...</p>
                 </div>
-
-                <div id="menu-user" class="hidden"></div>
 
                 <div id="menu-logout" class="hidden">
                     <a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a>
@@ -89,22 +91,10 @@
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { auth, db } from "./firebase-config.js";
+        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
-            authDomain: "ninkos-cookies.firebaseapp.com",
-            projectId: "ninkos-cookies",
-            storageBucket: "ninkos-cookies.firebasestorage.app",
-            messagingSenderId: "1065814927466",
-            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // 1. RENDERIZAÇÃO DOS PRODUTOS
+        // 1. CARREGAR PRODUTOS DO FIRESTORE
         const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
 
         onSnapshot(q, (snapshot) => {
@@ -144,6 +134,15 @@
                     if(containerCookies) containerCookies.innerHTML += cardHTML;
                 }
             });
+
+            // Se a coleção estiver vazia, avisa o usuário
+            if (snapshot.empty) {
+                if(containerCookies) containerCookies.innerHTML = "<p class='loading-msg'>Nenhum cookie cadastrado no banco.</p>";
+                if(containerShakes) containerShakes.innerHTML = "<p class='loading-msg'>Nenhum shake cadastrado no banco.</p>";
+            }
+        }, (error) => {
+            console.error("Erro ao carregar produtos:", error);
+            document.querySelectorAll('.loading-msg').forEach(m => m.innerText = "Erro ao conectar com o banco de dados.");
         });
 
         // 2. LÓGICA DO CARRINHO
@@ -154,22 +153,24 @@
             const cartTotal = document.getElementById('cart-total');
             const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
             const valorTotal = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+            
             if(cartCount) cartCount.innerText = totalItens;
             if(cartTotal) cartTotal.innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
+        // Função global para ser chamada pelo clique
         window.adicionarAoCarrinho = function(id, nome, preco, imagemUrl) {
-            const precoNum = parseFloat(preco);
             const index = carrinho.findIndex(c => c.id === id);
             if (index > -1) {
                 carrinho[index].quantidade += 1;
             } else {
-                carrinho.push({ id, nome, preco: precoNum, quantidade: 1, imagemUrl: imagemUrl });
+                carrinho.push({ id, nome, preco: parseFloat(preco), quantidade: 1, imagemUrl: imagemUrl });
             }
             localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
             atualizarIconeCarrinho();
         };
 
+        // Evento de clique nos botões (Delegação de evento para funcionar com itens dinâmicos)
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-comprar')) {
                 const btn = e.target;
@@ -185,19 +186,21 @@
         atualizarIconeCarrinho();
     </script>
 
-    <script type="module" src="js/auth-control.js"></script>
+    <script type="module" src="auth-control.js"></script>
 
     <script>
-        // Scroll suave
+        // Scroll suave (Mantive no script normal pois não usa Firebase)
         document.querySelectorAll('.botao-navegacao').forEach(botao => {
             botao.addEventListener('click', function(e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 const targetSection = document.querySelector(targetId);
-                window.scrollTo({
-                    top: targetSection.offsetTop - 240, 
-                    behavior: 'smooth'
-                });
+                if(targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 240, 
+                        behavior: 'smooth'
+                    });
+                }
                 document.querySelectorAll('.botao-navegacao').forEach(b => b.classList.remove('ativo'));
                 this.classList.add('ativo');
             });

@@ -26,7 +26,7 @@
         </header>
     </div>
 
-    <main class="conteudo-carrinho">
+    <main class="conteudo-carrinho" style="margin-top: 150px;">
         <section class="secao-checkout">
             <h2>Seu Pedido 🛒</h2>
             
@@ -43,7 +43,10 @@
                 <div class="checkout-form">
                     <h3>🏠 Dados para Entrega:</h3>
                     <input type="text" id="cliente-nome" placeholder="Seu Nome Completo" required>
+                    <input type="tel" id="cliente-telefone" placeholder="Seu WhatsApp (ex: 82999999999)" required>
+                    
                     <input type="text" id="cliente-endereco" placeholder="Endereço (Rua, Número, Bairro)" required>
+                    
                     <select id="cliente-pagamento" required>
                         <option value="">Forma de Pagamento</option>
                         <option value="Pix">Pix</option>
@@ -52,17 +55,39 @@
                     </select>
                 </div>
                 
-                <button class="btn-prosseguir" onclick="enviarParaWhatsApp()">
+                <button class="btn-prosseguir" id="btn-finalizar">
                     Finalizar e Enviar para o WhatsApp 🚀
                 </button>
-                <button class="btn-limpar" onclick="limparCarrinho()">Limpar Carrinho</button>
+                <button class="btn-limpar" id="btn-limpar-cart">Limpar Carrinho</button>
             </div>
         </section>
     </main>
 
-    <script>
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
         let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
 
+        // 1. BUSCA DADOS DO USUÁRIO PARA O CHECKOUT
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    if(d.nome) document.getElementById('cliente-nome').value = d.nome;
+                    if(d.telefone) document.getElementById('cliente-telefone').value = d.telefone; // Puxa o telefone do Firestore
+                    
+                    if(d.rua) {
+                        const enderecoCompleto = `${d.rua}, ${d.numero || 'S/N'} - ${d.bairro || ''}`;
+                        document.getElementById('cliente-endereco').value = enderecoCompleto;
+                    }
+                }
+            }
+        });
+
+        // 2. RENDERIZAÇÃO E LÓGICA DO CARRINHO
         function renderizarCarrinho() {
             const container = document.getElementById('lista-carrinho');
             const resumo = document.getElementById('resumo-area');
@@ -93,12 +118,12 @@
                         </div>
                         <div class="item-controles">
                             <div class="qtd-botoes">
-                                <button onclick="mudarQtd(${index}, -1)">-</button>
+                                <button class="btn-qtd" data-index="${index}" data-delta="-1">-</button>
                                 <span class="qtd-display">${item.quantidade}</span>
-                                <button onclick="mudarQtd(${index}, 1)">+</button>
+                                <button class="btn-qtd" data-index="${index}" data-delta="1">+</button>
                             </div>
                             <span class="item-subtotal">R$ ${subtotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
-                            <button class="btn-remover" onclick="removerItem(${index})">🗑️</button>
+                            <button class="btn-remover-item" data-index="${index}" style="background:none; border:none; cursor:pointer;">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -107,39 +132,43 @@
             totalDisplay.innerText = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        function mudarQtd(index, delta) {
-            carrinho[index].quantidade += delta;
-            if (carrinho[index].quantidade <= 0) {
-                removerItem(index);
-            } else {
+        window.salvarEAtualizar = () => {
+            localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
+            renderizarCarrinho();
+        };
+
+        document.addEventListener('click', (e) => {
+            if(e.target.classList.contains('btn-qtd')) {
+                const index = e.target.dataset.index;
+                const delta = parseInt(e.target.dataset.delta);
+                carrinho[index].quantidade += delta;
+                if (carrinho[index].quantidade <= 0) {
+                    carrinho.splice(index, 1);
+                }
                 salvarEAtualizar();
             }
-        }
+            if(e.target.classList.contains('btn-remover-item')) {
+                carrinho.splice(e.target.dataset.index, 1);
+                salvarEAtualizar();
+            }
+        });
 
-        function removerItem(index) {
-            carrinho.splice(index, 1);
-            salvarEAtualizar();
-        }
-
-        function limparCarrinho() {
-            if(confirm("Deseja realmente esvaziar seu carrinho?")) {
+        document.getElementById('btn-limpar-cart').onclick = () => {
+            if(confirm("Esvaziar carrinho?")) {
                 carrinho = [];
                 salvarEAtualizar();
             }
-        }
+        };
 
-        function salvarEAtualizar() {
-            localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
-            renderizarCarrinho();
-        }
-
-        function enviarParaWhatsApp() {
+        // 3. ENVIO PARA WHATSAPP E LIMPEZA AUTOMÁTICA
+        document.getElementById('btn-finalizar').onclick = () => {
             const nome = document.getElementById('cliente-nome').value.trim();
+            const telefone = document.getElementById('cliente-telefone').value.trim(); // Captura o telefone
             const endereco = document.getElementById('cliente-endereco').value.trim();
             const pagamento = document.getElementById('cliente-pagamento').value;
 
-            if (!nome || !endereco || !pagamento) {
-                alert("Por favor, preencha todos os campos para a entrega! 🍪");
+            if (!nome || !telefone || !endereco || !pagamento) {
+                alert("Preencha todos os dados de entrega e contato! 🍪");
                 return;
             }
 
@@ -149,28 +178,30 @@
             carrinho.forEach(item => {
                 const subtotal = item.preco * item.quantidade;
                 totalGeral += subtotal;
-                mensagemProdutos += `• *${item.quantidade}x* ${item.nome} - R$ ${subtotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n`;
+                mensagemProdutos += `• *${item.quantidade}x* ${item.nome} (R$ ${subtotal.toFixed(2)})\n`;
             });
-
-            const totalFormatado = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             const textoWhatsApp = encodeURIComponent(
                 `*NOVO PEDIDO - NINKO'S COOKIES* 🍪\n\n` +
                 `👤 *Cliente:* ${nome}\n` +
+                `📱 *WhatsApp:* ${telefone}\n` + // Telefone incluído na mensagem
                 `📍 *Endereço:* ${endereco}\n` +
                 `💳 *Pagamento:* ${pagamento}\n\n` +
-                `*ÍTENS DO PEDIDO:*\n${mensagemProdutos}\n` +
-                `*TOTAL:* ${totalFormatado}\n\n` +
-                `_Aguardando confirmação do pedido..._`
+                `*ÍTENS:*\n${mensagemProdutos}\n` +
+                `*TOTAL:* R$ ${totalGeral.toFixed(2)}\n\n` +
+                `_Pedido enviado via site Ninko's Cookies_`
             );
 
-            const numeroWhats = "5582999608947"; 
-            window.open(`https://wa.me/${numeroWhats}?text=${textoWhatsApp}`, '_blank');
-        }
+            // Abre o WhatsApp
+            window.open(`https://wa.me/5582999608947?text=${textoWhatsApp}`, '_blank');
 
-        // Inicializa a tela
+            // LIMPEZA AUTOMÁTICA DO CARRINHO APÓS ENVIAR
+            carrinho = [];
+            salvarEAtualizar();
+            alert("Pedido enviado com sucesso! Seu carrinho foi limpo. 🍪✨");
+        };
+
         renderizarCarrinho();
     </script>
-    <script src="carrinho.js"></script>
 </body>
 </html>

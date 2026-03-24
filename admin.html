@@ -6,173 +6,296 @@
     <title>Painel Admin - Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Estilos específicos para o formulário de administração */
-        .admin-body { background-color: #fae5e7; }
-        
-        .form-admin { 
-            padding: 2rem; 
-            max-width: 500px; 
-            margin: 2rem auto; 
-            background: white; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .admin-body { background-color: #fae5e7; padding-bottom: 50px; }
+        .form-admin, .lista-admin { 
+            padding: 2rem; max-width: 800px; margin: 2rem auto; 
+            background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        
-        .form-admin h1 { 
-            margin-bottom: 1.5rem; 
-            font-size: 1.5rem; 
-            text-align: center; 
-            color: #000;
-        }
+        .form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
         
         input, textarea, select { 
-            width: 100%; 
-            padding: 0.8rem; 
-            margin-bottom: 1rem; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            font-family: 'keepcalm', sans-serif; 
+            width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
+            border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif; 
         }
         
         .btn-salvar { 
-            background: #fae5e7; 
-            border: 2px solid #5f5f5f; 
-            padding: 1rem; 
-            cursor: pointer; 
-            font-weight: bold; 
-            width: 100%; 
-            border-radius: 5px;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-salvar:hover { 
-            background: #fff2f3; 
-            transform: translateY(-2px); 
-        }
-        
-        .link-voltar { 
-            text-align: center; 
-            display: block; 
-            margin-top: 1.5rem; 
-            text-decoration: none; 
-            color: #5f5f5f; 
-            font-size: 0.85rem; 
+            background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
+            cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;
         }
 
-        /* Bloqueio de interface enquanto verifica login */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background-color: #f9f9f9; }
+        .img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+        
+        .btn-excluir { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .btn-excluir:hover { background: #cc0000; }
+        
         #conteudo-protegido { display: none; }
+        .hidden { display: none; }
+
+        /* Estilo para o Preview da Foto */
+        .preview-foto {
+            width: 100px; height: 100px; object-fit: cover; 
+            border-radius: 8px; border: 2px dashed #f7b2b7; margin-bottom: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body class="admin-body">
 
     <div class="menu-fixo">
         <header>
+            <div class="header-side">
+                <div id="menu-logout" class="hidden">
+                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold;">Sair</a>
+                </div>
+            </div>
+
             <div class="logo-container">
                 <a href="index.html">
-                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
+                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo">
                 </a>
             </div>
+
+            <div class="header-side auth-area">
+                <div id="menu-user"></div>
+            </div>
         </header>
-        
         <nav>
-            <h1>Painel Administrativo:</h1>
+            <h1>Painel Administrativo</h1>
             <ul>
                 <li><a href="index.html" class="botao-navegacao">Início</a></li>
-                <li><a href="cardapio.html" class="botao-navegacao">Cardápio</a></li>
-                
-                <li id="menu-login"><a href="login.html" class="botao-navegacao">Entrar</a></li>
-                <li id="menu-user" class="hidden"><a href="#" class="botao-navegacao ativo">Admin Ativo</a></li>
-                <li id="menu-logout" class="hidden"><a href="#" class="botao-navegacao">Sair</a></li>
+                <li><a href="#" class="botao-navegacao ativo">Gerenciar Tudo</a></li>
             </ul>
         </nav>
     </div>
 
-    <main id="conteudo-protegido">
+    <main id="conteudo-protegido" style="margin-top: 240px;">
         <div class="form-admin">
-            <h1>Adicionar Novo Sabor</h1>
+            <h1 id="titulo-form">Adicionar Novo Sabor</h1>
             <form id="form-produto">
-                <input type="text" id="nome" placeholder="Nome do Sabor (Ex: Pistacchio)" required>
-                <textarea id="descricao" placeholder="Descrição dos ingredientes..." required></textarea>
-                
+                <input type="hidden" id="produto-id"> 
+                <input type="text" id="nome" placeholder="Nome do Sabor" required>
+                <textarea id="descricao" placeholder="Descrição..." required></textarea>
                 <input type="text" id="preco" placeholder="Preço (Ex: 12.00)" required>
-                
-                <label for="categoria" style="font-size: 0.8rem; color: #555; display: block; margin-bottom: 5px;">Categoria:</label>
                 <select id="categoria">
                     <option value="cookies">Cookies</option>
                     <option value="milk-shakes">Milk Shakes</option>
                 </select>
-                
-                <input type="text" id="imagemUrl" placeholder="Link da Imagem (URL)">
-                
-                <button type="submit" class="btn-salvar">Salvar no Cardápio</button>
+
+                <label style="font-weight: bold; font-size: 0.9rem;">Foto do Produto:</label>
+                <input type="file" id="arquivo-foto" accept="image/*" style="border:none; padding: 10px 0;">
+                <img id="img-preview" class="preview-foto">
+                <input type="hidden" id="imagemUrl"> <button type="submit" id="btn-submit" class="btn-salvar">Salvar no Cardápio</button>
+                <button type="button" id="btn-cancelar" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
             </form>
-            <a href="cardapio.html" class="link-voltar">← Voltar para o Cardápio</a>
+        </div>
+
+        <div class="lista-admin">
+            <h2>Sabores Atuais</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-produtos"></tbody>
+            </table>
+        </div>
+
+        <div class="lista-admin">
+            <h2>Gerenciar Acessos (Admins)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-usuarios"></tbody>
+            </table>
         </div>
     </main>
 
+    <script type="module" src="auth-control.js"></script>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Importação do STORAGE adicionada
+        import { auth, db, storage } from "./firebase-config.js";
+        import { collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAEyl-g55Qc646M8lhlCpKvQCoux5gG4VA",
-            authDomain: "ninkos-cookies.firebaseapp.com",
-            projectId: "ninkos-cookies",
-            storageBucket: "ninkos-cookies.firebasestorage.app",
-            messagingSenderId: "1065814927466",
-            appId: "1:1065814927466:web:405c7357f761d98ea3c213"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- TRAVA DE SEGURANÇA ---
-        onAuthStateChanged(auth, (user) => {
+        // 1. TRAVA DE SEGURANÇA (Mantida)
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Se estiver logado, libera o formulário
-                document.getElementById('conteudo-protegido').style.display = 'block';
+                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                const dados = docSnap.data();
+                if (dados && (dados.isAdmin === true || dados.regra === 'admin')) {
+                    document.getElementById('conteudo-protegido').style.display = 'block';
+                } else {
+                    alert("Acesso negado!");
+                    window.location.href = "index.html";
+                }
             } else {
-                // Se não estiver logado, redireciona para login após 1 segundo
-                alert("Acesso restrito! Por favor, faça login.");
                 window.location.href = "login.html";
             }
         });
 
-        // --- LÓGICA DE SALVAR PRODUTO ---
-        document.getElementById('form-produto').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const precoInput = document.getElementById('preco').value.replace(',', '.');
-            const precoFinal = parseFloat(precoInput);
-
-            if (isNaN(precoFinal)) {
-                alert("Por favor, insira um preço válido (ex: 12.00)");
-                return;
-            }
-
-            const novoProduto = {
-                nome: document.getElementById('nome').value,
-                descricao: document.getElementById('descricao').value,
-                preco: precoFinal,
-                categoria: document.getElementById('categoria').value,
-                imagemUrl: document.getElementById('imagemUrl').value || "img/padrao.jpg",
-                dataCriacao: new Date()
-            };
-
-            try {
-                await addDoc(collection(db, "produtos"), novoProduto);
-                alert("Sabor '" + novoProduto.nome + "' adicionado com sucesso!");
-                e.target.reset();
-            } catch (error) {
-                console.error("Erro ao salvar: ", error);
-                alert("Erro ao salvar. Verifique se você tem permissão no Firebase.");
+        // Lógica de Preview da Imagem
+        document.getElementById('arquivo-foto').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const preview = document.getElementById('img-preview');
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
+
+        // 2. LISTAR PRODUTOS (Tempo Real)
+        const qProd = query(collection(db, "produtos"), orderBy("nome", "asc"));
+        onSnapshot(qProd, (snapshot) => {
+            const tbody = document.getElementById('tabela-produtos');
+            tbody.innerHTML = "";
+            snapshot.forEach((res) => {
+                const p = res.data();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${p.imagemUrl || 'img/padrao.jpg'}" class="img-tabela"></td>
+                        <td>${p.nome}</td>
+                        <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
+                        <td>
+                            <button onclick="prepararEdicao('${res.id}', '${p.nome}', '${p.descricao.replace(/'/g, "\\'")}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')" style="cursor:pointer; background: #eee; border:1px solid #999; padding: 5px;">✏️</button>
+                            <button class="btn-excluir" onclick="excluirProduto('${res.id}', '${p.nome}')">🗑️</button>
+                        </td>
+                    </tr>`;
+            });
+        });
+
+        // 3. LISTAR USUÁRIOS (Tempo Real - Mantida)
+        const qUser = query(collection(db, "usuarios"), orderBy("nome", "asc"));
+        onSnapshot(qUser, (snapshot) => {
+            const tbody = document.getElementById('tabela-usuarios');
+            tbody.innerHTML = "";
+            snapshot.forEach((res) => {
+                const u = res.data();
+                const isAdmin = u.isAdmin === true;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${u.nome || '---'}</td>
+                        <td>${u.email || '---'}</td>
+                        <td><b style="color:${isAdmin?'green':'gray'}">${isAdmin?'Admin':'Cliente'}</b></td>
+                        <td>
+                            <button onclick="alternarAdmin('${res.id}', ${isAdmin})" 
+                                style="cursor:pointer; padding: 5px; background:${isAdmin?'#ffcccc':'#ccffcc'}" 
+                                ${res.id === auth.currentUser?.uid ? 'disabled' : ''}>
+                                ${isAdmin ? 'Remover' : 'Tornar Admin'}
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+        });
+
+        // --- FUNÇÕES DE SALVAMENTO COM UPLOAD ---
+        document.getElementById('form-produto').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const id = document.getElementById('produto-id').value;
+            const arquivo = document.getElementById('arquivo-foto').files[0];
+            
+            btn.innerText = "Processando... 🍪";
+            btn.disabled = true;
+
+            try {
+                let urlFinal = document.getElementById('imagemUrl').value;
+
+                // Faz o upload apenas se uma nova foto foi selecionada
+                if (arquivo) {
+                    const nomeUnico = `${Date.now()}-${arquivo.name}`;
+                    const storageRef = ref(storage, `produtos/${nomeUnico}`);
+                    const snapshot = await uploadBytes(storageRef, arquivo);
+                    urlFinal = await getDownloadURL(snapshot.ref);
+                }
+
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    descricao: document.getElementById('descricao').value,
+                    preco: parseFloat(document.getElementById('preco').value.replace(',', '.')),
+                    categoria: document.getElementById('categoria').value,
+                    imagemUrl: urlFinal || "img/padrao.jpg"
+                };
+
+                if (id) {
+                    await updateDoc(doc(db, "produtos", id), dados);
+                } else {
+                    await addDoc(collection(db, "produtos"), dados);
+                }
+                
+                resetarForm();
+                alert("Salvo com sucesso!");
+            } catch (err) { 
+                console.error(err);
+                alert("Erro ao salvar."); 
+            } finally {
+                btn.innerText = id ? "Salvar Alterações" : "Salvar no Cardápio";
+                btn.disabled = false;
+            }
+        };
+
+        // Funções Globais (Excluir, Alternar Admin, Resetar)
+        window.excluirProduto = async (id, nome) => {
+            if (confirm(`Deseja remover "${nome}"?`)) await deleteDoc(doc(db, "produtos", id));
+        };
+
+        window.alternarAdmin = async (userId, statusAtual) => {
+            if (confirm("Deseja alterar as permissões deste usuário?")) {
+                await updateDoc(doc(db, "usuarios", userId), { 
+                    isAdmin: !statusAtual,
+                    regra: !statusAtual ? 'admin' : 'cliente' 
+                });
+            }
+        };
+
+        window.prepararEdicao = (id, nome, desc, preco, cat, img) => {
+            document.getElementById('produto-id').value = id;
+            document.getElementById('nome').value = nome;
+            document.getElementById('descricao').value = desc;
+            document.getElementById('preco').value = preco;
+            document.getElementById('categoria').value = cat;
+            document.getElementById('imagemUrl').value = img;
+            
+            const preview = document.getElementById('img-preview');
+            preview.src = img || 'img/padrao.jpg';
+            preview.style.display = 'block';
+
+            document.getElementById('titulo-form').innerText = "Editando Sabor";
+            document.getElementById('btn-submit').innerText = "Salvar Alterações";
+            document.getElementById('btn-cancelar').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function resetarForm() {
+            document.getElementById('form-produto').reset();
+            document.getElementById('produto-id').value = "";
+            document.getElementById('imagemUrl').value = "";
+            document.getElementById('img-preview').style.display = 'none';
+            document.getElementById('titulo-form').innerText = "Adicionar Novo Sabor";
+            document.getElementById('btn-submit').innerText = "Salvar no Cardápio";
+            document.getElementById('btn-cancelar').classList.add('hidden');
+        }
+        window.resetarForm = resetarForm;
+        document.getElementById('btn-cancelar').onclick = resetarForm;
+
     </script>
-
-    <script type="module" src="js/auth-control.js"></script>
-
 </body>
 </html>
