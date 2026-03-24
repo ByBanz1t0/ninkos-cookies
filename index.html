@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninko's Cookies | Home & Cardápio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hidden { display: none !important; }
+        .loading-msg { text-align: center; color: #888; padding: 20px; width: 100%; }
+        .sabor-foto { object-fit: cover; }
+    </style>
+</head>
+<body>
+
+    <a href="carrinho.html" class="carrinho-flutuante" id="carrinho-btn">
+        <div class="carrinho-qtd" id="cart-count">0</div>
+        <div class="carrinho-info">
+            <span>Itens</span><br>
+            <span class="carrinho-valor" id="cart-total">R$ 0,00</span>
+        </div>
+    </a>
+    
+    <div class="menu-fixo">
+        <header>
+            <div class="header-side"></div> 
+            <div class="logo-container">
+                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
+            </div>
+            <div class="header-side auth-area">
+                <div id="menu-user"><p style="font-size: 0.7rem; color: #f7b2b7;">Carregando...</p></div>
+                <div id="menu-logout" class="hidden"><a href="#" class="btn-auth-sair" id="btn-sair-link">Sair</a></div>
+            </div>
+        </header>
+        <nav>
+            <h1>Nossos produtos:</h1>
+            <ul>
+                <li><a href="#secao-cookies" class="botao-navegacao">Cookies</a></li>
+                <li><a href="#secao-shakes" class="botao-navegacao">Milk Shakes</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <section class="conteudo">
+            <h3>Para você se deliciar:</h3>
+            <div class="banner-inicial" style="text-align: center; margin-bottom: 3rem;">
+                <img src="img/logos/ninkos_logo.png" alt="Logo" style="max-width: 40%;">
+            </div>
+        </section>
+
+        <section id="secao-cookies">
+            <h2>Sabores de Cookies:</h2>
+            <div id="container-cookies" class="container-produtos">
+                <p class="loading-msg">Preparando os cookies... 🍪</p>
+            </div>
+        </section>
+
+        <section id="secao-shakes">
+            <h2>Sabores de Milk Shakes:</h2>
+            <div id="container-shakes" class="container-produtos">
+                <p class="loading-msg">Batendo os shakes... 🥤</p>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const q = query(collection(db, "produtos"), orderBy("nome", "asc"));
+
+        onSnapshot(q, (snapshot) => {
+            const containerCookies = document.getElementById('container-cookies');
+            const containerShakes = document.getElementById('container-shakes');
+            if(containerCookies) containerCookies.innerHTML = "";
+            if(containerShakes) containerShakes.innerHTML = "";
+
+            snapshot.forEach((doc) => {
+                const item = doc.data();
+                const precoNum = parseFloat(item.preco) || 0;
+                const imgUrl = item.imagemUrl || 'img/logos/ninkos_logo.png';
+
+                const cardHTML = `
+                    <article class="sabor-item">
+                        <img src="${imgUrl}" class="sabor-foto" alt="${item.nome}" onerror="this.src='img/logos/ninkos_logo.png';">
+                        <div class="sabor-info">
+                            <h3>${item.nome}</h3>
+                            <p class="sabor-descricao">${item.descricao || 'Sem descrição.'}</p>
+                            <p class="sabor-preco"><strong>R$ ${precoNum.toFixed(2)}</strong></p>
+                            <button class="btn-comprar" data-id="${doc.id}" data-nome="${item.nome}" data-preco="${precoNum}" data-img="${imgUrl}">Adicionar 🛒</button>
+                        </div>
+                    </article>`;
+
+                if (item.categoria === "milk-shakes") {
+                    if(containerShakes) containerShakes.innerHTML += cardHTML;
+                } else {
+                    if(containerCookies) containerCookies.innerHTML += cardHTML;
+                }
+            });
+        });
+
+        // Lógica do Carrinho
+        let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
+        function atualizarIconeCarrinho() {
+            const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
+            const valorTotal = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+            document.getElementById('cart-count').innerText = totalItens;
+            document.getElementById('cart-total').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        window.adicionarAoCarrinho = function(id, nome, preco, imagemUrl) {
+            const index = carrinho.findIndex(c => c.id === id);
+            if (index > -1) carrinho[index].quantidade += 1;
+            else carrinho.push({ id, nome, preco: parseFloat(preco), quantidade: 1, imagemUrl });
+            localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
+            atualizarIconeCarrinho();
+        };
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-comprar')) {
+                const btn = e.target;
+                adicionarAoCarrinho(btn.getAttribute('data-id'), btn.getAttribute('data-nome'), btn.getAttribute('data-preco'), btn.getAttribute('data-img'));
+            }
+        });
+        atualizarIconeCarrinho();
+    </script>
+    <script type="module" src="auth-control.js"></script>
+</body>
+</html>

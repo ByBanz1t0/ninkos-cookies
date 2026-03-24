@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Carrinho - Ninko's Cookies</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .linha-resumo { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; color: #555; }
+        .linha-total { border-top: 2px solid #f7b2b7; padding-top: 10px; margin-top: 10px; font-size: 1.2rem; }
+        .frete-info { font-size: 0.85rem; color: #d63384; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-fixo">
+        <header>
+            <div class="header-side">
+                <a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a>
+            </div> 
+            <div class="logo-container">
+                <a href="index.html">
+                    <img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo da Ninko's Cookies">
+                </a>
+            </div>
+            <div class="header-side auth-area">
+                <div id="menu-user"></div>
+            </div>
+        </header>
+    </div>
+
+    <main class="conteudo-carrinho" style="margin-top: 150px;">
+        <section class="secao-checkout">
+            <h2>Seu Pedido 🛒</h2>
+            
+            <div id="lista-carrinho">
+                <p class="carrinho-vazio">Seu carrinho está triste e vazio... 🍪</p>
+            </div>
+
+            <div class="resumo-pedido" id="resumo-area" style="display: none;">
+                
+                <div id="detalhes-valores">
+                    <div class="linha-resumo">
+                        <span>Subtotal:</span>
+                        <span id="valor-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="linha-resumo">
+                        <span>Frete (<span id="nome-bairro-frete">...</span>):</span>
+                        <span id="valor-frete">R$ 0,00</span>
+                    </div>
+                    <div class="linha-total">
+                        <span>Total Geral:</span>
+                        <strong id="valor-total-carrinho">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <div class="checkout-form">
+                    <h3>🏠 Dados para Entrega:</h3>
+                    <input type="text" id="cliente-nome" placeholder="Seu Nome Completo" required>
+                    <input type="tel" id="cliente-telefone" placeholder="Seu WhatsApp (ex: 82999999999)" required>
+                    <input type="text" id="cliente-endereco" placeholder="Endereço (Rua, Número, Bairro)" required>
+                    
+                    <select id="cliente-pagamento" required>
+                        <option value="">Forma de Pagamento</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Cartão (Maquininha)">Cartão (Maquininha)</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
+                </div>
+                
+                <button class="btn-prosseguir" id="btn-finalizar">
+                    Finalizar e Enviar para o WhatsApp 🚀
+                </button>
+                <button class="btn-limpar" id="btn-limpar-cart">Limpar Carrinho</button>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { doc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
+        let valorFreteGlobal = 0;
+        let bairroUsuario = "Não identificado";
+        let usuarioLogado = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                usuarioLogado = user;
+                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+                if (docSnap.exists()) {
+                    const d = docSnap.data();
+                    if(d.nome) document.getElementById('cliente-nome').value = d.nome;
+                    if(d.telefone) document.getElementById('cliente-telefone').value = d.telefone;
+                    
+                    if(d.rua) {
+                        const enderecoCompleto = `${d.rua}, ${d.numero || 'S/N'} - ${d.bairro || ''}`;
+                        document.getElementById('cliente-endereco').value = enderecoCompleto;
+                    }
+
+                    if(d.bairro) {
+                        bairroUsuario = d.bairro;
+                        document.getElementById('nome-bairro-frete').innerText = bairroUsuario;
+                        
+                        const qBairro = query(collection(db, "bairros"), where("nome", "==", d.bairro));
+                        const queryBairroSnap = await getDocs(qBairro);
+                        
+                        if (!queryBairroSnap.empty) {
+                            valorFreteGlobal = queryBairroSnap.docs[0].data().frete;
+                        }
+                    }
+                }
+            }
+            renderizarCarrinho();
+        });
+
+        function renderizarCarrinho() {
+            const container = document.getElementById('lista-carrinho');
+            const resumo = document.getElementById('resumo-area');
+            const subtotalDisplay = document.getElementById('valor-subtotal');
+            const freteDisplay = document.getElementById('valor-frete');
+            const totalDisplay = document.getElementById('valor-total-carrinho');
+            
+            if (carrinho.length === 0) {
+                container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio. Que tal adicionar uns cookies? 🍪</p>';
+                resumo.style.display = 'none';
+                return;
+            }
+
+            resumo.style.display = 'block';
+            container.innerHTML = ''; 
+            let subtotalGeral = 0;
+
+            carrinho.forEach((item, index) => {
+                const subtotalItem = item.preco * item.quantidade;
+                subtotalGeral += subtotalItem;
+
+                container.innerHTML += `
+                    <div class="item-carrinho">
+                        <div class="item-visual">
+                            <img src="${item.imagemUrl || 'img/padrao.jpg'}" alt="${item.nome}" class="item-foto-carrinho">
+                            <div class="item-info">
+                                <span class="item-nome">${item.nome}</span>
+                                <span class="item-preco-unit">R$ ${item.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                            </div>
+                        </div>
+                        <div class="item-controles">
+                            <div class="qtd-botoes">
+                                <button class="btn-qtd" data-index="${index}" data-delta="-1">-</button>
+                                <span class="qtd-display">${item.quantidade}</span>
+                                <button class="btn-qtd" data-index="${index}" data-delta="1">+</button>
+                            </div>
+                            <span class="item-subtotal">R$ ${subtotalItem.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                            <button class="btn-remover-item" data-index="${index}" style="background:none; border:none; cursor:pointer;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const totalComFrete = subtotalGeral + valorFreteGlobal;
+
+            subtotalDisplay.innerText = subtotalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            freteDisplay.innerText = valorFreteGlobal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalDisplay.innerText = totalComFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        window.salvarEAtualizar = () => {
+            localStorage.setItem('carrinhoNinkos', JSON.stringify(carrinho));
+            renderizarCarrinho();
+        };
+
+        document.addEventListener('click', (e) => {
+            if(e.target.classList.contains('btn-qtd')) {
+                const index = e.target.dataset.index;
+                const delta = parseInt(e.target.dataset.delta);
+                carrinho[index].quantidade += delta;
+                if (carrinho[index].quantidade <= 0) carrinho.splice(index, 1);
+                salvarEAtualizar();
+            }
+            if(e.target.classList.contains('btn-remover-item')) {
+                carrinho.splice(e.target.dataset.index, 1);
+                salvarEAtualizar();
+            }
+        });
+
+        document.getElementById('btn-limpar-cart').onclick = () => {
+            if(confirm("Esvaziar carrinho?")) {
+                carrinho = [];
+                salvarEAtualizar();
+            }
+        };
+
+        // --- SALVAMENTO NO FIREBASE E WHATSAPP ---
+        document.getElementById('btn-finalizar').onclick = async () => {
+            const nome = document.getElementById('cliente-nome').value.trim();
+            const telefone = document.getElementById('cliente-telefone').value.trim();
+            const endereco = document.getElementById('cliente-endereco').value.trim();
+            const pagamento = document.getElementById('cliente-pagamento').value;
+
+            if (!nome || !telefone || !endereco || !pagamento) {
+                alert("Preencha todos os dados de entrega e contato! 🍪");
+                return;
+            }
+
+            const btn = document.getElementById('btn-finalizar');
+            btn.innerText = "Processando Pedido...";
+            btn.disabled = true;
+
+            let mensagemProdutos = "";
+            let subtotalCalculado = 0;
+
+            // Formata itens para o WhatsApp e calcula subtotal
+            const itensParaBanco = carrinho.map(item => {
+                const sub = item.preco * item.quantidade;
+                subtotalCalculado += sub;
+                mensagemProdutos += `• *${item.quantidade}x* ${item.nome} (R$ ${sub.toFixed(2)})\n`;
+                return {
+                    nome: item.nome,
+                    quantidade: item.quantidade,
+                    precoUnitario: item.preco
+                };
+            });
+
+            const totalFinal = subtotalCalculado + valorFreteGlobal;
+
+            try {
+                // 1. SALVA NO FIREBASE (Coleção 'pedidos')
+                await addDoc(collection(db, "pedidos"), {
+                    clienteId: usuarioLogado ? usuarioLogado.uid : "anonimo",
+                    clienteNome: nome,
+                    clienteTelefone: telefone,
+                    endereco: endereco,
+                    bairro: bairroUsuario,
+                    formaPagamento: pagamento,
+                    itens: itensParaBanco,
+                    subtotal: subtotalCalculado,
+                    frete: valorFreteGlobal,
+                    total: totalFinal,
+                    status: "Pendente",
+                    data: serverTimestamp()
+                });
+
+                // 2. ABRE O WHATSAPP
+                const textoWhatsApp = encodeURIComponent(
+                    `*NOVO PEDIDO - NINKO'S COOKIES* 🍪\n\n` +
+                    `👤 *Cliente:* ${nome}\n` +
+                    `📱 *WhatsApp:* ${telefone}\n` +
+                    `📍 *Bairro:* ${bairroUsuario}\n` +
+                    `📍 *Endereço:* ${endereco}\n` +
+                    `💳 *Pagamento:* ${pagamento}\n\n` +
+                    `*ÍTENS:*\n${mensagemProdutos}\n` +
+                    `--------------------------\n` +
+                    `💰 *Subtotal:* R$ ${subtotalCalculado.toFixed(2)}\n` +
+                    `🚚 *Frete:* R$ ${valorFreteGlobal.toFixed(2)}\n` +
+                    `✅ *TOTAL:* R$ ${totalFinal.toFixed(2)}\n\n` +
+                    `_Pedido enviado via site Ninko's Cookies_`
+                );
+
+                window.open(`https://wa.me/5582999608947?text=${textoWhatsApp}`, '_blank');
+
+                // 3. LIMPA TUDO
+                localStorage.removeItem('carrinhoNinkos');
+                carrinho = [];
+                renderizarCarrinho();
+                alert("Pedido confirmado e enviado! 🍪✨");
+
+            } catch (error) {
+                console.error("Erro ao salvar pedido:", error);
+                alert("Houve um problema ao processar seu pedido no banco de dados.");
+            } finally {
+                btn.innerText = "Finalizar e Enviar para o WhatsApp 🚀";
+                btn.disabled = false;
+            }
+        };
+
+        renderizarCarrinho();
+    </script>
+</body>
+</html>

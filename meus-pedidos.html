@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Ninko's Cookies</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .container-pedidos { max-width: 600px; margin: 150px auto 50px; padding: 20px; }
+        .card-historico { 
+            background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee;
+        }
+        .header-pedido { display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; margin-bottom: 10px; align-items: center; }
+        .data-pedido { font-size: 0.85rem; color: #888; }
+        
+        /* Badges de Status Coloridas */
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .status-Pendente { background: #fff3cd; color: #856404; }
+        .status-Preparando { background: #cfe2ff; color: #084298; }
+        .status-Enviado { background: #e0cffc; color: #6610f2; }
+        .status-Entregue { background: #d4edda; color: #155724; }
+        .status-Cancelado { background: #f8d7da; color: #842029; }
+
+        .item-pedido-discreto { font-size: 0.9rem; color: #555; margin-bottom: 3px; display: flex; justify-content: space-between; }
+        .total-pedido-cliente { margin-top: 10px; text-align: right; font-weight: bold; color: #d63384; font-size: 1.1rem; border-top: 1px dashed #eee; padding-top: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="menu-fixo">
+        <header>
+            <div class="header-side"><a href="index.html" style="text-decoration: none; color: #d63384; font-weight: bold;">← Voltar</a></div> 
+            <div class="logo-container">
+                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
+            </div>
+            <div class="header-side auth-area"><div id="menu-user"></div></div>
+        </header>
+    </div>
+
+    <main class="container-pedidos">
+        <h2 style="margin-bottom: 25px; text-align: center; color: #d63384;">Meu Histórico de Cookies 🍪</h2>
+        <div id="lista-meus-pedidos">
+            <p style="text-align: center;">Carregando suas delícias...</p>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const listaContainer = document.getElementById('lista-meus-pedidos');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const q = query(
+                    collection(db, "pedidos"), 
+                    where("clienteId", "==", user.uid),
+                    orderBy("data", "desc")
+                );
+
+                onSnapshot(q, (snapshot) => {
+                    if (snapshot.empty) {
+                        listaContainer.innerHTML = `
+                            <div style="text-align: center; padding: 40px;">
+                                <p style="color:#888;">Você ainda não fez nenhum pedido. 😢</p>
+                                <a href="index.html" class="btn-comprar" style="display:inline-block; margin-top:15px; text-decoration:none; padding: 10px 20px;">Ver Cardápio</a>
+                            </div>`;
+                        return;
+                    }
+
+                    listaContainer.innerHTML = "";
+                    snapshot.forEach((doc) => {
+                        const p = doc.data();
+                        
+                        // Formatação de Data e Hora
+                        const dataFormatada = p.data ? p.data.toDate().toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : 'Processando...';
+                        
+                        const card = document.createElement('div');
+                        card.className = 'card-historico';
+                        
+                        // Lista de itens com fallback de segurança
+                        let itensHTML = "";
+                        if (p.itens && Array.isArray(p.itens)) {
+                            itensHTML = p.itens.map(i => `
+                                <div class="item-pedido-discreto">
+                                    <span>${i.quantidade}x ${i.nome}</span>
+                                    <span style="color:#aaa;">R$ ${(i.precoUnitario * i.quantidade).toFixed(2)}</span>
+                                </div>
+                            `).join('');
+                        }
+
+                        card.innerHTML = `
+                            <div class="header-pedido">
+                                <span class="data-pedido">📅 ${dataFormatada}</span>
+                                <span class="status-badge status-${p.status || 'Pendente'}">${p.status || 'Pendente'}</span>
+                            </div>
+                            <div class="corpo-pedido">
+                                ${itensHTML}
+                            </div>
+                            <div class="total-pedido-cliente">
+                                Total: ${p.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </div>
+                        `;
+                        listaContainer.appendChild(card);
+                    });
+                }, (error) => {
+                    console.error("Erro no Snapshot:", error);
+                    // Se der erro de índice no Firebase, o link aparecerá aqui no console
+                });
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+    <script type="module" src="auth-control.js"></script>
+</body>
+</html>
