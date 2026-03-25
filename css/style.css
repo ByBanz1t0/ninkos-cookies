@@ -380,7 +380,9 @@ section h2 {
     background-color: #ffffff;
     padding: 1rem;
     margin-bottom: 1rem;
-    border-radius: 0.75rem;
+    border-radius: 0.8rem;
+    border: 2px solid #f7b2b7;
+    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);  
     border: 1px solid transparent;
     transition: all 0.2s ease;
 }
@@ -909,6 +911,7 @@ footer {
     padding: 20px;
     border-radius: 15px;
     margin: 0 auto 5px; 
+    margin-bottom: 5px;  
     max-width: 600px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
