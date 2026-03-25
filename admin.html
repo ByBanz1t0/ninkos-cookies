@@ -479,94 +479,81 @@
             carregarPedidos(e.target.value);
         });
 
-// --- FUNÇÃO DE IMPRESSÃO VIA IFRAME (EVITA BLOQUEIO DE POP-UP) ---
+        // --- FUNÇÃO DE IMPRESSÃO ---
         function imprimirNota(id, p) {
             const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
-            
-            // Gerar linhas dos itens
             const itensTexto = p.itens ? p.itens.map(item => 
                 `<tr>
-                    <td style="padding: 5px 0;">${item.quantidade}x ${item.nome}<br>
-                        <small>(un: R$ ${item.preco.toFixed(2)})</small>
-                    </td>
-                    <td style="text-align: right; vertical-align: top;">R$ ${(item.preco * item.quantidade).toFixed(2)}</td>
+                    <td style="padding: 5px 0;">${item.quantidade}x ${item.nome}</td>
+                    <td style="text-align: right;">R$ ${(item.preco * item.quantidade).toFixed(2)}</td>
                 </tr>`
             ).join('') : '<tr><td>Sem itens</td></tr>';
 
-            // Criar um iframe temporário e invisível
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.right = '0';
-            iframe.style.bottom = '0';
-            iframe.style.width = '0';
-            iframe.style.height = '0';
-            iframe.style.border = '0';
-            document.body.appendChild(iframe);
-
-            const doc = iframe.contentWindow.document;
-            doc.write(`
+            const janelaImpressao = window.open('', '', 'width=800,height=600');
+            janelaImpressao.document.write(`
                 <html>
                 <head>
+                    <title>Imprimir Pedido #${id.slice(-5).toUpperCase()}</title>
                     <style>
-                        body { font-family: 'Courier New', Courier, monospace; width: 280px; padding: 5px; color: #000; line-height: 1.2; font-size: 12px; }
-                        .topo { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px; }
-                        .detalhes { margin-bottom: 8px; }
-                        table { width: 100%; border-bottom: 1px dashed #000; margin-bottom: 8px; border-collapse: collapse; font-size: 11px; }
-                        .financeiro { text-align: right; }
-                        .total { font-weight: bold; font-size: 14px; margin-top: 4px; }
-                        .rodape { text-align: center; margin-top: 15px; border-top: 1px dashed #000; padding-top: 8px; }
-                        hr { border: none; border-top: 1px dashed #000; margin: 5px 0; }
+                        body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 10px; color: #000; }
+                        .topo { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+                        .detalhes { font-size: 0.9rem; margin-bottom: 10px; }
+                        table { width: 100%; border-bottom: 1px dashed #000; margin-bottom: 10px; font-size: 0.85rem; }
+                        .total { font-weight: bold; font-size: 1.1rem; text-align: right; }
+                        .rodape { text-align: center; margin-top: 20px; font-size: 0.8rem; border-top: 1px dashed #000; padding-top: 10px; }
                     </style>
                 </head>
                 <body>
                     <div class="topo">
-                        <h2 style="margin:0; font-size: 18px;">Ninko's Cookies</h2>
-                        <p style="margin:3px 0;">Pedido #${id.slice(-5).toUpperCase()}</p>
+                        <h2 style="margin:0;">Ninko's Cookies</h2>
+                        <p style="margin:5px 0;">Pedido #${id.slice(-5).toUpperCase()}</p>
                         <span>${dataP}</span>
                     </div>
-                    
                     <div class="detalhes">
-                        <strong>CLIENTE:</strong> ${p.clienteNome || '---'}<br>
-                        <strong>TEL:</strong> ${p.telefone || '---'}<br>
-                        <hr>
-                        <strong>ENDEREÇO:</strong><br>
-                        ${p.rua || 'Rua não informada'}, ${p.numero || 'S/N'}<br>
-                        ${p.complemento ? 'Comp: ' + p.complemento + '<br>' : ''}
-                        <strong>Bairro:</strong> ${p.bairro || '---'}<br>
-                        ${p.referencia ? 'Ref: ' + p.referencia : ''}
+                        <strong>CLIENTE:</strong> ${p.clienteNome}<br>
+                        <strong>RUA:</strong> ${p.rua}<br>
+                        <strong>BAIRRO:</strong> ${p.bairro}<br>
+                        <strong>ENTREGA:</strong> R$ ${p.frete ? p.frete.toFixed(2) : '0.00'}
                     </div>
-
                     <table>
                         <thead>
                             <tr><th style="text-align:left;">Item</th><th style="text-align:right;">Subtotal</th></tr>
                         </thead>
                         <tbody>${itensTexto}</tbody>
                     </table>
-
-                    <div class="financeiro">
-                        <div>Subtotal Itens: R$ ${(p.total - (p.taxaEntrega || 0)).toFixed(2)}</div>
-                        <div>Taxa de Entrega: R$ ${p.taxaEntrega ? p.taxaEntrega.toFixed(2) : '0.00'}</div>
-                        <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
-                    </div>
-
+                    <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
                     <div class="rodape">
                         Obrigado pela preferência! 🍪<br>
-                        @ninkoscookies
+                        Acompanhe seu pedido no site.
                     </div>
                 </body>
                 </html>
             `);
-
-            doc.close();
-
-            // Aguarda o conteúdo carregar e dispara a impressão
-            iframe.contentWindow.focus();
-            setTimeout(() => {
-                iframe.contentWindow.print();
-                // Remove o iframe após a impressão (ou após fechar a janela de impressão)
-                document.body.removeChild(iframe);
-            }, 500);
+            janelaImpressao.document.close();
+            janelaImpressao.print();
+            janelaImpressao.close();
         }
+
+        window.atualizarStatusPedido = async (id, novoStatus) => {
+            const ref = doc(db, "pedidos", id);
+            let dados = { status: novoStatus, ultimaAtualizacao: serverTimestamp() };
+            if (novoStatus === 'cancelado') {
+                const m = prompt("Motivo do cancelamento:");
+                if (!m) return;
+                dados.motivoCancelamento = m;
+            }
+            await updateDoc(ref, dados);
+
+            // LOGICA DE IMPRESSÃO AO ACEITAR (EM PRODUÇÃO)
+            if (novoStatus === 'em produção') {
+                const docSnap = await getDoc(ref);
+                if (docSnap.exists()) {
+                    if (confirm("Pedido aceito! Deseja imprimir a nota para a entrega?")) {
+                        imprimirNota(id, docSnap.data());
+                    }
+                }
+            }
+        };
 
         window.excluirDoc = async (pasta, id) => {
             if(confirm(`Excluir permanentemente?`)) await deleteDoc(doc(db, pasta, id));
