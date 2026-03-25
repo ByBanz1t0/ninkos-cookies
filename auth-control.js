@@ -64,7 +64,7 @@ onAuthStateChanged(auth, async (user) => {
 
                 if (ehAdmin) {
                     htmlMenu += `
-                        <a href="admin.html" class="btn-auth" style="background-color: #000; color: #fff; border-color: #000; margin-right: 10px;">
+                        <a href="admin.html" class="btn-auth" style="background-color: #000; color: #fff; border-color: #000; ">
                             ⚙️
                         </a>
                     `;
