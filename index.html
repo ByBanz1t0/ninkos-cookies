@@ -183,7 +183,7 @@
                         <img src="${imgUrl}" class="sabor-foto" alt="${item.nome}" onerror="this.src='img/logos/ninkos_logo.png';">
                         <div class="sabor-info">
                             <h3>${item.nome}</h3>
-                            <p class="sabor-descricao">${item.descricao || 'Sem descrição.'}</p>
+                            <p class="sabor-descricao">- ${item.descricao || 'Sem descrição.'}</p>
                             <p class="sabor-preco"><strong>R$ ${precoNum.toFixed(2)}</strong></p>
                             <button class="btn-comprar" data-id="${docSnap.id}" data-nome="${item.nome}" data-preco="${precoNum}" data-img="${imgUrl}">Adicionar 🛒</button>
                         </div>
