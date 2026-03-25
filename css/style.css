@@ -27,7 +27,7 @@ body {
     line-height: 1.6;
     font-size: 0.9rem;
     overflow-x: hidden;
-    padding-top: 130px; 
+    padding-top: 140px; 
 }
 
 /* Utilitários - O segredo para o JS funcionar */
@@ -913,7 +913,7 @@ footer {
     color: white;
     padding: 20px; 
     border-radius: 15px;
-    margin: 5 auto 40px;  
+    margin: 0 auto 5px;  
     text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
 }
