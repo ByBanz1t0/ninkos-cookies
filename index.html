@@ -84,6 +84,15 @@
         import { collection, onSnapshot, query, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { mostrarNotificacao } from "./auth-control.js";
 
+        // TESTE NOTIFICAÇÃO NO INDEX
+        if (Notification.permission !== "granted") { Notification.requestPermission(); }
+        function notifyAdmin(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: body, icon: "img/logos/ninkos_logo.png" });
+                new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
+            }
+        }
+        
         // --- FUNÇÃO AUXILIAR: VERIFICAÇÃO DE HORÁRIO ---
         function verificarStatusHorario(horarios) {
             if (!horarios) return { aberto: true };
