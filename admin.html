@@ -455,7 +455,8 @@
                         </div>
                         <div style="font-size:0.9rem;">
                             <p><strong>👤 Cliente:</strong> ${p.clienteNome}</p>
-                            <p><strong>📍 Bairro:</strong> ${p.bairro}</p>
+                            <p><strong>📞 Telefone:</strong> ${p.clienteTelefone}</p>
+                            <p><strong>📍 Endereço:</strong> ${p.endereco}</p>
                             <p><strong>🍪 Itens:</strong> <ul style="margin:5px 0;">${itensHTML}</ul></p>
                             <p style="color:#d63384; font-weight:bold;">Total: R$ ${p.total.toFixed(2)}</p>
                         </div>
@@ -465,8 +466,8 @@
                                 <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
                                 <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
                                 <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
-                                <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizado</option>
-                                <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>❌ Cancelar</option>
+                                <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizar</option>
+                                <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>Cancelar</option>
                             </select>
                         </div>
                     `;
