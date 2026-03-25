@@ -56,6 +56,14 @@
         }
         .grid-horarios span { font-weight: bold; color: #555; }
         .grid-horarios input { margin-bottom: 0; }
+
+        /* Estilo para o cabeçalho de pedidos com filtro */
+        .header-pedidos {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; margin-bottom: 1.5rem;
+        }
+        .header-pedidos h2 { margin-bottom: 0 !important; }
+        #filtro-periodo { width: auto; margin-bottom: 0; padding: 5px 10px; }
     </style>
 </head>
 <body class="admin-body">
@@ -150,7 +158,15 @@
         </div>
 
         <div class="lista-admin">
-            <h2>📦 Gestão de Pedidos em Tempo Real</h2>
+            <div class="header-pedidos">
+                <h2>📦 Histórico de Pedidos</h2>
+                <select id="filtro-periodo">
+                    <option value="todos">Todo o Período</option>
+                    <option value="24h">Últimas 24 Horas</option>
+                    <option value="7d">Últimos 7 Dias</option>
+                    <option value="30d">Últimos 30 Dias</option>
+                </select>
+            </div>
             <div id="container-pedidos-admin"></div>
         </div>
 
@@ -158,7 +174,8 @@
 
     <script type="module">
         import { db, auth } from "./firebase-config.js";
-        import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // ADICIONADO 'where' NAS IMPORTAÇÕES
+        import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         if (Notification.permission !== "granted") { Notification.requestPermission(); }
         function notifyAdmin(title, body) {
@@ -359,93 +376,86 @@
             }
         };
 
-        function carregarPedidos() {
-            const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
-            onSnapshot(q, (snapshot) => {
+        // FUNÇÃO DE CARREGAR PEDIDOS COM LÓGICA DE FILTRO
+        let unsubscribePedidos = null;
+        function carregarPedidos(filtro = "todos") {
+            if (unsubscribePedidos) unsubscribePedidos(); // Limpa escuta anterior
+
+            let q = query(collection(db, "pedidos"), orderBy("data", "desc"));
+
+            if (filtro !== "todos") {
+                const agora = new Date();
+                let dataLimite = new Date();
+                if (filtro === "24h") dataLimite.setHours(agora.getHours() - 24);
+                else if (filtro === "7d") dataLimite.setDate(agora.getDate() - 7);
+                else if (filtro === "30d") dataLimite.setDate(agora.getDate() - 30);
+                
+                q = query(collection(db, "pedidos"), where("data", ">=", dataLimite), orderBy("data", "desc"));
+            }
+
+            unsubscribePedidos = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const p = change.doc.data();
-                        const agora = new Date().getTime();
-                        const dataPedido = p.data?.toDate().getTime();
-                        if (dataPedido && (agora - dataPedido) < 30000) {
-                            notifyAdmin("Novo Pedido Recebido! 🍪", `Cliente: ${p.clienteNome} - Total: R$ ${p.total.toFixed(2)}`);
+                        const agoraMs = new Date().getTime();
+                        const dataPedidoMs = p.data?.toDate().getTime();
+                        if (dataPedidoMs && (agoraMs - dataPedidoMs) < 30000) {
+                            notifyAdmin("Novo Pedido! 🍪", `Cliente: ${p.clienteNome}`);
                         }
                     }
                 });
 
                 containerPedidos.innerHTML = "";
+                if (snapshot.empty) {
+                    containerPedidos.innerHTML = `<p style="text-align:center; padding:20px; color:#888;">Nenhum pedido encontrado.</p>`;
+                    return;
+                }
+
                 snapshot.forEach((docSnap) => {
                     const p = docSnap.data();
                     const id = docSnap.id;
                     const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
                     
-                    // CORREÇÃO: Usando 'precoUnitario' definido no carrinho
                     const itensHTML = p.itens ? p.itens.map(item => 
-                        `<li style="font-size:0.85rem; color:#444; margin-bottom:3px;">
-                            ${item.quantidade}x ${item.nome} - <span style="color:#666;">R$ ${(item.precoUnitario * item.quantidade).toFixed(2)}</span>
-                        </li>`
-                    ).join('') : '<li>Nenhum item encontrado</li>';
+                        `<li style="font-size:0.85rem; color:#444;">${item.quantidade}x ${item.nome}</li>`
+                    ).join('') : '<li>Sem itens</li>';
+
+                    const cores = { 'realizado': '#f39c12', 'em produção': '#d63384', 'em rota': '#3498db', 'finalizado': '#27ae60', 'cancelado': '#ff4d4d' };
 
                     const div = document.createElement('div');
                     div.className = 'card-pedido';
-                    
-                    const cores = { 
-                        'realizado': '#f39c12', 
-                        'em produção': '#d63384', 
-                        'em rota': '#3498db', 
-                        'finalizado': '#27ae60', 
-                        'cancelado': '#ff4d4d' 
-                    };
                     div.style.borderLeft = `6px solid ${cores[p.status] || '#888'}`;
-
                     div.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
                             <strong>Pedido #${id.slice(-5).toUpperCase()}</strong>
                             <span class="badge-status" style="background:${cores[p.status] || '#888'};">${p.status}</span>
                         </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <p style="margin: 3px 0; font-size: 0.9rem;"><strong>👤 Cliente:</strong> ${p.clienteNome || '---'}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📍 Endereço:</strong> ${p.endereco || '---'}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>🏘️ Bairro:</strong> ${p.bairro || '---'}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📞 WhatsApp:</strong> <a href="https://wa.me/55${p.clienteTelefone}" target="_blank" style="color:#25d366; text-decoration:none;">${p.clienteTelefone || '---'} <i class="fab fa-whatsapp"></i></a></p>
-                            </div>
-
-                            <div>
-                                <p style="margin: 0 0 5px 0; font-size: 0.9rem;"><strong>🍪 Itens:</strong></p>
-                                <ul style="padding-left: 15px; margin: 0; list-style: none;">${itensHTML}</ul>
-                                <p style="margin: 10px 0 3px 0; font-size: 0.85rem;"><strong>💳 Pagamento:</strong> ${p.formaPagamento || 'Não informado'}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>🚚 Frete:</strong> R$ ${(p.frete || 0).toFixed(2)}</p>
-                                <p style="margin: 5px 0; font-size: 1rem; color: #d63384;"><strong>Total: R$ ${p.total.toFixed(2)}</strong></p>
-                            </div>
+                        <div style="font-size:0.9rem;">
+                            <p><strong>👤 Cliente:</strong> ${p.clienteNome}</p>
+                            <p><strong>📍 Bairro:</strong> ${p.bairro}</p>
+                            <p><strong>🍪 Itens:</strong> <ul style="margin:5px 0;">${itensHTML}</ul></p>
+                            <p style="color:#d63384; font-weight:bold;">Total: R$ ${p.total.toFixed(2)}</p>
                         </div>
-
-                        <p style="margin: 10px 0 0 0; font-size: 0.75rem; color: #999;">📅 Realizado em: ${dataP}</p>
-                        
-                        ${p.status === 'cancelado' && p.motivoCancelamento ? 
-                            `<p style="color:#ff4d4d; font-size:0.85rem; background:#fff1f1; padding:8px; border-radius:4px; margin-top:10px; border:1px solid #ffcccc;">
-                                <strong>Motivo do Cancelamento:</strong> ${p.motivoCancelamento}
-                            </p>` : ''}
-
-                        <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px; display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <label style="font-size:0.75rem; color:#666; display:block;">Mudar Status:</label>
-                                <select onchange="atualizarStatusPedido('${id}', this.value)" style="margin-bottom:0; padding:5px; font-size:0.85rem; border-radius: 4px; width: auto;">
-                                    <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
-                                    <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
-                                    <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
-                                    <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizado</option>
-                                    <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>❌ Cancelar</option>
-                                </select>
-                            </div>
-                            <button onclick="excluirDoc('pedidos', '${id}')" class="btn-excluir" style="padding: 8px 12px;"><i class="fas fa-trash"></i></button>
+                        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.75rem; color:#999;">${dataP}</span>
+                            <select onchange="atualizarStatusPedido('${id}', this.value)" style="width:auto; padding:3px; font-size:0.8rem;">
+                                <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
+                                <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
+                                <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
+                                <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizado</option>
+                                <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>❌ Cancelar</option>
+                            </select>
                         </div>
                     `;
                     containerPedidos.appendChild(div);
                 });
             });
         }
+
+        // ESCUTAR MUDANÇA NO FILTRO
+        document.getElementById('filtro-periodo').addEventListener('change', (e) => {
+            carregarPedidos(e.target.value);
+        });
 
         window.atualizarStatusPedido = async (id, novoStatus) => {
             const ref = doc(db, "pedidos", id);
@@ -474,7 +484,7 @@
                 carregarProdutos();
                 carregarBairros();
                 carregarUsuarios();
-                carregarPedidos();
+                carregarPedidos(); // Inicia com filtro "todos"
             } else { window.location.href = "login.html"; }
         });
     </script>
