@@ -92,7 +92,7 @@
                     const b = doc.data();
                     const option = document.createElement('option');
                     option.value = b.nome;
-                    option.textContent = `${b.nome} (Entrega R$ ${b.frete.toFixed(2)})`;
+                    option.textContent = `${b.nome}`;
                     selectBairro.appendChild(option);
                 });
             } catch (err) {
