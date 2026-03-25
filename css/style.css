@@ -62,11 +62,12 @@ body {
 #aviso-fechado h1 { 
     color: #d63384; 
     margin-bottom: 10px; 
+    font-size: 1.2rem;
 }
 
 #aviso-fechado p { 
     color: #555; 
-    font-size: 1.1rem; 
+    font-size: 1rem; 
 }
 
 /* ==========================================================================
