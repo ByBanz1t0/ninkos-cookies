@@ -40,7 +40,6 @@
         .card-pedido { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
         .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 10px; font-weight: bold; text-transform: uppercase; color: white; }
         .btn-acao-user { cursor: pointer; background: #fff; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; transition: 0.2s; margin-right: 5px; }
-        .btn-acao-user:hover { background: #f9f9f9; border-color: #bbb; }
 
         .status-loja-container {
             display: flex; justify-content: space-between; align-items: center;
@@ -122,8 +121,6 @@
                 <tbody id="tabela-produtos"></tbody>
             </table>
         </div>
-
-        <hr style="max-width: 800px; margin: 40px auto; border: 1px solid #f7b2b7; opacity: 0.3;">
 
         <div class="form-admin">
             <h2 id="titulo-bairro">Cadastrar Bairro e Frete</h2>
@@ -343,11 +340,11 @@
                     const isMe = currentUser && currentUser.uid === docSnap.id;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''} ${isMe ? '<strong>(Você)</strong>' : ''}</td>
+                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''}</td>
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888; font-size: 0.8rem;">Dono do Painel</span>'}
+                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
                             ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>` : ''}
                         </td>
                     `;
@@ -382,10 +379,10 @@
                     const id = docSnap.id;
                     const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
                     
-                    // Gerar lista de itens
+                    // CORREÇÃO: Usando 'precoUnitario' definido no carrinho
                     const itensHTML = p.itens ? p.itens.map(item => 
                         `<li style="font-size:0.85rem; color:#444; margin-bottom:3px;">
-                            ${item.quantidade}x ${item.nome} - <span style="color:#666;">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
+                            ${item.quantidade}x ${item.nome} - <span style="color:#666;">R$ ${(item.precoUnitario * item.quantidade).toFixed(2)}</span>
                         </li>`
                     ).join('') : '<li>Nenhum item encontrado</li>';
 
@@ -409,16 +406,16 @@
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
-                                <p style="margin: 3px 0; font-size: 0.9rem;"><strong>👤 Cliente:</strong> ${p.clienteNome}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📍 Endereço:</strong> ${p.endereco || '---'}, ${p.numero || 'S/N'}</p>
+                                <p style="margin: 3px 0; font-size: 0.9rem;"><strong>👤 Cliente:</strong> ${p.clienteNome || '---'}</p>
+                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📍 Endereço:</strong> ${p.endereco || '---'}</p>
                                 <p style="margin: 3px 0; font-size: 0.85rem;"><strong>🏘️ Bairro:</strong> ${p.bairro || '---'}</p>
-                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📞 WhatsApp:</strong> <a href="https://wa.me/55${p.whatsapp}" target="_blank" style="color:#25d366; text-decoration:none;">${p.whatsapp || '---'} <i class="fab fa-whatsapp"></i></a></p>
+                                <p style="margin: 3px 0; font-size: 0.85rem;"><strong>📞 WhatsApp:</strong> <a href="https://wa.me/55${p.clienteTelefone}" target="_blank" style="color:#25d366; text-decoration:none;">${p.clienteTelefone || '---'} <i class="fab fa-whatsapp"></i></a></p>
                             </div>
 
                             <div>
                                 <p style="margin: 0 0 5px 0; font-size: 0.9rem;"><strong>🍪 Itens:</strong></p>
                                 <ul style="padding-left: 15px; margin: 0; list-style: none;">${itensHTML}</ul>
-                                <p style="margin: 10px 0 3px 0; font-size: 0.85rem;"><strong>💳 Pagamento:</strong> ${p.metodoPagamento || 'Não informado'}</p>
+                                <p style="margin: 10px 0 3px 0; font-size: 0.85rem;"><strong>💳 Pagamento:</strong> ${p.formaPagamento || 'Não informado'}</p>
                                 <p style="margin: 3px 0; font-size: 0.85rem;"><strong>🚚 Frete:</strong> R$ ${(p.frete || 0).toFixed(2)}</p>
                                 <p style="margin: 5px 0; font-size: 1rem; color: #d63384;"><strong>Total: R$ ${p.total.toFixed(2)}</strong></p>
                             </div>
@@ -453,29 +450,16 @@
         window.atualizarStatusPedido = async (id, novoStatus) => {
             const ref = doc(db, "pedidos", id);
             let dados = { status: novoStatus, ultimaAtualizacao: serverTimestamp() };
-            
             if (novoStatus === 'cancelado') {
-                const m = prompt("Motivo do cancelamento (obrigatório para o cliente ver):");
-                if (!m || m.trim() === "") { 
-                    alert("Você deve informar um motivo!");
-                    carregarPedidos(); 
-                    return; 
-                }
+                const m = prompt("Motivo do cancelamento:");
+                if (!m) return;
                 dados.motivoCancelamento = m;
-            } else { 
-                dados.motivoCancelamento = null; 
             }
-
-            try {
-                await updateDoc(ref, dados);
-            } catch (e) {
-                console.error(e);
-                alert("Erro ao atualizar status.");
-            }
+            await updateDoc(ref, dados);
         };
 
         window.excluirDoc = async (pasta, id) => {
-            if(confirm(`Excluir permanentemente de ${pasta}?`)) await deleteDoc(doc(db, pasta, id));
+            if(confirm(`Excluir permanentemente?`)) await deleteDoc(doc(db, pasta, id));
         };
 
         formProduto.addEventListener('submit', salvarProduto);
