@@ -383,7 +383,6 @@ section h2 {
     border-radius: 0.8rem;
     border: 2px solid #f7b2b7;
     box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);  
-    border: 1px solid transparent;
     transition: all 0.2s ease;
 }
 
@@ -831,6 +830,7 @@ footer {
 .perfil-container {
     max-width: 600px;
     margin: 5px auto 40px; 
+    margin-top: 10px;  
     background: #ffffff;
     padding: 30px;
     border-radius: 20px;
