@@ -480,12 +480,17 @@
         });
 
         // --- FUNÇÃO DE IMPRESSÃO ---
+// --- FUNÇÃO DE IMPRESSÃO ATUALIZADA ---
         function imprimirNota(id, p) {
             const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
+            
+            // Gerar linhas dos itens com valor unitário e subtotal
             const itensTexto = p.itens ? p.itens.map(item => 
                 `<tr>
-                    <td style="padding: 5px 0;">${item.quantidade}x ${item.nome}</td>
-                    <td style="text-align: right;">R$ ${(item.preco * item.quantidade).toFixed(2)}</td>
+                    <td style="padding: 5px 0;">${item.quantidade}x ${item.nome}<br>
+                        <small>(un: R$ ${item.preco.toFixed(2)})</small>
+                    </td>
+                    <td style="text-align: right; vertical-align: top;">R$ ${(item.preco * item.quantidade).toFixed(2)}</td>
                 </tr>`
             ).join('') : '<tr><td>Sem itens</td></tr>';
 
@@ -493,14 +498,16 @@
             janelaImpressao.document.write(`
                 <html>
                 <head>
-                    <title>Imprimir Pedido #${id.slice(-5).toUpperCase()}</title>
+                    <title>Pedido #${id.slice(-5).toUpperCase()}</title>
                     <style>
-                        body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 10px; color: #000; }
+                        body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 10px; color: #000; line-height: 1.2; }
                         .topo { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
-                        .detalhes { font-size: 0.9rem; margin-bottom: 10px; }
-                        table { width: 100%; border-bottom: 1px dashed #000; margin-bottom: 10px; font-size: 0.85rem; }
-                        .total { font-weight: bold; font-size: 1.1rem; text-align: right; }
+                        .detalhes { font-size: 0.85rem; margin-bottom: 10px; }
+                        table { width: 100%; border-bottom: 1px dashed #000; margin-bottom: 10px; font-size: 0.85rem; border-collapse: collapse; }
+                        .financeiro { text-align: right; font-size: 0.9rem; }
+                        .total { font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
                         .rodape { text-align: center; margin-top: 20px; font-size: 0.8rem; border-top: 1px dashed #000; padding-top: 10px; }
+                        hr { border: none; border-top: 1px dashed #000; }
                     </style>
                 </head>
                 <body>
@@ -509,21 +516,34 @@
                         <p style="margin:5px 0;">Pedido #${id.slice(-5).toUpperCase()}</p>
                         <span>${dataP}</span>
                     </div>
+                    
                     <div class="detalhes">
                         <strong>CLIENTE:</strong> ${p.clienteNome}<br>
-                        <strong>BAIRRO:</strong> ${p.bairro}<br>
-                        <strong>ENTREGA:</strong> R$ ${p.taxaEntrega ? p.taxaEntrega.toFixed(2) : '0.00'}
+                        <strong>TEL:</strong> ${p.telefone || 'Não informado'}<br>
+                        <hr>
+                        <strong>ENDEREÇO:</strong><br>
+                        ${p.rua || '---'}, ${p.numero || 'S/N'}<br>
+                        ${p.complemento ? 'Comp: ' + p.complemento + '<br>' : ''}
+                        <strong>Bairro:</strong> ${p.bairro}<br>
+                        ${p.referencia ? 'Ref: ' + p.referencia : ''}
                     </div>
+
                     <table>
                         <thead>
                             <tr><th style="text-align:left;">Item</th><th style="text-align:right;">Subtotal</th></tr>
                         </thead>
                         <tbody>${itensTexto}</tbody>
                     </table>
-                    <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
+
+                    <div class="financeiro">
+                        <div>Subtotal Itens: R$ ${(p.total - (p.taxaEntrega || 0)).toFixed(2)}</div>
+                        <div>Taxa de Entrega: R$ ${p.taxaEntrega ? p.taxaEntrega.toFixed(2) : '0.00'}</div>
+                        <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
+                    </div>
+
                     <div class="rodape">
                         Obrigado pela preferência! 🍪<br>
-                        Acompanhe seu pedido no site.
+                        @ninkoscookies
                     </div>
                 </body>
                 </html>
@@ -543,7 +563,6 @@
             }
             await updateDoc(ref, dados);
 
-            // LOGICA DE IMPRESSÃO AO ACEITAR (EM PRODUÇÃO)
             if (novoStatus === 'em produção') {
                 const docSnap = await getDoc(ref);
                 if (docSnap.exists()) {
