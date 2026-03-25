@@ -9,82 +9,118 @@
     <style>
         .admin-body { background-color: #fae5e7; padding-bottom: 50px; }
         .form-admin, .lista-admin { 
-            padding: 2rem; max-width: 800px; margin: 2rem auto; 
+            padding: 2rem; max-width: 1200px; margin: 2rem auto; 
             background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
-        /* Seção de Pedidos com 4 colunas (2 por linha) */
-        .secao-pedidos { max-width: 1100px !important; margin: 2rem auto; }
+        .form-admin h1, .form-admin h2, .form-admin h3, .lista-admin h2, .form-admin p { 
+            text-align: center; color: #333; margin-bottom: 1.5rem; 
+        }
+
+        input, textarea, select { 
+            width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
+            border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif; 
+        }
+        .btn-salvar { 
+            background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
+            cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background-color: #f9f9f9; }
+        .img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+        .btn-excluir { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
         
+        #conteudo-protegido { display: none; }
+        .hidden { display: none; }
+
+        /* Estilos das 4 Colunas */
         .grid-pedidos {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 colunas por linha */
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
             margin-top: 20px;
         }
-
         .coluna-pedidos {
-            background: #fdf2f3; 
-            padding: 15px; 
-            border-radius: 8px; 
-            min-height: 400px; 
+            background: #fdf2f3;
+            padding: 12px;
+            border-radius: 8px;
+            min-height: 500px;
             border: 1px solid #eec0c5;
-            width: 100%;
         }
-
         .coluna-pedidos h3 {
-            font-size: 0.95rem; margin-bottom: 15px; padding-bottom: 8px;
-            border-bottom: 2px solid #d63384; color: #d63384; text-transform: uppercase; text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #d63384;
+            color: #d63384;
+            text-transform: uppercase;
         }
 
         .card-pedido { 
             background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 12px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.85rem; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 0.82rem; 
         }
 
-        /* Estilos Gerais */
-        .filtros-topo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; }
+        .filtros-topo {
+            display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px;
+            background: #fff; padding: 15px; border-radius: 8px;
+        }
         .filtros-topo select { width: auto; margin-bottom: 0; }
-        
-        input, textarea, select { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 5px; }
-        .btn-salvar { background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-        .img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
-        .btn-excluir { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-        
-        .status-loja-container { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 1.5rem; border-radius: 10px; max-width: 800px; margin: 2rem auto; border: 2px solid #d63384; }
+
+        .status-loja-container {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fff; padding: 1.5rem; border-radius: 10px;
+            max-width: 800px; margin: 2rem auto; border: 2px solid #d63384;
+        }
         .status-indicador { font-weight: bold; padding: 8px 15px; border-radius: 20px; }
         .aberta { background: #e8f5e9; color: #2e7d32; }
         .fechada { background: #ffebee; color: #c62828; }
-        .grid-horarios { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
-        
-        @media (max-width: 900px) { .grid-pedidos { grid-template-columns: 1fr; } .secao-pedidos { max-width: 95%; } }
-        #conteudo-protegido { display: none; }
-        .hidden { display: none; }
+
+        .grid-horarios {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px; align-items: center; margin-bottom: 10px;
+        }
+        .grid-horarios span { font-weight: bold; color: #555; }
+        .grid-horarios input { margin-bottom: 0; }
     </style>
 </head>
 <body class="admin-body">
 
     <div class="menu-fixo">
         <header>
-            <div class="header-side"><a href="index.html" class="btn-auth">← Voltar</a></div> 
-            <div class="logo-container"><img id="img-logo" src="img/logos/ninkos_logo.png"></div>
-            <div class="header-side auth-area"><div id="menu-user"></div></div>
+            <div class="header-side">
+                <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Voltar</a>
+            </div> 
+            <div class="logo-container">
+                <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
+            </div>
+            <div class="header-side auth-area">
+                <div id="menu-user"></div>
+                <div id="menu-logout" class="hidden">
+                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold; margin-left: 10px;">Sair</a>
+                </div>
+            </div>
         </header>
     </div>
 
     <main id="conteudo-protegido" style="margin-top: 150px;">
         
         <div class="status-loja-container">
-            <div><h3>Status da Loja</h3><p id="label-status" class="status-indicador fechada">Carregando...</p></div>
-            <button id="btn-toggle-loja" class="btn-salvar" style="width: auto;">Alterar Status</button>
+            <div>
+                <h3 style="margin:0; text-align: left;">Status da Loja</h3>
+                <p style="margin:5px 0 0 0; font-size: 0.9rem; color: #666; text-align: left;">Controle se os clientes podem fazer pedidos.</p>
+            </div>
+            <div style="text-align: right;">
+                <span id="label-status" class="status-indicador fechada">Carregando...</span>
+                <button id="btn-toggle-loja" style="display:block; margin-top:10px; width:100%; cursor:pointer;">Alterar Status</button>
+            </div>
         </div>
 
         <div class="form-admin">
-            <h2>Horários de Funcionamento ⏰</h2>
+            <h2>Horários de Funcionamento Automático ⏰</h2>
             <div id="container-inputs-horarios"></div>
-            <button type="button" id="btn-salvar-horarios" class="btn-salvar">Atualizar Horários</button>
+            <button type="button" id="btn-salvar-horarios" class="btn-salvar" style="margin-top: 20px;">Atualizar Horários</button>
         </div>
         
         <div class="form-admin">
@@ -94,16 +130,22 @@
                 <input type="text" id="nome" placeholder="Nome do Sabor" required>
                 <textarea id="descricao" placeholder="Descrição..." required></textarea>
                 <input type="text" id="preco" placeholder="Preço (Ex: 12.00)" required>
-                <select id="categoria"><option value="cookies">Cookies</option><option value="milk-shakes">Milk Shakes</option></select>
-                <input type="text" id="imagemUrl" placeholder="Caminho da Imagem" required>
-                <button type="submit" class="btn-salvar">Salvar no Cardápio</button>
-                <button type="button" id="btn-cancelar" class="hidden">Cancelar Edição</button>
+                <select id="categoria">
+                    <option value="cookies">Cookies</option>
+                    <option value="milk-shakes">Milk Shakes</option>
+                </select>
+                <input type="text" id="imagemUrl" placeholder="Caminho da Imagem (Ex: img/produtos/cookie.jpg)" required>
+                <button type="submit" id="btn-submit" class="btn-salvar">Salvar no Cardápio</button>
+                <button type="button" id="btn-cancelar" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
             </form>
         </div>
 
         <div class="lista-admin">
             <h2>Sabores Atuais</h2>
-            <table><thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead><tbody id="tabela-produtos"></tbody></table>
+            <table>
+                <thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-produtos"></tbody>
+            </table>
         </div>
 
         <div class="form-admin">
@@ -111,21 +153,33 @@
             <form id="form-bairro">
                 <input type="hidden" id="bairro-id">
                 <input type="text" id="bairro-nome" placeholder="Ex: Centro" required>
-                <input type="text" id="bairro-frete" placeholder="Valor do Frete" required>
-                <button type="submit" class="btn-salvar">Salvar Bairro</button>
-                <button type="button" id="btn-cancelar-bairro" class="hidden">Cancelar</button>
+                <input type="text" id="bairro-frete" placeholder="Valor do Frete (Ex: 7.00)" required>
+                <button type="submit" id="btn-bairro" class="btn-salvar">Salvar Bairro</button>
+                <button type="button" id="btn-cancelar-bairro" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
             </form>
         </div>
 
         <div class="lista-admin">
             <h2>Bairros Atendidos</h2>
-            <table><thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead><tbody id="tabela-bairros"></tbody></table>
+            <table>
+                <thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-bairros"></tbody>
+            </table>
         </div>
 
-        <div class="lista-admin secao-pedidos">
-            <h2>📦 Gestão de Pedidos</h2>
+        <div class="lista-admin">
+            <h2>👥 Gerenciar Usuários</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Ações</th></tr></thead>
+                <tbody id="tabela-usuarios"></tbody>
+            </table>
+        </div>
+
+        <div class="lista-admin" style="max-width: 95%;">
+            <h2>📦 Gestão de Pedidos em Tempo Real</h2>
+            
             <div class="filtros-topo">
-                <span>Filtrar por:</span>
+                <span><strong>Filtrar Pedidos:</strong></span>
                 <select id="filtro-periodo">
                     <option value="todas">Todo o período</option>
                     <option value="24h">Últimas 24 horas</option>
@@ -135,26 +189,60 @@
             </div>
 
             <div class="grid-pedidos">
-                <div class="coluna-pedidos"><h3>🔔 Realizados</h3><div id="col-realizado"></div></div>
-                <div class="coluna-pedidos"><h3>👨‍🍳 Produção / 🚚 Rota</h3><div id="col-producao-rota"></div></div>
-                <div class="coluna-pedidos" style="background:#e8f5e9;"><h3>✅ Finalizados</h3><div id="col-finalizado"></div></div>
-                <div class="coluna-pedidos" style="background:#ffebee;"><h3>❌ Cancelados</h3><div id="col-cancelado"></div></div>
+                <div class="coluna-pedidos">
+                    <h3>🔔 Realizados</h3>
+                    <div id="col-realizado"></div>
+                </div>
+                <div class="coluna-pedidos">
+                    <h3>👨‍🍳 Produção / 🚚 Rota</h3>
+                    <div id="col-producao-rota"></div>
+                </div>
+                <div class="coluna-pedidos" style="background:#e8f5e9;">
+                    <h3 style="color:#2e7d32; border-color:#2e7d32;">✅ Finalizados</h3>
+                    <div id="col-finalizado"></div>
+                </div>
+                <div class="coluna-pedidos" style="background:#ffebee;">
+                    <h3 style="color:#c62828; border-color:#c62828;">❌ Cancelados</h3>
+                    <div id="col-cancelado"></div>
+                </div>
             </div>
         </div>
+
     </main>
 
     <script type="module">
         import { db, auth } from "./firebase-config.js";
-        import { collection, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIGURAÇÕES E PRODUTOS
         const configRef = doc(db, "configuracoes", "status_loja");
         const formProduto = document.getElementById('form-produto');
         const formBairro = document.getElementById('form-bairro');
+        const tabelaProdutos = document.getElementById('tabela-produtos');
+        const tabelaBairros = document.getElementById('tabela-bairros');
+        const tabelaUsuarios = document.getElementById('tabela-usuarios');
+        
+        // ELEMENTOS DAS COLUNAS
+        const colRealizado = document.getElementById('col-realizado');
+        const colProducaoRota = document.getElementById('col-producao-rota');
+        const colFinalizado = document.getElementById('col-finalizado');
+        const colCancelado = document.getElementById('col-cancelado');
         const filtroPeriodo = document.getElementById('filtro-periodo');
 
-        // --- STATUS E HORÁRIOS ---
-        const diasSemana = [{id:'seg',nome:'Segunda'},{id:'ter',nome:'Terça'},{id:'qua',nome:'Quarta'},{id:'qui',nome:'Quinta'},{id:'sex',nome:'Sexta'},{id:'sab',nome:'Sábado'},{id:'dom',nome:'Domingo'}];
-        document.getElementById('container-inputs-horarios').innerHTML = diasSemana.map(dia => `<div class="grid-horarios"><span>${dia.nome}</span><input type="time" id="${dia.id}-inicio"><input type="time" id="${dia.id}-fim"></div>`).join('');
+        // STATUS E HORÁRIOS
+        const diasSemana = [
+            { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' }, 
+            { id: 'qua', nome: 'Quarta' }, { id: 'qui', nome: 'Quinta' }, 
+            { id: 'sex', nome: 'Sexta' }, { id: 'sab', nome: 'Sábado' }, { id: 'dom', nome: 'Domingo' }
+        ];
+
+        document.getElementById('container-inputs-horarios').innerHTML = diasSemana.map(dia => `
+            <div class="grid-horarios">
+                <span>${dia.nome}</span>
+                <input type="time" id="${dia.id}-inicio">
+                <input type="time" id="${dia.id}-fim">
+            </div>
+        `).join('');
 
         async function carregarHorariosNaTela() {
             const docSnap = await getDoc(configRef);
@@ -171,15 +259,20 @@
 
         document.getElementById('btn-salvar-horarios').addEventListener('click', async () => {
             const h = {};
-            diasSemana.forEach(dia => { h[dia.id] = { inicio: document.getElementById(`${dia.id}-inicio`).value, fim: document.getElementById(`${dia.id}-fim`).value }; });
+            diasSemana.forEach(dia => {
+                h[dia.id] = {
+                    inicio: document.getElementById(`${dia.id}-inicio`).value,
+                    fim: document.getElementById(`${dia.id}-fim`).value
+                };
+            });
             await updateDoc(configRef, { horarios: h });
-            alert("Horários salvos!");
+            alert("Horários atualizados!");
         });
 
         function monitorarStatusLoja() {
-            onSnapshot(configRef, (snap) => {
-                if (snap.exists()) {
-                    const aberta = snap.data().aberta;
+            onSnapshot(configRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const aberta = docSnap.data().aberta;
                     document.getElementById('label-status').innerText = aberta ? "LOJA ABERTA" : "LOJA FECHADA";
                     document.getElementById('label-status').className = `status-indicador ${aberta ? 'aberta' : 'fechada'}`;
                 }
@@ -187,12 +280,12 @@
         }
 
         document.getElementById('btn-toggle-loja').addEventListener('click', async () => {
-            const snap = await getDoc(configRef);
-            if (snap.exists()) await updateDoc(configRef, { aberta: !snap.data().aberta });
+            const docSnap = await getDoc(configRef);
+            if (docSnap.exists()) await updateDoc(configRef, { aberta: !docSnap.data().aberta });
         });
 
-        // --- PRODUTOS ---
-        formProduto.addEventListener('submit', async (e) => {
+        // PRODUTOS E BAIRROS
+        async function salvarProduto(e) {
             e.preventDefault();
             const id = document.getElementById('produto-id').value;
             const dados = {
@@ -202,19 +295,27 @@
                 categoria: document.getElementById('categoria').value,
                 imagemUrl: document.getElementById('imagemUrl').value
             };
-            id ? await updateDoc(doc(db, "produtos", id), dados) : await addDoc(collection(db, "produtos"), dados);
-            formProduto.reset(); resetForm();
-        });
+            if (id) { await updateDoc(doc(db, "produtos", id), dados); resetForm(); } 
+            else { await addDoc(collection(db, "produtos"), dados); }
+            formProduto.reset();
+        }
 
         function carregarProdutos() {
-            onSnapshot(collection(db, "produtos"), (snap) => {
-                const tbody = document.getElementById('tabela-produtos');
-                tbody.innerHTML = "";
-                snap.forEach(d => {
-                    const p = d.data();
-                    tbody.innerHTML += `<tr><td><img src="${p.imagemUrl}" class="img-tabela"></td><td>${p.nome}</td><td>R$ ${p.preco.toFixed(2)}</td>
-                    <td><button onclick="editarProduto('${d.id}','${p.nome}','${p.descricao}','${p.preco}','${p.categoria}','${p.imagemUrl}')">Editar</button>
-                    <button class="btn-excluir" onclick="excluirDoc('produtos','${d.id}')">X</button></td></tr>`;
+            onSnapshot(collection(db, "produtos"), (snapshot) => {
+                tabelaProdutos.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><img src="${p.imagemUrl}" class="img-tabela"></td>
+                        <td>${p.nome}</td>
+                        <td>R$ ${p.preco.toFixed(2)}</td>
+                        <td>
+                            <button onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')">Editar</button>
+                            <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">X</button>
+                        </td>
+                    `;
+                    tabelaProdutos.appendChild(tr);
                 });
             });
         }
@@ -230,84 +331,143 @@
             document.getElementById('btn-cancelar').classList.remove('hidden');
         };
 
-        function resetForm() { document.getElementById('produto-id').value = ""; document.getElementById('titulo-form').innerText = "Adicionar Novo Sabor"; document.getElementById('btn-cancelar').classList.add('hidden'); }
+        function resetForm() {
+            document.getElementById('produto-id').value = "";
+            document.getElementById('titulo-form').innerText = "Adicionar Novo Sabor";
+            document.getElementById('btn-cancelar').classList.add('hidden');
+            formProduto.reset();
+        }
 
-        // --- BAIRROS ---
         formBairro.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('bairro-id').value;
-            const dados = { nome: document.getElementById('bairro-nome').value, frete: parseFloat(document.getElementById('bairro-frete').value) };
-            id ? await updateDoc(doc(db, "bairros", id), dados) : await addDoc(collection(db, "bairros"), dados);
+            const dados = {
+                nome: document.getElementById('bairro-nome').value,
+                frete: parseFloat(document.getElementById('bairro-frete').value)
+            };
+            if (id) { await updateDoc(doc(db, "bairros", id), dados); resetFormBairro(); } 
+            else { await addDoc(collection(db, "bairros"), dados); }
             formBairro.reset();
         });
 
         function carregarBairros() {
-            onSnapshot(collection(db, "bairros"), (snap) => {
-                const tbody = document.getElementById('tabela-bairros');
-                tbody.innerHTML = "";
-                snap.forEach(d => {
-                    const b = d.data();
-                    tbody.innerHTML += `<tr><td>${b.nome}</td><td>R$ ${b.frete.toFixed(2)}</td><td><button onclick="editarBairro('${d.id}','${b.nome}','${b.frete}')">Editar</button>
-                    <button class="btn-excluir" onclick="excluirDoc('bairros','${d.id}')">X</button></td></tr>`;
+            onSnapshot(collection(db, "bairros"), (snapshot) => {
+                tabelaBairros.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const b = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${b.nome}</td><td>R$ ${b.frete.toFixed(2)}</td><td>
+                        <button onclick="editarBairro('${docSnap.id}', '${b.nome}', '${b.frete}')">Editar</button>
+                        <button class="btn-excluir" onclick="excluirDoc('bairros', '${docSnap.id}')">X</button>
+                    </td>`;
+                    tabelaBairros.appendChild(tr);
                 });
             });
         }
 
-        window.editarBairro = (id, nome, frete) => { document.getElementById('bairro-id').value = id; document.getElementById('bairro-nome').value = nome; document.getElementById('bairro-frete').value = frete; };
+        window.editarBairro = (id, nome, frete) => {
+            document.getElementById('bairro-id').value = id;
+            document.getElementById('bairro-nome').value = nome;
+            document.getElementById('bairro-frete').value = frete;
+            document.getElementById('titulo-bairro').innerText = "Editando Bairro";
+            document.getElementById('btn-cancelar-bairro').classList.remove('hidden');
+        };
 
-        // --- PEDIDOS (COMPLETO) ---
+        function resetFormBairro() {
+            document.getElementById('bairro-id').value = "";
+            document.getElementById('titulo-bairro').innerText = "Cadastrar Bairro e Frete";
+            document.getElementById('btn-cancelar-bairro').classList.add('hidden');
+            formBairro.reset();
+        }
+
+        // GESTÃO DE PEDIDOS (COM COLUNAS E FILTROS)
         function carregarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("data", "desc"));
-            onSnapshot(q, (snap) => {
-                const cols = { realizado: document.getElementById('col-realizado'), 'em produção': document.getElementById('col-producao-rota'), 'em rota': document.getElementById('col-producao-rota'), finalizado: document.getElementById('col-finalizado'), cancelado: document.getElementById('col-cancelado') };
-                Object.values(cols).forEach(c => c.innerHTML = "");
-                
+            
+            onSnapshot(q, (snapshot) => {
+                colRealizado.innerHTML = "";
+                colProducaoRota.innerHTML = "";
+                colFinalizado.innerHTML = "";
+                colCancelado.innerHTML = "";
+
                 const agora = new Date();
                 const filtro = filtroPeriodo.value;
 
-                snap.forEach(d => {
-                    const p = d.data();
+                snapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    const id = docSnap.id;
                     const dataP = p.data?.toDate();
+
+                    // Lógica do Filtro de Período
                     if (dataP && filtro !== "todas") {
-                        const horas = (agora - dataP) / (1000 * 60 * 60);
+                        const diferencaEmMS = agora - dataP;
+                        const horas = diferencaEmMS / (1000 * 60 * 60);
                         if (filtro === "24h" && horas > 24) return;
                         if (filtro === "7d" && horas > 168) return;
                         if (filtro === "30d" && horas > 720) return;
                     }
 
-                    const itens = p.itens?.map(i => `<li>${i.quantidade}x ${i.nome} - R$ ${(i.precoUnitario * i.quantidade).toFixed(2)}</li>`).join('') || '';
-                    const card = `<div class="card-pedido">
-                        <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>#${d.id.slice(-4).toUpperCase()}</span><span style="font-size:0.7rem; color:#999;">${dataP?.toLocaleString('pt-BR') || '---'}</span></div>
-                        <p><strong>👤 ${p.clienteNome}</strong></p>
-                        <p>📞 <a href="https://wa.me/55${p.clienteTelefone}" target="_blank" style="color:#25d366; text-decoration:none;">${p.clienteTelefone} <i class="fab fa-whatsapp"></i></a></p>
-                        <p style="font-size:0.75rem; color:#666;">📍 ${p.endereco}</p>
-                        <ul style="margin:5px 0; padding-left:15px; font-size:0.8rem; border-top:1px solid #eee;">${itens}</ul>
-                        <p><strong>💳 ${p.formaPagamento}</strong></p>
-                        <p style="color:#d63384; font-weight:bold;">Total: R$ ${p.total.toFixed(2)}</p>
-                        <select onchange="atualizarStatusPedido('${d.id}', this.value)" style="font-size:0.75rem; padding:4px; margin-top:5px; margin-bottom:0;">
-                            <option value="realizado" ${p.status==='realizado'?'selected':''}>Realizado</option>
-                            <option value="em produção" ${p.status==='em produção'?'selected':''}>Produção</option>
-                            <option value="em rota" ${p.status==='em rota'?'selected':''}>Em Rota</option>
-                            <option value="finalizado" ${p.status==='finalizado'?'selected':''}>Finalizado</option>
-                            <option value="cancelado" ${p.status==='cancelado'?'selected':''}>Cancelar</option>
-                        </select>
-                        <button onclick="excluirDoc('pedidos','${d.id}')" style="background:none; border:none; color:red; cursor:pointer; margin-left:10px;">🗑️</button>
-                    </div>`;
-                    
-                    if (cols[p.status]) cols[p.status].innerHTML += card;
+                    const itensHTML = p.itens ? p.itens.map(item => 
+                        `<li>${item.quantidade}x ${item.nome} - R$ ${(item.precoUnitario * item.quantidade).toFixed(2)}</li>`
+                    ).join('') : '';
+
+                    const cardHTML = `
+                        <div class="card-pedido">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <strong>#${id.slice(-4).toUpperCase()}</strong>
+                                <span style="font-size:0.7rem; color:#999;">${dataP?.toLocaleString('pt-BR') || '---'}</span>
+                            </div>
+                            <p><strong>👤 ${p.clienteNome || '---'}</strong></p>
+                            <p>📞 <a href="https://wa.me/55${p.clienteTelefone}" target="_blank" style="color:#25d366; text-decoration:none;">${p.clienteTelefone || '---'}</a></p>
+                            <p style="color:#666; font-size:0.75rem;">📍 ${p.endereco || '---'}</p>
+                            <ul style="margin:8px 0; padding-left:15px; border-top:1px solid #eee; padding-top:5px;">${itensHTML}</ul>
+                            <p><strong>💳 ${p.formaPagamento || '---'}</strong></p>
+                            <p style="color:#d63384; font-weight:bold; font-size: 0.9rem;">Total: R$ ${p.total?.toFixed(2) || '0.00'}</p>
+                            <div style="margin-top:10px; display:flex; gap:5px;">
+                                <select onchange="atualizarStatusPedido('${id}', this.value)" style="font-size:0.75rem; padding:4px;">
+                                    <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
+                                    <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
+                                    <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
+                                    <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizado</option>
+                                    <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>Cancelar</option>
+                                </select>
+                                <button onclick="excluirDoc('pedidos', '${id}')" style="background:none; border:none; cursor:pointer; color:red;">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Distribuição por Colunas
+                    if (p.status === 'realizado') colRealizado.innerHTML += cardHTML;
+                    else if (p.status === 'em produção' || p.status === 'em rota') colProducaoRota.innerHTML += cardHTML;
+                    else if (p.status === 'finalizado') colFinalizado.innerHTML += cardHTML;
+                    else if (p.status === 'cancelado') colCancelado.innerHTML += cardHTML;
                 });
             });
         }
 
-        window.atualizarStatusPedido = async (id, status) => { await updateDoc(doc(db, "pedidos", id), { status, ultimaAtualizacao: serverTimestamp() }); };
-        window.excluirDoc = async (pasta, id) => { if(confirm("Excluir permanentemente?")) await deleteDoc(doc(db, pasta, id)); };
+        window.atualizarStatusPedido = async (id, novoStatus) => {
+            await updateDoc(doc(db, "pedidos", id), { status: novoStatus, ultimaAtualizacao: serverTimestamp() });
+        };
+
+        window.excluirDoc = async (pasta, id) => {
+            if(confirm("Excluir permanentemente?")) await deleteDoc(doc(db, pasta, id));
+        };
 
         filtroPeriodo.addEventListener('change', carregarPedidos);
+        formProduto.addEventListener('submit', salvarProduto);
+        document.getElementById('btn-cancelar').addEventListener('click', resetForm);
+        document.getElementById('btn-cancelar-bairro').addEventListener('click', resetFormBairro);
 
+        // LOGIN E INICIALIZAÇÃO
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('conteudo-protegido').style.display = "block";
-                monitorarStatusLoja(); carregarHorariosNaTela(); carregarProdutos(); carregarBairros(); carregarPedidos();
+                monitorarStatusLoja();
+                carregarHorariosNaTela();
+                carregarProdutos();
+                carregarBairros();
+                carregarPedidos();
+                // carregarUsuarios(); (Adicione se desejar a tabela de usuários completa)
             } else { window.location.href = "login.html"; }
         });
     </script>
