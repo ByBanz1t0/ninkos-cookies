@@ -908,12 +908,12 @@ footer {
 
 /* ADIÇÃO: Estilo do Card de Pontos, mantido */
 .card-fidelidade {
+    max-width: 600px;  
     background: linear-gradient(135deg, #d63384, #f7b2b7);
     color: white;
     padding: 20px; 
     border-radius: 15px;
-    margin: 0 auto 5px;  
-    max-width: 600px;
+    margin: 5 auto 40px;  
     text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
 }
