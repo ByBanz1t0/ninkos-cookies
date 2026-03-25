@@ -832,7 +832,7 @@ footer {
 .perfil-container {
     max-width: 600px;
     margin: 5px auto 40px; 
-    margin-top: 10px;  
+    margin-top: 20px;  
     background: #ffffff;
     padding: 30px;
     border-radius: 20px;
@@ -912,8 +912,7 @@ footer {
     color: white;
     padding: 20px; 
     border-radius: 15px;
-    margin: 0 auto 5px; 
-    margin: 5px auto 40px  
+    margin: 0 auto 5px;  
     max-width: 600px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
