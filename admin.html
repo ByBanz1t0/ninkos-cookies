@@ -64,6 +64,30 @@
         }
         .header-pedidos h2 { margin-bottom: 0 !important; }
         #filtro-periodo { width: auto; margin-bottom: 0; padding: 5px 10px; }
+
+        /* --- IMPLEMENTAÇÃO DO SCROLL --- */
+        #container-pedidos-admin {
+            max-height: 600px; /* Define a altura máxima da lista */
+            overflow-y: auto;  /* Ativa o scroll apenas vertical */
+            padding-right: 5px;
+            border-radius: 8px;
+        }
+
+        /* Estilização da Barra de Rolagem */
+        #container-pedidos-admin::-webkit-scrollbar {
+            width: 8px;
+        }
+        #container-pedidos-admin::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #container-pedidos-admin::-webkit-scrollbar-thumb {
+            background: #f7b2b7;
+            border-radius: 10px;
+        }
+        #container-pedidos-admin::-webkit-scrollbar-thumb:hover {
+            background: #d63384;
+        }
     </style>
 </head>
 <body class="admin-body">
@@ -174,7 +198,6 @@
 
     <script type="module">
         import { db, auth } from "./firebase-config.js";
-        // ADICIONADO 'where' NAS IMPORTAÇÕES
         import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         if (Notification.permission !== "granted") { Notification.requestPermission(); }
@@ -452,7 +475,6 @@
             });
         }
 
-        // ESCUTAR MUDANÇA NO FILTRO
         document.getElementById('filtro-periodo').addEventListener('change', (e) => {
             carregarPedidos(e.target.value);
         });
