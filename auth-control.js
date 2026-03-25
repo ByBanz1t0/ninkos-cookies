@@ -58,14 +58,14 @@ onAuthStateChanged(auth, async (user) => {
             if (menuUser) {
                 let htmlMenu = `
                     <a href="meus-pedidos.html" class="btn-meus-pedidos">
-                        📦 Meus Pedidos
+                        📦
                     </a>
                 `;
 
                 if (ehAdmin) {
                     htmlMenu += `
                         <a href="admin.html" class="btn-auth" style="background-color: #000; color: #fff; border-color: #000; margin-right: 10px;">
-                            ⚙️ Admin
+                            ⚙️
                         </a>
                     `;
                 }
@@ -73,7 +73,7 @@ onAuthStateChanged(auth, async (user) => {
                 // Exibe pontos no menu se quiser (Opcional)
                 // htmlMenu += `<span style="font-size: 0.8rem; color: #d63384;">✨ ${pontos} pts</span>`;
 
-                htmlMenu += `<a href="perfil.html" class="btn-auth">Olá, ${nomeParaExibir}</a>`;
+                htmlMenu += `<a href="perfil.html" class="btn-auth">👤</a>`;
 
                 menuUser.innerHTML = htmlMenu;
                 menuUser.classList.remove('hidden');
