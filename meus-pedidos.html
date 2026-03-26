@@ -137,6 +137,7 @@
                             itensHTML = p.itens.map(i => `
                                 <div class="item-pedido-discreto">
                                     <span>${i.quantidade}x ${i.nome}</span>
+                                    <span>${i.quantidade}x ${i.nome}</span>
                                     <span style="color:#aaa;">R$ ${(i.precoUnitario * i.quantidade).toFixed(2)}</span>
                                 </div>
                             `).join('');
