@@ -136,7 +136,7 @@
                         if (p.itens && Array.isArray(p.itens)) {
                             itensHTML = p.itens.map(i => `
                                 <div class="item-pedido-discreto">
-                                    <span>${i.quantidade}x ${i.nome}</span>
+                                    <span>${i.quantidade}x ${i.nome}</span><br>
                                 <div class="item-pedido-discreto"> 
                                     Frete: ${p.frete.toFixed(2)}
                                     <span style="color:#aaa;">R$ ${(i.precoUnitario * i.quantidade).toFixed(2)}</span>
