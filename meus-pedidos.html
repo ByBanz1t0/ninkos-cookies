@@ -60,7 +60,7 @@
     </div>
 
     <main class="container-pedidos">
-        <h2 style="margin-bottom: 25px; text-align: center; color: #d63384;">Meu Histórico de Cookies 🍪</h2>
+        <h2 style="margin-bottom: 25px; text-align: center; color: #d63384;">Histórico de Pedidos 🍪</h2>
         <div id="lista-meus-pedidos">
             <p style="text-align: center;">Carregando suas delícias...</p>
         </div>
@@ -137,6 +137,7 @@
                             itensHTML = p.itens.map(i => `
                                 <div class="item-pedido-discreto">
                                     <span>${i.quantidade}x ${i.nome}</span>
+                                    <span>Frete: ${i.frete.toFixed(2)}</span>
                                     <span style="color:#aaa;">R$ ${(i.precoUnitario * i.quantidade).toFixed(2)}</span>
                                 </div>
                             `).join('');
