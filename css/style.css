@@ -989,6 +989,7 @@ footer {
 
 /* --- STATUS DA LOJA (Lado a lado) --- */
 .status-loja-container {
+    margin-top: 8rem;
     margin: 2rem auto;
     display: flex;
     justify-content: space-between;
