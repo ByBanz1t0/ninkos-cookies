@@ -979,12 +979,13 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
+    background-color: #ffffff;
     padding: 1.5rem;
     border-radius: 0.625rem;
     max-width: 50rem; /* 800px */
     margin: 2rem auto;
     border: 0.125rem solid #f7b2b7;
+    box-shadow: 0 0.25rem 0.9375rem rgba(0,0,0,0.05);
 }
 
 .status-controles {
@@ -1000,6 +1001,52 @@ footer {
     padding: 0.5rem 0.9375rem;
     border-radius: 1.25rem;
     font-size: 0.8rem;
+}
+
+.status-info {
+    text-align: left;
+    flex: 1;
+}
+
+.status-info h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+    font-family: 'keepcalm', sans-serif;
+}
+
+.status-info p {
+    margin: 0.3125rem 0 0 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.status-controles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.625rem;
+}
+
+.status-indicador {
+    display: inline-block;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 1.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 8rem;
+}
+
+.aberta {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.fechada {
+    background-color: #ffebee;
+    color: #c62828;
 }
 
 @media (max-width: 768px) {
