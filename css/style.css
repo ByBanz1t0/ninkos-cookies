@@ -28,7 +28,7 @@ body {
     background-color: #fae5e7;
     color: #000;
     line-height: 1.6;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     overflow-x: hidden;
     padding-top: 8.75rem; /* 140px */
 }
@@ -990,7 +990,11 @@ footer {
 
 @media (max-width: 400px) {
     #img-logo {
-        width: 4rem;
+        width: 3.75rem;
+    }
+    
+    body {
+        font-size: 0.75rem; 
     }
     
     header {
