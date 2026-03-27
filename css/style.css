@@ -993,11 +993,11 @@ footer {
     align-items: center;
     background-color: #ffffff;
     padding: 1.5rem;
-    border-radius: 0.625rem;
+    border-radius: 1.5rem;
     max-width: 50rem; /* 800px */
     margin: 2rem auto;
-    border: 0.125rem solid #f7b2b7;
-    box-shadow: 0 0.25rem 0.9375rem rgba(0,0,0,0.05);
+    border: 0.0625rem solid #f7b2b7;
+    box-shadow: 0 0.25rem 0.9375rem rgba(0,0,0,0.1);
 }
 
 .status-controles {
