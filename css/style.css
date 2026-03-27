@@ -77,19 +77,22 @@ body {
     left: 0;
     width: 100%;
     z-index: 10000; 
-    background-color: #fae5e7; 
-    padding-bottom: 0.8rem;
-    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1); /* 4px 12px */
-    border-bottom: 0.125rem solid #f7b2b7; /* 2px */
+    background-color: #fae5e7; /* Fundo rosado claro da foto */
+    padding-bottom: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
+    /* A LINHA ROSA DE SEPARAÇÃO (Base do cabeçalho) */
+    border-bottom: 0.125rem solid #f7b2b7; 
 }
 
 header {
-    position: fixed;
     width: 100%;
-    padding: 1rem 2rem;
+    max-width: 75rem; /* 1200px */
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
     display: flex;
-    justify-content: space-between; 
+    justify-content: center; /* Centraliza o logo no meio */
     align-items: center;
+    position: relative; /* Necessário para posicionar os ícones na direita */
 }
 
 .header-side {
