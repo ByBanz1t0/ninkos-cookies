@@ -30,7 +30,7 @@ body {
     line-height: 1.6;
     font-size: 0.8rem;
     overflow-x: hidden;
-    padding-top: 8.75rem; /* 140px */
+    padding-top: 7.5rem; /* 140px */
 }
 
 .hidden {
@@ -989,7 +989,7 @@ footer {
 
 /* --- STATUS DA LOJA (Lado a lado) --- */
 .status-loja-container {
-    margin: 14rem auto 0;
+    margin: 10rem auto 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
