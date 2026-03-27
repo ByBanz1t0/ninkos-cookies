@@ -1001,3 +1001,67 @@ footer {
         padding: 0.5rem;
     }
 }
+
+/* ============================================================
+   PADRONIZAÇÃO DE BOTÕES DO ADMIN
+   ============================================================ */
+
+/* 1. BOTÕES PRINCIPAIS (Seguem o padrão arredondado do site) */
+.btn-salvar-admin, 
+.btn-admin-principal,
+#btn-abrir-fechar-loja { 
+    display: inline-block;
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+    border: 0.125rem solid #f7b2b7; /* 2px */
+    border-radius: 2rem; /* Formato arredondado dos outros botões */
+    background-color: #ffffff;
+    color: #000;
+    font-family: 'keepcalm', sans-serif;
+    font-weight: bold;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 1rem;
+}
+
+.btn-salvar-admin:hover, 
+#btn-abrir-fechar-loja:hover { 
+    background-color: #f7b2b7;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* 2. BOTÕES DE AÇÃO (Estilo funcional para tabelas e listas) */
+.btn-acao-admin {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+    border-radius: 0.5rem; /* Menos arredondado para economizar espaço */
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    cursor: pointer;
+    font-family: sans-serif; /* Fonte padrão para leitura rápida */
+    transition: 0.2s;
+    margin: 2px;
+}
+
+/* Botão de Excluir (Variação de Ação) */
+.btn-excluir { 
+    background: #ff4d4d; 
+    color: white; 
+    border: none; 
+    padding: 0.4rem 0.8rem; 
+    cursor: pointer; 
+    border-radius: 0.25rem; 
+    font-size: 0.7rem;
+}
+
+.btn-excluir:hover {
+    background: #cc0000;
+}
+
+/* Botões de Privilégio (Tornar/Remover Admin) */
+.btn-promover { background: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; }
+.btn-rebaixar { background: #fff3e0; color: #e65100; border: 1px solid #e65100; }
