@@ -17,7 +17,7 @@
 
 html {
     scroll-behavior: smooth;
-    overflow-y: scroll; 
+    overflow-y: scroll;
 }
 
 body {
@@ -27,10 +27,10 @@ body {
     line-height: 1.6;
     font-size: 0.9rem;
     overflow-x: hidden;
-    padding-top: 140px; 
+    padding-top: 140px;
 }
 
-/* Utilitários - O segredo para o JS funcionar */
+/* Utilitários */
 .hidden {
     display: none !important;
 }
@@ -42,7 +42,7 @@ body {
     align-items: center;
 }
 
-/* --- ESTILO DA LOJA FECHADA (NOVO) --- */
+/* Aviso de Loja Fechada */
 #aviso-fechado {
     position: fixed;
     top: 0;
@@ -50,7 +50,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.98);
-    z-index: 10001; /* Um nível acima do menu fixo */
+    z-index: 10001;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -59,30 +59,30 @@ body {
     padding: 20px;
 }
 
-#aviso-fechado h1 { 
-    color: #d63384; 
-    margin-bottom: 10px; 
+#aviso-fechado h1 {
+    color: #d63384;
+    margin-bottom: 10px;
     font-size: 1.5rem;
 }
 
-#aviso-fechado p { 
-    color: #555; 
-    font-size: 1rem; 
+#aviso-fechado p {
+    color: #555;
+    font-size: 1rem;
 }
 
 /* ==========================================================================
-   2. ESTRUTURA DO CABEÇALHO (HEADER & LOGO)
+   2. CABEÇALHO E NAVEGAÇÃO
    ========================================================================== */
 
 .menu-fixo {
-    position: fixed; 
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10000; 
-    background-color: #fae5e7; 
+    z-index: 10000;
+    background-color: #fae5e7;
     padding-bottom: 0.8rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-bottom: 2px solid #f7b2b7;
 }
 
@@ -90,12 +90,12 @@ header {
     width: 100%;
     padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
 }
 
 .header-side {
-    flex: 1; 
+    flex: 1;
     display: flex;
     align-items: center;
 }
@@ -109,7 +109,7 @@ header {
     width: 6.5rem;
     max-width: 100%;
     height: auto;
-    display: block; 
+    display: block;
     margin: 0 auto;
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -119,149 +119,17 @@ header {
     transform: scale(1.1);
 }
 
-/* ==========================================================================
-   2.1. RODAPÉ
-   ========================================================================== */
-
-.footer-site {
-    background-color: #fae5e7;
-    border-top: 1px solid #f7b2b7;
-    padding: 2rem 1rem 1rem;
-    margin-top: 2rem;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 2rem;
-}
-
-.footer-logo-img {
-    max-width: 2rem;
-    height: auto;
-    margin-bottom: 1rem;
-}
-
-.footer-info p {
-    color: #888;
-    font-size: 0.81rem;
-    max-width: 250px;
-}
-
-.footer-social h3 {
-    color: #d63384;
-    font-size: 0.99rem;
-    margin-bottom: 1.2rem;
-}
-
-.social-icons-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.social-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: #555;
-    font-size: 0.81rem;
-    transition: 0.3s;
-}
-
-.social-link:hover {
-    color: #d63384;
-}
-
-.icon-social {
-    width: 24px;
-    height: 24px;
-    max-width: 100%;
-}
-
-.footer-copyright {
-    text-align: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-    color: #aaa;
-    font-size: 0.72rem;
-}
-
-/* ==========================================================================
-   3. ÁREA DE AUTENTICAÇÃO (LOGIN / MINHA CONTA)
-   ========================================================================== */
-
-.auth-area {
-    justify-content: flex-end; 
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.btn-auth, #menu-user a {
-    text-decoration: none;
-    color: #000;
-    font-size: 0.8rem;
-    font-weight: bold;
-    padding: 0.5rem 1.2rem;
-    border: 2px solid #f7b2b7;
-    border-radius: 2rem;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.btn-auth:hover, #menu-user a:hover {
-    background-color: #f7b2b7;
-    color: white;
-}
-
-.btn-auth-sair {
-    text-decoration: none;
-    color: #5f5f5f;
-    font-size: 0.67rem;
-    border-bottom: 1px solid transparent;
-    transition: all 0.2s;
-}
-
-.btn-auth-sair:hover {
-    border-bottom: 1px solid #5f5f5f;
-    color: #d63384;
-}
-
-.user-icon {
-    font-size: 1.08rem;
-    max-width: 100%;
-    height: auto;
-    background: #fff;
-    padding: 5px;
-    border-radius: 50%;
-    border: 1px solid #f7b2b7;
-    margin-right: 5px;
-}
-
-/* ==========================================================================
-   4. NAVEGAÇÃO (MENU DE CATEGORIAS)
-   ========================================================================== */
-
 nav {
     width: 100%;
-    max-width: 1100px; 
-    margin: 0.5rem auto 0;  
+    max-width: 1100px;
+    margin: 0.5rem auto 0;
     padding: 0.5rem 1.5rem;
     text-align: left;
     border-top: 1px solid rgba(247, 178, 183, 0.3);
 }
 
 nav h1 {
-    font-size: 1.17rem; 
+    font-size: 1.17rem;
     margin-bottom: 0.8rem;
 }
 
@@ -280,7 +148,7 @@ nav ul {
     font-weight: bold;
     padding: 0.6rem 1.5rem;
     border: 2px solid #f7b2b7;
-    border-radius: 2rem; 
+    border-radius: 2rem;
     background-color: #ffffff;
     transition: all 0.3s ease;
     display: inline-block;
@@ -294,14 +162,14 @@ nav ul {
 }
 
 .ativo {
-    background-color: #d63384 !important; 
+    background-color: #d63384 !important;
     border-color: #d63384 !important;
     color: white !important;
     transform: scale(1.05);
 }
 
 /* ==========================================================================
-   5. CONTEÚDO PRINCIPAL E BOX DE LOGIN
+   3. PRODUTOS E CARDÁPIO
    ========================================================================== */
 
 main {
@@ -313,68 +181,15 @@ main {
 section {
     padding: 1rem 1.5rem;
     margin-bottom: 1rem;
-    scroll-margin-top: 180px; 
+    scroll-margin-top: 180px;
 }
 
 section h2 {
-    font-size: 1.17rem; 
+    font-size: 1.17rem;
     margin-bottom: 1rem;
     margin-left: 1rem;
-    margin-right: 1rem;  
+    margin-right: 1rem;
 }
-
-.conteudo-login {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 300px); 
-    padding: 2rem;
-}
-
-.login-box {
-    background: #ffffff;
-    padding: 2.5rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    border: 1px solid #f7b2b7;
-}
-
-.login-box h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.12rem; 
-    color: #333;
-}
-
-.login-box input {
-    width: 100%;
-    padding: 0.9rem;
-    margin-bottom: 1.2rem;
-    border: 1px solid #ccc;
-    border-radius: 0.8rem;
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.81rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.login-box input:focus {
-    border-color: #f7b2b7;
-    background-color: #fff2f3;
-}
-
-#auth-message {
-    min-height: 1.2rem;
-    font-weight: bold;
-    margin-top: 10px;
-    font-size: 0.76rem;
-}
-
-/* ==========================================================================
-   6. ITENS DO CARDÁPIO (PRODUTOS)
-   ========================================================================== */
 
 .sabor-item {
     display: flex;
@@ -384,7 +199,7 @@ section h2 {
     margin-bottom: 1rem;
     border-radius: 0.9rem;
     border: 2px solid #f7b2b7;
-    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);  
+    box-shadow: 0 10px 25px rgba(247, 178, 183, 0.2);
     transition: all 0.2s ease;
 }
 
@@ -398,42 +213,12 @@ section h2 {
     flex-shrink: 0;
 }
 
-/* ==========================================================================
-   7. RODAPÉ (FOOTER)
-   ========================================================================== */
-
-footer {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    background-color: #fae5e7;
-    border-top: 1px solid rgba(247, 178, 183, 0.3);
-}
-
-.contato h3 {
-    margin-bottom: 1.5rem;
-}
-
-.social-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.8rem;
-}
-
-.img-social {
-    width: 1.4rem;
-    max-width: 100%;
-    height: auto;
-    margin-right: 0.5rem;
-}
-
-.social-link a {
+.sabor-preco {
     color: #d63384;
-    text-decoration: none;
     font-weight: bold;
+    font-size: 0.99rem;
+    margin-top: 0.5rem;
 }
-
-/* --- ADIÇÕES PARA O FUNCIONAMENTO DO CARRINHO E LOGIN --- */
 
 .btn-comprar {
     margin-top: 0rem;
@@ -450,7 +235,7 @@ footer {
 }
 
 .btn-comprar:hover {
-    background-color: #f7b2b7; 
+    background-color: #f7b2b7;
     transform: scale(1.05);
 }
 
@@ -458,14 +243,10 @@ footer {
     transform: scale(0.95);
 }
 
-.sabor-preco {
-    color: #d63384;
-    font-weight: bold;
-    font-size: 0.99rem;
-    margin-top: 0.5rem;
-}
+/* ==========================================================================
+   4. CARRINHO E CHECKOUT
+   ========================================================================== */
 
-/* --- ÍCONE FLUTUANTE DO CARRINHO --- */
 .carrinho-flutuante {
     position: fixed;
     bottom: 20px;
@@ -478,7 +259,7 @@ footer {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     z-index: 9999;
     transition: transform 0.3s ease;
@@ -511,21 +292,11 @@ footer {
     font-size: 0.81rem;
 }
 
-/* ==========================================================================
-   8. AJUSTES DE ESPAÇAMENTO (CARRINHO, ADMIN, PEDIDOS)
-   ========================================================================== */
-
-/* Carrinho */
-.conteudo-carrinho {
-    padding-top: 0 !important;
-    margin-top: -10px;
-}
-
 .secao-checkout {
     background: white;
-    padding: 1.5rem; 
+    padding: 1.5rem;
     border-radius: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     margin-top: 0.5rem;
 }
 
@@ -537,89 +308,19 @@ footer {
     border-bottom: 1px solid #f7b2b7;
 }
 
-.item-nome {
-    display: block;
-    font-weight: bold;
-    color: #333;
-}
-
-.item-preco-unit {
-    font-size: 0.76rem;
-    color: #d63384;
-}
-
-.item-controles {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.item-controles button {
-    background: #fff;
-    border: 1px solid #f7b2b7;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.item-controles button:hover {
-    background: #f7b2b7;
-}
-
-.btn-remover {
-    border: none !important;
-    background: transparent !important;
-    margin-left: 10px;
-}
-
-.resumo-pedido {
-    margin-top: 1.5rem;
-    text-align: right;
-    border-top: 2px solid #d63384;
-    padding-top: 1rem;
-}
-
-.linha-total {
-    font-size: 1.17rem;
-    margin-bottom: 1.5rem;
-}
-
-.btn-limpar {
-    background: none;
-    border: none;
-    color: #5f5f5f;
-    text-decoration: underline;
-    margin-top: 0.5rem;
-    cursor: pointer;
-    font-size: 0.72rem;
-}
-
-.carrinho-vazio {
-    text-align: center;
-    padding: 3rem;
-    color: #5f5f5f;
-}
-
 .item-visual {
     display: flex;
     align-items: center;
-    gap: 15px; 
-    flex: 1; 
+    gap: 15px;
+    flex: 1;
 }
 
 .item-foto-carrinho {
-    width: 80px; 
+    width: 80px;
     height: 80px;
-    max-width: 100%;
-    object-fit: cover; 
-    border-radius: 10px; 
+    object-fit: cover;
+    border-radius: 10px;
     border: 1px solid #f7b2b7;
-}
-
-.item-info {
-    display: flex;
-    flex-direction: column;
 }
 
 .qtd-botoes {
@@ -645,71 +346,8 @@ footer {
     justify-content: center;
 }
 
-.qtd-botoes button:hover {
-    background: #f7b2b7;
-    color: white;
-}
-
-.item-subtotal {
-    font-weight: bold;
-    color: #333;
-    min-width: 80px; 
-    text-align: right;
-}
-
-/* FORMULÁRIO DE CHECKOUT */
-.checkout-form {
-    text-align: left;
-    margin-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.checkout-form h3 {
-    color: #d63384;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-/* CHECKOUT, CADASTRO E PERFIL */
-
-/* MANTIDO EXATAMENTE COMO SEU ORIGINAL: */
-.checkout-form input, 
-.checkout-form select,
-.login-box input,
-.user-info input,
-.campo-perfil input,
-.campo-perfil select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #f7b2b7; 
-    border-radius: 8px;
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    background-color: #fff;
-    display: block;
-}
-
-.checkout-form input:focus, 
-.login-box input:focus,
-.user-info input:focus,
-.campo-perfil input:focus,
-.campo-perfil select:focus {
-    border-color: #d63384;
-    background-color: #fff2f3;
-    box-shadow: 0 0 5px rgba(214, 51, 132, 0.2);
-}
-
-.grid-checkout, .grid-campos {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 10px;
-}
-
-.btn-prosseguir, .btn-finalizar-wpp {
+.btn-prosseguir,
+.btn-finalizar-wpp {
     background-color: #25d366 !important;
     color: white !important;
     border: none;
@@ -728,57 +366,142 @@ footer {
     margin-top: 1rem;
 }
 
-/* Admin */
-.admin-body { 
-    background-color: #fae5e7; 
-    padding-bottom: 50px;
-    padding-top: 0 !important; 
+/* ==========================================================================
+   5. AUTENTICAÇÃO E LOGIN
+   ========================================================================== */
+
+.auth-area {
+    justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.form-admin, .lista-admin { 
-    padding: 1.5rem; max-width: 800px; margin: 1rem auto; 
-    background: white; border-radius: 1.5rem; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #f7b2b7;
+.btn-auth,
+#menu-user a {
+    text-decoration: none;
+    color: #000;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.5rem 1.2rem;
+    border: 2px solid #f7b2b7;
+    border-radius: 2rem;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    display: inline-block;
+    cursor: pointer;
 }
 
-.form-admin h1, .lista-admin h2 { text-align: center; color: #333; margin-bottom: 1.5rem; font-size: 1.26rem;}
-
-.form-admin input, .form-admin textarea, .form-admin select { 
-    width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
-    border: 1px solid #ccc; border-radius: 8px; font-family: 'keepcalm', sans-serif; 
+.login-box {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #f7b2b7;
 }
 
-.btn-salvar-admin { 
-    background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
-    cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;
-    font-family: 'keepcalm', sans-serif; transition: 0.3s;
+.login-box input {
+    width: 100%;
+    padding: 0.9rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 0.8rem;
+    font-family: 'keepcalm', sans-serif;
+    font-size: 0.81rem;
+    outline: none;
 }
-
-.btn-salvar-admin:hover { background-color: #d63384; color: white; }
-
-.lista-admin table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-.lista-admin th, .lista-admin td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-
-.img-tabela { width: 50px; height: 50px; max-width: 100%; object-fit: cover; border-radius: 5px; border: 1px solid #f7b2b7; }
-
-.btn-excluir { background: #ff4d4d; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 4px; }
-
-.badge-status { font-size: 0.63rem; padding: 4px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
-.status-Pendente { color: #f39c12; background: #fff9e6; }
-.status-Entregue { color: #27ae60; background: #e6ffed; }
-
-/* Pedidos */
-.container-pedidos {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-.card-pedido { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 6px solid #d63384; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-.preview-foto { width: 120px; height: 120px; max-width: 100%; object-fit: cover; border-radius: 10px; border: 2px dashed #f7b2b7; margin: 10px auto; display: none; }
 
 /* ==========================================================================
-   9. SISTEMA DE NOTIFICAÇÕES (TOASTS)
+   6. ADMINISTRAÇÃO E GESTÃO
+   ========================================================================== */
+
+.form-admin,
+.lista-admin {
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 1rem auto;
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f7b2b7;
+}
+
+.btn-salvar-admin {
+    background: #f7b2b7;
+    border: 2px solid #5f5f5f;
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 5px;
+    font-family: 'keepcalm', sans-serif;
+    transition: 0.3s;
+}
+
+.img-tabela {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #f7b2b7;
+}
+
+.badge-status {
+    font-size: 0.63rem;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-Pendente {
+    color: #f39c12;
+    background: #fff9e6;
+}
+
+.status-Entregue {
+    color: #27ae60;
+    background: #e6ffed;
+}
+
+/* ==========================================================================
+   7. PERFIL E FIDELIDADE
+   ========================================================================== */
+
+.perfil-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto 10px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid #f7b2b7;
+    text-align: center;
+}
+
+.card-fidelidade {
+    width: 90%;
+    max-width: 600px;
+    background: linear-gradient(135deg, #d63384, #f7b2b7);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 0 auto 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
+}
+
+.card-fidelidade strong {
+    font-size: 1.8rem;
+    display: block;
+    margin: 5px 0;
+}
+
+/* ==========================================================================
+   8. NOTIFICAÇÕES (TOASTS) E ANIMAÇÕES
    ========================================================================== */
 
 .toast-container {
@@ -798,7 +521,7 @@ footer {
     padding: 12px 25px;
     border-radius: 50px;
     border: 2px solid #d63384;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     font-family: 'keepcalm', sans-serif;
     font-size: 0.81rem;
     display: flex;
@@ -807,141 +530,65 @@ footer {
     animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 2.5s forwards;
 }
 
-.toast-icon {
-    font-size: 1.08rem;
-}
-
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(100%); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeOut {
-    to { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+        pointer-events: none;
+    }
 }
 
 /* ==========================================================================
-   10. PÁGINA DE PERFIL DO USUÁRIO
+   9. RODAPÉ (FOOTER)
    ========================================================================== */
 
-.conteudo-perfil {
-    margin-top: 0 !important; 
-    padding-top: 0 !important;
+.footer-site {
+    background-color: #fae5e7;
+    border-top: 1px solid #f7b2b7;
+    padding: 2rem 1rem 1rem;
+    margin-top: 2rem;
 }
 
-.perfil-container {
-    width: 90%;  
-    max-width: 600px;
-    margin: 20px auto 10px;    
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 20px;
-    border: 2px solid #f7b2b7;
-    box-shadow: border-box rgba(247, 178, 183, 0.2);
-    text-align: center;
-}
-
-.perfil-container h2 {
-    color: #d63384;
-    margin-bottom: 25px;
-    font-size: 1.44rem; 
-}
-
-.user-info, .campo-perfil {
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-.user-info label, .campo-perfil label {
-    display: block;
-    font-size: 0.76rem;
-    color: #d63384;
-    font-weight: bold;
-    margin: 0 0 8px 5px;
-}
-
-/* ADIÇÃO: Suporte para campos com bordas 1.5px (como você usou antes) preservado aqui */
-.user-info input, .campo-perfil input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1.5px solid #f7b2b7;
-    border-radius: 12px;
-    font-family: 'keepcalm', sans-serif;
-    font-size: 0.85rem;
-    color: #333;
-    transition: all 0.3s ease;
-}
-
-/* ADIÇÃO: Seção de campos lado a lado via flex, mantida */
-.grid-campos-flex {
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    gap: 10px;
-    text-align: left;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
 }
 
-.grid-campos-flex .campo-perfil {
-    flex: 1;
-}
-
-#saudacao {
-    margin-bottom: 2px !important; 
-    color: #d63384;
+.footer-copyright {
     text-align: center;
-    font-size: 1.26rem;
-}
-
-#btn-salvar, .btn-acao-perfil {
-    width: 100%;
-    padding: 15px;
-    background-color: #d63384;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-family: 'keepcalm', sans-serif;
-    font-weight: bold;
-    font-size: 0.99rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
-}
-
-/* ADIÇÃO: Estilo do Card de Pontos, mantido */
-.card-fidelidade {
-    width: 90%;  
-    max-width: 600px;  
-    background: linear-gradient(135deg, #d63384, #f7b2b7);
-    color: white;
-    padding: 20px; 
-    border-radius: 15px; 
-    margin: 0 auto 10px;  
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(214, 51, 132, 0.2);
-}
-
-.card-fidelidade h3 { 
-    font-size: 0.9rem;
-    margin-bottom: 5px; 
-}
-
-.card-fidelidade strong { 
-    font-size: 1.8rem; 
-    display: block;
-    margin: 5px 0;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    color: #aaa;
+    font-size: 0.72rem;
 }
 
 /* ==========================================================================
-   11. RESPONSIVIDADE (AJUSTES PARA CELULAR)
+   10. RESPONSIVIDADE (MEDIA QUERIES)
    ========================================================================== */
 
 @media (max-width: 768px) {
-    /* Ajuste do Corpo e Fonte Global */
     body {
-        padding-top: 140px; 
+        padding-top: 140px;
         font-size: 0.8rem;
     }
 
-    /* Header Compacto */
     header {
         padding: 0.8rem 1rem;
         flex-direction: row;
@@ -951,16 +598,6 @@ footer {
         width: 4.5rem;
     }
 
-    .auth-area {
-        gap: 8px;
-    }
-
-    .btn-auth, #menu-user a {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.7rem;
-    }
-
-    /* Navegação por Categorias com Scroll Horizontal */
     nav ul {
         display: flex;
         flex-wrap: nowrap;
@@ -976,103 +613,29 @@ footer {
         font-size: 0.7rem;
     }
 
-    /* --- LISTA DE COOKIES COMPACTA (FOTO NA LATERAL) --- */
     .sabor-item {
-        flex-direction: row; 
+        flex-direction: row;
         align-items: center;
         padding: 0.8rem;
-        gap: 12px;
-        margin-bottom: 0.8rem;
-        margin-left: 0.25rem;
-        margin-right: 0.25rem;  
     }
 
     .sabor-foto {
-        width: 5.5rem; 
+        width: 5.5rem;
         height: 5.5rem;
-        margin-right: 0;
-        border-radius: 0.5rem;
     }
 
-    .sabor-item div {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .sabor-item h3 {
-        font-size: 0.9rem;
-        margin-bottom: 2px;
-        line-height: 1.2;
-    }
-
-    .sabor-item p {
-        font-size: 0.75rem;
-        line-height: 1.3;
-        color: #666;
-        /* Trava em 2 linhas com reticências */
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .sabor-preco {
-        font-size: 0.9rem;
-        margin-top: 4px;
-    }
-
-    .btn-comprar {
-        margin-top: 4px;
-        padding: 0.4rem 1rem;
-        font-size: 0.65rem;
-        width: fit-content;
-    }
-
-    /* Carrinho Ajustado */
     .item-carrinho {
         flex-direction: column;
         gap: 12px;
         align-items: flex-start;
     }
-
-    .item-visual {
-        width: 100%;
-    }
-
-    .item-controles {
-        width: 100%;
-        justify-content: space-between;
-        border-top: 1px dashed #f7b2b7;
-        padding-top: 10px;
-    }
-
-    /* Formulários Ocupando a Tela */
-    .login-box, .perfil-container, .secao-checkout {
-        width: 95%;
-        margin: 10px auto;
-        padding: 1.2rem;
-    }
-
-    .grid-checkout, .grid-campos {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .btn-prosseguir {
-        position: sticky;
-        bottom: 10px;
-        z-index: 100;
-    }
 }
 
-/* Ajuste fino para telas mínimas */
 @media (max-width: 400px) {
     #img-logo {
         width: 4rem;
     }
-    
+
     header {
         padding: 0.5rem;
     }
