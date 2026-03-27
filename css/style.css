@@ -288,8 +288,16 @@ nav ul {
 
 main {
     width: 100%;
-    max-width: 75rem;
+    max-width: 75rem; /* 1200px */
     margin: 0 auto;
+}
+
+header {
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
 }
 
 section {
