@@ -6,89 +6,6 @@
     <title>Painel Admin - Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .admin-body { background-color: #fae5e7; padding-bottom: 50px; }
-        .form-admin, .lista-admin { 
-            padding: 2rem; max-width: 800px; margin: 2rem auto; 
-            background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .form-admin h1, .form-admin h2, .form-admin h3, .lista-admin h2, .form-admin p { 
-            text-align: center; 
-            color: #333; 
-            margin-bottom: 1.5rem; 
-        }
-        .form-admin p { font-size: 0.9rem; color: #666; margin-top: -1rem; margin-bottom: 2rem; }
-
-        input, textarea, select { 
-            width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
-            border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif; 
-        }
-        .btn-salvar { 
-            background: #f7b2b7; border: 2px solid #5f5f5f; padding: 1rem; 
-            cursor: pointer; font-weight: bold; width: 100%; border-radius: 5px;
-        }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background-color: #f9f9f9; }
-        .img-tabela { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
-        .btn-excluir { background: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-        
-        #conteudo-protegido { display: none; }
-        .hidden { display: none; }
-        
-        .card-pedido { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
-        .badge-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 10px; font-weight: bold; text-transform: uppercase; color: white; }
-        .btn-acao-user { cursor: pointer; background: #fff; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; transition: 0.2s; margin-right: 5px; }
-
-        .status-loja-container {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #fff; padding: 1.5rem; border-radius: 10px;
-            max-width: 800px; margin: 2rem auto; border: 2px solid #d63384;
-        }
-        .status-indicador { font-weight: bold; padding: 8px 15px; border-radius: 20px; }
-        .aberta { background: #e8f5e9; color: #2e7d32; }
-        .fechada { background: #ffebee; color: #c62828; }
-
-        .grid-horarios {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px; align-items: center; margin-bottom: 10px;
-        }
-        .grid-horarios span { font-weight: bold; color: #555; }
-        .grid-horarios input { margin-bottom: 0; }
-
-        /* Estilo para o cabeçalho de pedidos com filtro */
-        .header-pedidos {
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; margin-bottom: 1.5rem;
-        }
-        .header-pedidos h2 { margin-bottom: 0 !important; }
-        #filtro-periodo { width: auto; margin-bottom: 0; padding: 5px 10px; }
-
-        /* --- IMPLEMENTAÇÃO DO SCROLL --- */
-        #container-pedidos-admin {
-            max-height: 600px; /* Define a altura máxima da lista */
-            overflow-y: auto;  /* Ativa o scroll apenas vertical */
-            padding-right: 5px;
-            border-radius: 8px;
-        }
-
-        /* Estilização da Barra de Rolagem */
-        #container-pedidos-admin::-webkit-scrollbar {
-            width: 8px;
-        }
-        #container-pedidos-admin::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        #container-pedidos-admin::-webkit-scrollbar-thumb {
-            background: #f7b2b7;
-            border-radius: 10px;
-        }
-        #container-pedidos-admin::-webkit-scrollbar-thumb:hover {
-            background: #d63384;
-        }
-    </style>
 </head>
 <body class="admin-body">
 
@@ -103,22 +20,22 @@
             <div class="header-side auth-area">
                 <div id="menu-user"></div>
                 <div id="menu-logout" class="hidden">
-                    <a href="#" class="btn-auth-sair" style="text-decoration:none; color:#d63384; font-weight:bold; margin-left: 10px;">Sair</a>
+                    <a href="#" class="btn-auth-sair">Sair</a>
                 </div>
             </div>
         </header>
     </div>
 
-    <main id="conteudo-protegido" style="margin-top: 150px;">
+    <main id="conteudo-protegido">
         
         <div class="status-loja-container">
-            <div>
-                <h3 style="margin:0; text-align: left;">Status da Loja</h3>
-                <p style="margin:5px 0 0 0; font-size: 0.9rem; color: #666; text-align: left;">Controle se os clientes podem fazer pedidos.</p>
+            <div class="status-info">
+                <h3>Status da Loja</h3>
+                <p>Controle se os clientes podem fazer pedidos.</p>
             </div>
-            <div style="text-align: right;">
+            <div class="status-controles">
                 <span id="label-status" class="status-indicador fechada">Carregando...</span>
-                <button id="btn-toggle-loja" class="btn-acao-user" style="display:block; margin-top:10px; width:100%;">Alterar Status</button>
+                <button id="btn-toggle-loja" class="btn-salvar-admin">Alterar Status</button>
             </div>
         </div>
 
@@ -126,7 +43,7 @@
             <h2>Horários de Funcionamento Automático ⏰</h2>
             <p>A loja fechará automaticamente fora destes períodos.</p>
             <div id="container-inputs-horarios"></div>
-            <button type="button" id="btn-salvar-horarios" class="btn-salvar" style="margin-top: 20px;">Atualizar Horários</button>
+            <button type="button" id="btn-salvar-horarios" class="btn-salvar-admin">Atualizar Horários</button>
         </div>
         
         <div class="form-admin">
@@ -141,8 +58,8 @@
                     <option value="milk-shakes">Milk Shakes</option>
                 </select>
                 <input type="text" id="imagemUrl" placeholder="Caminho da Imagem (Ex: img/produtos/cookie.jpg)" required>
-                <button type="submit" id="btn-submit" class="btn-salvar">Salvar no Cardápio</button>
-                <button type="button" id="btn-cancelar" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
+                <button type="submit" id="btn-submit" class="btn-salvar-admin">Salvar no Cardápio</button>
+                <button type="button" id="btn-cancelar" class="hidden">Cancelar Edição</button>
             </form>
         </div>
 
@@ -160,8 +77,8 @@
                 <input type="hidden" id="bairro-id">
                 <input type="text" id="bairro-nome" placeholder="Ex: Centro" required>
                 <input type="text" id="bairro-frete" placeholder="Valor do Frete (Ex: 7.00)" required>
-                <button type="submit" id="btn-bairro" class="btn-salvar">Salvar Bairro</button>
-                <button type="button" id="btn-cancelar-bairro" class="hidden" style="margin-top:10px; background:#ccc; border:none; padding:10px; width:100%; cursor:pointer;">Cancelar Edição</button>
+                <button type="submit" id="btn-bairro" class="btn-salvar-admin">Salvar Bairro</button>
+                <button type="button" id="btn-cancelar-bairro" class="hidden">Cancelar Edição</button>
             </form>
         </div>
 
@@ -297,7 +214,7 @@
                         <td>${p.nome}</td>
                         <td>R$ ${p.preco.toFixed(2)}</td>
                         <td>
-                            <button class="btn-acao-user" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')">Editar</button>
+                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')">Editar</button>
                             <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">X</button>
                         </td>
                     `;
@@ -346,7 +263,7 @@
                         <td>${b.nome}</td>
                         <td>R$ ${b.frete.toFixed(2)}</td>
                         <td>
-                            <button class="btn-acao-user" onclick="editarBairro('${docSnap.id}', '${b.nome}', '${b.frete}')">Editar</button>
+                            <button class="btn-acao-admin" onclick="editarBairro('${docSnap.id}', '${b.nome}', '${b.frete}')">Editar</button>
                             <button class="btn-excluir" onclick="excluirDoc('bairros', '${docSnap.id}')">X</button>
                         </td>
                     `;
@@ -384,7 +301,7 @@
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-user" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
+                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-admin btn-promover" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-admin btn-rebaixar" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
                             ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>` : ''}
                         </td>
                     `;
@@ -399,10 +316,9 @@
             }
         };
 
-        // FUNÇÃO DE CARREGAR PEDIDOS COM LÓGICA DE FILTRO
         let unsubscribePedidos = null;
         function carregarPedidos(filtro = "todos") {
-            if (unsubscribePedidos) unsubscribePedidos(); // Limpa escuta anterior
+            if (unsubscribePedidos) unsubscribePedidos(); 
 
             let q = query(collection(db, "pedidos"), orderBy("data", "desc"));
 
@@ -481,7 +397,6 @@
             carregarPedidos(e.target.value);
         });
 
-        // --- FUNÇÃO DE IMPRESSÃO ---
         function imprimirNota(id, p) {
             const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
             const itensTexto = p.itens ? p.itens.map(item => 
@@ -546,7 +461,6 @@
             }
             await updateDoc(ref, dados);
 
-            // LOGICA DE IMPRESSÃO AO ACEITAR (EM PRODUÇÃO)
             if (novoStatus === 'em produção') {
                 const docSnap = await getDoc(ref);
                 if (docSnap.exists()) {
@@ -573,7 +487,7 @@
                 carregarProdutos();
                 carregarBairros();
                 carregarUsuarios();
-                carregarPedidos(); // Inicia com filtro "todos"
+                carregarPedidos(); 
             } else { window.location.href = "login.html"; }
         });
     </script>
