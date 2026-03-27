@@ -287,10 +287,6 @@ nav ul {
 }
 
 main {
-    padding-top: 11rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    display: block;
     width: 100%;
     max-width: 75rem;
     margin: 0 auto;
