@@ -47,7 +47,7 @@ onAuthStateChanged(auth, async (user) => {
                 nomeParaExibir = dados.nome ? dados.nome.split(' ')[0] : "Usuário";
                 pontos = dados.pontos || 0; // Busca os pontos do banco
                 
-                if (dados.isAdmin === true || dados.regra === 'admin') {
+                if (dados.isAdmin === true || dados.cargo === 'admin' ) {
                     ehAdmin = true;
                 }
             }
