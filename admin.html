@@ -298,8 +298,7 @@
                     const isMe = currentUser && currentUser.uid === docSnap.id;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''}</td>
-                        <td>${u.nome || '---'} ${isDev ? '🧑‍💻' : ''}</td>
+                        <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''} ${isDev ? '🧑‍💻' : ''}</td>
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
