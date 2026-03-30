@@ -311,8 +311,19 @@
         }
 
         window.alterarCargo = async (id, novoCargo) => {
-            if(confirm(novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?")) {
-                await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo, isAdmin: true });
+            const mensagem = novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?";
+            
+            if(confirm(mensagem)) {
+                try {
+                    await updateDoc(doc(db, "usuarios", id), { 
+                        cargo: novoCargo, 
+                        // Define true se for admin, false caso contrário
+                        isAdmin: novoCargo === 'admin' 
+                    });
+                    console.log("Usuário atualizado com sucesso!");
+                } catch (error) {
+                    console.error("Erro ao atualizar cargo:", error);
+                }
             }
         };
 
