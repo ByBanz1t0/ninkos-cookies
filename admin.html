@@ -302,7 +302,7 @@
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-admin btn-promover" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-admin btn-rebaixar" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
+                            ${!isMe ? (!(isAdmin || isDev) ? `<button class="btn-acao-admin btn-promover" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-admin btn-rebaixar" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
                             ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">Excluir</button>` : ''}
                         </td>
                     `;
