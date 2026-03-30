@@ -312,7 +312,7 @@
 
         window.alterarCargo = async (id, novoCargo) => {
             if(confirm(novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?")) {
-                await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo });
+                await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo, isAdmin: true });
             }
         };
 
