@@ -229,8 +229,8 @@
                                     onclick="alternarDisponibilidade('${docSnap.id}', ${p.disponivel !== false})">
                                 ${statusTexto}
                             </button>
-                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}', ${p.disponivel !== false})">Editar</button>
-                            <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">X</button>
+                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}', ${p.disponivel !== false})">✏️</button>
+                            <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">🗑️</button>
                         </td>
                     `;
                     tabelaProdutos.appendChild(tr);
