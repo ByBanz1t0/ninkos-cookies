@@ -175,6 +175,9 @@
 
             snapshot.forEach((docSnap) => {
                 const item = docSnap.data();
+                if (item.disponivel === false) {
+                    return; 
+                }
                 const precoNum = parseFloat(item.preco) || 0;
                 const imgUrl = item.imagemUrl || 'img/logos/ninkos_logo.png';
 
