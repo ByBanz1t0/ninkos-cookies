@@ -54,9 +54,11 @@
 
             <input type="email" id="email" placeholder="E-mail" required>
             <input type="password" id="password" placeholder="Senha" required>
-                <p id="reset-pass-area" style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
-                    <a href="#" id="link-recuperar" style="color: #666; font-size: 0.8rem;">Esqueci minha senha</a>
-                </p>
+            
+            <p id="reset-pass-area" style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
+                <a href="#" id="link-recuperar" style="color: #666; font-size: 0.8rem;">Esqueci minha senha</a>
+            </p>
+
             <button id="btn-auth-principal" class="botao-navegacao ativo" style="width: 100%;">Entrar</button>
             
             <p id="toggle-text" style="text-align: center; margin-top: 15px; font-size: 0.85rem;">
@@ -79,22 +81,21 @@
         const linkAlternar = document.getElementById('link-alternar');
         const toggleText = document.getElementById('toggle-text');
         const selectBairro = document.getElementById('cad-bairro');
+        const resetPassArea = document.getElementById('reset-pass-area');
+        const linkRecuperar = document.getElementById('link-recuperar');
 
         let modoCadastro = false;
 
-        // Função para carregar os bairros que você cadastrou no Admin
         async function carregarBairros() {
             try {
                 const q = query(collection(db, "bairros"), orderBy("nome", "asc"));
                 const querySnapshot = await getDocs(q);
-                
                 selectBairro.innerHTML = '<option value="">Selecione seu bairro...</option>';
-                
                 querySnapshot.forEach((doc) => {
                     const b = doc.data();
                     const option = document.createElement('option');
                     option.value = b.nome;
-                    option.textContent = `${b.nome}`;
+                    option.textContent = b.nome;
                     selectBairro.appendChild(option);
                 });
             } catch (err) {
@@ -102,7 +103,6 @@
             }
         }
 
-        // Alternar entre Login e Cadastro
         linkAlternar.addEventListener('click', (e) => {
             e.preventDefault();
             modoCadastro = !modoCadastro;
@@ -112,39 +112,43 @@
                 authTitle.innerText = "Crie sua conta 🍪";
                 btnPrincipal.innerText = "Finalizar Cadastro";
                 camposCadastro.classList.remove('hidden');
+                resetPassArea.classList.add('hidden'); // Esconde o "esqueci senha" no cadastro
                 toggleText.innerHTML = `Já tem conta? <a href="#" id="link-alternar" style="color: #d63384; font-weight: bold;">Fazer Login</a>`;
-                carregarBairros(); // Carrega os bairros ao abrir o cadastro
+                carregarBairros();
             } else {
                 authTitle.innerText = "Entrar na Ninko's 🍪";
                 btnPrincipal.innerText = "Entrar";
                 camposCadastro.classList.add('hidden');
+                resetPassArea.classList.remove('hidden'); // Mostra no login
                 toggleText.innerHTML = `Não tem uma conta? <a href="#" id="link-alternar" style="color: #d63384; font-weight: bold;">Criar Conta agora</a>`;
             }
             document.getElementById('link-alternar').onclick = (e) => linkAlternar.click();
         });
 
-        // Local para colar a lógica de recuperação
-        const linkRecuperar = document.getElementById('link-recuperar');
-            linkRecuperar.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value.trim();
-                if (!email) {
-                    status.innerText = "⚠️ Digite seu e-mail para recuperar a senha.";
-                    status.style.color = "#d63384";
-                    return;
-                }
-                try {
-                    status.innerText = "Enviando e-mail de recuperação...";
-                    await sendPasswordResetEmail(auth, email);
-                    status.innerText = "✅ E-mail de redefinição enviado!";
-                    status.style.color = "green";
-                } catch (error) {
-                    status.innerText = "❌ Erro: " + error.code;
-                    status.style.color = "#d63384";
-                }
-            });
-        
-        // Lógica de Autenticação
+        // Lógica para Esqueci minha senha
+        linkRecuperar.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+
+            if (!email) {
+                status.innerText = "⚠️ Digite seu e-mail para recuperar a senha.";
+                status.style.color = "#d63384";
+                return;
+            }
+
+            try {
+                status.innerText = "Enviando e-mail de recuperação...";
+                status.style.color = "#555";
+                await sendPasswordResetEmail(auth, email);
+                status.innerText = "✅ E-mail enviado! Verifique sua caixa de entrada.";
+                status.style.color = "green";
+            } catch (error) {
+                status.innerText = "❌ Erro ao enviar. Verifique o e-mail.";
+                status.style.color = "#d63384";
+            }
+        });
+
+        // Lógica de Autenticação (Entrar / Cadastrar)
         btnPrincipal.addEventListener('click', async () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -154,11 +158,7 @@
                 status.style.color = "#d63384";
                 return;
             }
-            <input type="password" id="password" placeholder="Senha" required>
-            
-            <p id="reset-pass-area" style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
-                <a href="#" id="link-recuperar" style="color: #666; font-size: 0.8rem;">Esqueci minha senha</a>
-            </p>
+
             status.innerText = modoCadastro ? "Criando conta..." : "Entrando...";
             btnPrincipal.disabled = true;
 
@@ -176,7 +176,7 @@
                         nome: nome,
                         telefone: document.getElementById('cad-tel').value.trim(),
                         cep: document.getElementById('cad-cep').value.trim(),
-                        bairro: bairro, // Salva o nome do bairro selecionado
+                        bairro: bairro,
                         rua: document.getElementById('cad-rua').value.trim(),
                         numero: document.getElementById('cad-num').value.trim(),
                         complemento: document.getElementById('cad-comp').value.trim(),
@@ -196,46 +196,11 @@
             } catch (error) {
                 btnPrincipal.disabled = false;
                 status.style.color = "#d63384";
-                
-                if (error.code === 'custom/no-name') status.innerText = "⚠️ Digite seu nome completo.";
-                else if (error.code === 'custom/no-bairro') status.innerText = "⚠️ Selecione um bairro para entrega.";
+                if (error.code === 'auth/invalid-credential') status.innerText = "❌ E-mail ou senha incorretos.";
                 else if (error.code === 'auth/email-already-in-use') status.innerText = "❌ E-mail já cadastrado.";
-                else if (error.code === 'auth/weak-password') status.innerText = "❌ Senha muito curta (mín. 6).";
-                else if (error.code === 'auth/invalid-credential') status.innerText = "❌ E-mail ou senha incorretos.";
                 else status.innerText = "❌ Erro: " + error.code;
             }
         });
-        const linkRecuperar = document.getElementById('link-recuperar');
-            
-            linkRecuperar.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value.trim();
-            
-                if (!email) {
-                    status.innerText = "⚠️ Digite seu e-mail para recuperar a senha.";
-                    status.style.color = "#d63384";
-                    document.getElementById('email').focus();
-                    return;
-                }
-            
-                try {
-                    status.innerText = "Enviando e-mail de recuperação...";
-                    status.style.color = "#555";
-                    
-                    await sendPasswordResetEmail(auth, email);
-                    
-                    status.innerText = "✅ E-mail de redefinição enviado! Verifique sua caixa de entrada.";
-                    status.style.color = "green";
-                } catch (error) {
-                    console.error("Erro ao recuperar:", error);
-                    if (error.code === 'auth/user-not-found') {
-                        status.innerText = "❌ E-mail não encontrado no sistema.";
-                    } else {
-                        status.innerText = "❌ Erro ao enviar e-mail. Tente novamente.";
-                    }
-                    status.style.color = "#d63384";
-                }
-            });
     </script>
     <script type="module" src="auth-control.js"></script>
 </body>
