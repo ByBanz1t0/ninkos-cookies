@@ -50,7 +50,7 @@
                     <input type="text" id="cad-comp" placeholder="Complemento">
                 </div>
 
-                <div style="background: #fdf2f8; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px dashed #d63384;">
+                <div id="msg-senha" class="hidden" style="background: #fdf2f8; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px dashed #d63384;">
                     <p style="text-align: left; font-size: 0.8rem; color: #555; margin: 0;">
                         <strong>Sua senha precisa de:</strong><br>
                         • Pelo menos 6 caracteres<br>
@@ -126,12 +126,14 @@
                 resetPassArea.classList.add('hidden'); // Esconde o "esqueci senha" no cadastro
                 toggleText.innerHTML = `Já tem conta? <a href="#" id="link-alternar" style="color: #d63384; font-weight: bold;">Fazer Login</a>`;
                 carregarBairros();
+                document.getElementById('msg-senha').classList.remove('hidden');
             } else {
                 authTitle.innerText = "Entrar na Ninko's 🍪";
                 btnPrincipal.innerText = "Entrar";
                 camposCadastro.classList.add('hidden');
                 resetPassArea.classList.remove('hidden'); // Mostra no login
                 toggleText.innerHTML = `Não tem uma conta? <a href="#" id="link-alternar" style="color: #d63384; font-weight: bold;">Criar Conta agora</a>`;
+                document.getElementById('msg-senha').classList.add('hidden');
             }
             document.getElementById('link-alternar').onclick = (e) => linkAlternar.click();
         });
