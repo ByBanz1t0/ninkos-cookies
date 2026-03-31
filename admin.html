@@ -57,6 +57,10 @@
                     <option value="cookies">Cookies</option>
                     <option value="milk-shakes">Milk Shakes</option>
                 </select>
+                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer;">
+                    <input type="checkbox" id="disponivel" checked style="width: auto; margin: 0;"> 
+                    <span>Disponível para venda</span>
+                </label>
                 <input type="text" id="imagemUrl" placeholder="Caminho da Imagem (Ex: img/produtos/cookie.jpg)" required>
                 <button type="submit" id="btn-submit" class="btn-salvar-admin">Salvar no Cardápio</button>
                 <button type="button" id="btn-cancelar" class="hidden">Cancelar Edição</button>
@@ -197,6 +201,7 @@
                 preco: parseFloat(document.getElementById('preco').value),
                 categoria: document.getElementById('categoria').value,
                 imagemUrl: document.getElementById('imagemUrl').value
+                disponivel: document.getElementById('disponivel').checked
             };
             if (id) { await updateDoc(doc(db, "produtos", id), dados); resetForm(); } 
             else { await addDoc(collection(db, "produtos"), dados); }
@@ -209,12 +214,25 @@
                 snapshot.forEach((docSnap) => {
                     const p = docSnap.data();
                     const tr = document.createElement('tr');
+                    // Dentro do snapshot.forEach da função carregarProdutos
+                    const p = docSnap.data();
+                    const tr = document.createElement('tr');
+                    
+                    // Define a cor e o texto do status
+                    const statusCor = p.disponivel !== false ? '#27ae60' : '#ff4d4d';
+                    const statusTexto = p.disponivel !== false ? 'Disponível' : 'Indisponível';
+                    
                     tr.innerHTML = `
-                        <td><img src="${p.imagemUrl}" class="img-tabela"></td>
+                        <td><img src="${p.imagemUrl}" class="img-tabela" style="${p.disponivel === false ? 'filter: grayscale(1); opacity: 0.5;' : ''}"></td>
                         <td>${p.nome}</td>
                         <td>R$ ${p.preco.toFixed(2)}</td>
                         <td>
-                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}')">Editar</button>
+                            <button class="btn-acao-admin" 
+                                    style="background-color: ${statusCor}; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
+                                    onclick="alternarDisponibilidade('${docSnap.id}', ${p.disponivel !== false})">
+                                ${statusTexto}
+                            </button>
+                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}', ${p.disponivel !== false})">Editar</button>
                             <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">X</button>
                         </td>
                     `;
@@ -501,6 +519,28 @@
                 carregarPedidos(); 
             } else { window.location.href = "login.html"; }
         });
+
+        // Função para alternar rápido entre disponível/indisponível
+        window.alternarDisponibilidade = async (id, statusAtual) => {
+            try {
+                await updateDoc(doc(db, "produtos", id), { disponivel: !statusAtual });
+            } catch (error) {
+                console.error("Erro ao atualizar status:", error);
+            }
+        };
+        
+        // Atualize sua função editarProduto existente para incluir o campo disponível
+        window.editarProduto = (id, nome, desc, preco, cat, img, disp) => {
+            document.getElementById('produto-id').value = id;
+            document.getElementById('nome').value = nome;
+            document.getElementById('descricao').value = desc;
+            document.getElementById('preco').value = preco;
+            document.getElementById('categoria').value = cat;
+            document.getElementById('imagemUrl').value = img;
+            document.getElementById('disponivel').checked = disp; // Seta o checkbox na edição
+            document.getElementById('titulo-form').innerText = "Editando Sabor";
+            document.getElementById('btn-cancelar').classList.remove('hidden');
+        };
     </script>
 </body>
 </html>
