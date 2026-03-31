@@ -125,6 +125,12 @@
                 toggleText.innerHTML = `Já tem conta? <a href="#" id="link-alternar" style="color: #d63384; font-weight: bold;">Fazer Login</a>`;
                 carregarBairros();
                 document.getElementById('msg-senha').classList.remove('hidden');
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+                    if (!regex.test(password)) {
+                        status.innerText = "❌ A senha não atende aos requisitos de segurança.";
+                        btnPrincipal.disabled = false;
+                        return;
+                    }
             } else {
                 authTitle.innerText = "Entrar na Ninko's 🍪";
                 btnPrincipal.innerText = "Entrar";
