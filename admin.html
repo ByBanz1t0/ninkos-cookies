@@ -214,9 +214,6 @@
                 snapshot.forEach((docSnap) => {
                     const p = docSnap.data();
                     const tr = document.createElement('tr');
-                    // Dentro do snapshot.forEach da função carregarProdutos
-                    const p = docSnap.data();
-                    const tr = document.createElement('tr');
                     
                     // Define a cor e o texto do status
                     const statusCor = p.disponivel !== false ? '#27ae60' : '#ff4d4d';
