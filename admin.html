@@ -241,13 +241,14 @@
             });
         }
 
-        window.editarProduto = (id, nome, desc, preco, cat, img) => {
+        window.editarProduto = (id, nome, desc, preco, cat, img, disp) => {
             document.getElementById('produto-id').value = id;
             document.getElementById('nome').value = nome;
             document.getElementById('descricao').value = desc;
             document.getElementById('preco').value = preco;
             document.getElementById('categoria').value = cat;
             document.getElementById('imagemUrl').value = img;
+            document.getElementById('disponivel').checked = disp; // Seta o checkbox na edição
             document.getElementById('titulo-form').innerText = "Editando Sabor";
             document.getElementById('btn-cancelar').classList.remove('hidden');
         };
@@ -527,19 +528,6 @@
             } catch (error) {
                 console.error("Erro ao atualizar status:", error);
             }
-        };
-        
-        // Atualize sua função editarProduto existente para incluir o campo disponível
-        window.editarProduto = (id, nome, desc, preco, cat, img, disp) => {
-            document.getElementById('produto-id').value = id;
-            document.getElementById('nome').value = nome;
-            document.getElementById('descricao').value = desc;
-            document.getElementById('preco').value = preco;
-            document.getElementById('categoria').value = cat;
-            document.getElementById('imagemUrl').value = img;
-            document.getElementById('disponivel').checked = disp; // Seta o checkbox na edição
-            document.getElementById('titulo-form').innerText = "Editando Sabor";
-            document.getElementById('btn-cancelar').classList.remove('hidden');
         };
     </script>
 </body>
