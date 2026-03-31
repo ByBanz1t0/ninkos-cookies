@@ -182,6 +182,37 @@
                 else status.innerText = "❌ Erro: " + error.code;
             }
         });
+        const linkRecuperar = document.getElementById('link-recuperar');
+            
+            linkRecuperar.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value.trim();
+            
+                if (!email) {
+                    status.innerText = "⚠️ Digite seu e-mail para recuperar a senha.";
+                    status.style.color = "#d63384";
+                    document.getElementById('email').focus();
+                    return;
+                }
+            
+                try {
+                    status.innerText = "Enviando e-mail de recuperação...";
+                    status.style.color = "#555";
+                    
+                    await sendPasswordResetEmail(auth, email);
+                    
+                    status.innerText = "✅ E-mail de redefinição enviado! Verifique sua caixa de entrada.";
+                    status.style.color = "green";
+                } catch (error) {
+                    console.error("Erro ao recuperar:", error);
+                    if (error.code === 'auth/user-not-found') {
+                        status.innerText = "❌ E-mail não encontrado no sistema.";
+                    } else {
+                        status.innerText = "❌ Erro ao enviar e-mail. Tente novamente.";
+                    }
+                    status.style.color = "#d63384";
+                }
+            });
     </script>
     <script type="module" src="auth-control.js"></script>
 </body>
