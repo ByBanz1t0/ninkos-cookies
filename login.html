@@ -131,7 +131,11 @@
                 status.style.color = "#d63384";
                 return;
             }
-
+            <input type="password" id="password" placeholder="Senha" required>
+            
+            <p id="reset-pass-area" style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
+                <a href="#" id="link-recuperar" style="color: #666; font-size: 0.8rem;">Esqueci minha senha</a>
+            </p>
             status.innerText = modoCadastro ? "Criando conta..." : "Entrando...";
             btnPrincipal.disabled = true;
 
