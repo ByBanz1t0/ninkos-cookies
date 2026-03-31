@@ -200,7 +200,7 @@
                 descricao: document.getElementById('descricao').value,
                 preco: parseFloat(document.getElementById('preco').value),
                 categoria: document.getElementById('categoria').value,
-                imagemUrl: document.getElementById('imagemUrl').value
+                imagemUrl: document.getElementById('imagemUrl').value,
                 disponivel: document.getElementById('disponivel').checked
             };
             if (id) { await updateDoc(doc(db, "produtos", id), dados); resetForm(); } 
