@@ -23,6 +23,8 @@
             margin-bottom: 10px;
             display: block;
         }
+        /* Estilos para a área de cupom */
+        .cupom-feedback { font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -56,11 +58,26 @@
 
             <div class="resumo-pedido" id="resumo-area" style="display: none;">
                 
+                <div class="checkout-form" style="margin-bottom: 20px; border-bottom: 1px dashed #f7b2b7; padding-bottom: 15px;">
+                    <h3>🎟️ Tem um cupom?</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="input-cupom" placeholder="Digite o código" style="margin-bottom: 0;">
+                        <button id="btn-aplicar-cupom" style="background: #d63384; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Aplicar</button>
+                    </div>
+                    <p id="msg-cupom" class="cupom-feedback"></p>
+                </div>
+
                 <div id="detalhes-valores">
                     <div class="linha-resumo">
                         <span>Subtotal:</span>
                         <span id="valor-subtotal">R$ 0,00</span>
                     </div>
+
+                    <div class="linha-resumo" id="linha-desconto" style="display: none; color: #27ae60; font-weight: bold;">
+                        <span>Desconto:</span>
+                        <span id="valor-desconto">- R$ 0,00</span>
+                    </div>
+
                     <div class="linha-resumo">
                         <span>Frete (<span id="nome-bairro-frete">...</span>):</span>
                         <span id="valor-frete">R$ 0,00</span>
@@ -101,6 +118,8 @@
 
         let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
         let valorFreteGlobal = 0;
+        let descontoAplicado = 0; // Variável para o valor em R$
+        let cupomAtivo = null;    // Dados do cupom vindo do Firebase
         let bairroUsuario = "Não identificado";
         let usuarioLogado = null;
 
@@ -134,12 +153,50 @@
             renderizarCarrinho();
         });
 
+        async function validarCupom() {
+            const codigo = document.getElementById('input-cupom').value.toUpperCase().trim();
+            const msg = document.getElementById('msg-cupom');
+            if (!codigo) return;
+
+            try {
+                const docRef = doc(db, "cupom", codigo);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const dados = docSnap.data();
+                    const subtotalAtual = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+
+                    if (!dados.ativo) {
+                        msg.innerText = "Cupom expirado! ❌";
+                        msg.style.color = "red";
+                        return;
+                    }
+
+                    if (subtotalAtual < dados.minimo) {
+                        msg.innerText = `Compra mínima: R$ ${dados.minimo.toFixed(2)} 🍪`;
+                        msg.style.color = "orange";
+                        return;
+                    }
+
+                    cupomAtivo = dados;
+                    msg.innerText = "Cupom aplicado! 🎉";
+                    msg.style.color = "#27ae60";
+                    renderizarCarrinho();
+                } else {
+                    msg.innerText = "Cupom inválido! ❌";
+                    msg.style.color = "red";
+                }
+            } catch (e) { console.error(e); }
+        }
+
         function renderizarCarrinho() {
             const container = document.getElementById('lista-carrinho');
             const resumo = document.getElementById('resumo-area');
             const subtotalDisplay = document.getElementById('valor-subtotal');
             const freteDisplay = document.getElementById('valor-frete');
             const totalDisplay = document.getElementById('valor-total-carrinho');
+            const linhaDesc = document.getElementById('linha-desconto');
+            const valorDescDisplay = document.getElementById('valor-desconto');
             
             if (carrinho.length === 0) {
                 container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio. Que tal adicionar uns cookies? 🍪</p>';
@@ -177,10 +234,21 @@
                 `;
             });
 
-            const totalComFrete = subtotalGeral + valorFreteGlobal;
+            // Lógica de Desconto
+            if (cupomAtivo) {
+                descontoAplicado = cupomAtivo.tipo === "percentual" ? subtotalGeral * cupomAtivo.valor : cupomAtivo.valor;
+                linhaDesc.style.display = 'flex';
+                valorDescDisplay.innerText = `- R$ ${descontoAplicado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            } else {
+                descontoAplicado = 0;
+                linhaDesc.style.display = 'none';
+            }
+
+            const totalFinal = (subtotalGeral - descontoAplicado) + valorFreteGlobal;
+
             subtotalDisplay.innerText = subtotalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             freteDisplay.innerText = valorFreteGlobal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            totalDisplay.innerText = totalComFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalDisplay.innerText = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         window.salvarEAtualizar = () => {
@@ -202,6 +270,8 @@
             }
         });
 
+        document.getElementById('btn-aplicar-cupom').onclick = validarCupom;
+
         document.getElementById('btn-limpar-cart').onclick = () => {
             if(confirm("Esvaziar carrinho?")) {
                 carrinho = [];
@@ -209,7 +279,6 @@
             }
         };
 
-        // --- FUNÇÃO FINALIZAR MODIFICADA ---
         document.getElementById('btn-finalizar').onclick = async () => {
             const nome = document.getElementById('cliente-nome').value.trim();
             const telefone = document.getElementById('cliente-telefone').value.trim();
@@ -228,17 +297,12 @@
             let subtotalCalculado = 0;
             const itensParaBanco = carrinho.map(item => {
                 subtotalCalculado += (item.preco * item.quantidade);
-                return {
-                    nome: item.nome,
-                    quantidade: item.quantidade,
-                    precoUnitario: item.preco
-                };
+                return { nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco };
             });
 
-            const totalFinal = subtotalCalculado + valorFreteGlobal;
+            const totalFinal = (subtotalCalculado - descontoAplicado) + valorFreteGlobal;
 
             try {
-                // SALVA NO FIREBASE
                 await addDoc(collection(db, "pedidos"), {
                     clienteId: usuarioLogado ? usuarioLogado.uid : "anonimo",
                     clienteNome: nome,
@@ -248,19 +312,17 @@
                     formaPagamento: pagamento,
                     itens: itensParaBanco,
                     subtotal: subtotalCalculado,
+                    desconto: descontoAplicado,
                     frete: valorFreteGlobal,
                     total: totalFinal,
-                    status: "realizado", // Status padrão para o admin ver
+                    cupom: cupomAtivo ? document.getElementById('input-cupom').value.toUpperCase() : null,
+                    status: "realizado",
                     data: serverTimestamp()
                 });
 
-                // LIMPA O CARRINHO
                 localStorage.removeItem('carrinhoNinkos');
                 carrinho = [];
-                
                 alert("Pedido confirmado com sucesso! 🍪✨");
-                
-                // REDIRECIONA PARA O HISTÓRICO
                 window.location.href = "meus-pedidos.html";
 
             } catch (error) {
