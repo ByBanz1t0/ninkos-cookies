@@ -135,6 +135,23 @@
         let bairroUsuario = "Não identificado";
         let usuarioLogado = null;
 
+        // Listener para mudar o frete quando trocar o método
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'metodo-recebimento') {
+                const enderecoInput = document.getElementById('cliente-endereco');
+                
+                if (e.target.value === 'retirada') {
+                    // Guarda o endereço antigo temporariamente se quiser, ou apenas avisa
+                    enderecoInput.value = "RETIRADA NO LOCAL (Rua Exemplo, 123)"; 
+                } else {
+                    // Aqui você precisaria disparar a lógica que busca o endereço do Firebase novamente
+                    location.reload(); // Forma mais simples de resetar o endereço original
+                }
+                
+                renderizarCarrinho(); // Isso vai disparar o novo cálculo de frete (0 ou valor original)
+            }
+        });
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 usuarioLogado = user;
@@ -209,6 +226,13 @@
             const totalDisplay = document.getElementById('valor-total-carrinho');
             const linhaDesc = document.getElementById('linha-desconto');
             const valorDescDisplay = document.getElementById('valor-desconto');
+            const metodoatualmente = document.querySelector('input[name="metodo-recebimento"]:checked').value;
+            const freteFinal = metodoatualmente === 'retirada' ? 0 : valorFreteGlobal;
+            
+            const totalFinal = (subtotalGeral - descontoAplicado) + freteFinal;
+            
+            freteDisplay.innerText = freteFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            totalDisplay.innerText = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
             if (carrinho.length === 0) {
                 container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio. Que tal adicionar uns cookies? 🍪</p>';
