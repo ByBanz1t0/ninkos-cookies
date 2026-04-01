@@ -604,7 +604,10 @@
                 carregarBairros();
                 carregarUsuarios();
                 carregarPedidos(); 
-            } else { window.location.href = "login.html"; }
+                carregarCupons(); // <-- APENAS ISSO AQUI
+            } else { 
+                window.location.href = "login.html"; 
+            }
         });
 
         // Função para alternar rápido entre disponível/indisponível
