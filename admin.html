@@ -102,6 +102,40 @@
             </table>
         </div>
 
+        <div class="form-admin">
+            <h1 id="titulo-cupom">Gerenciar Cupons 🎟️</h1>
+            <form id="form-cupom">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="cupom-codigo" placeholder="Código (Ex: BEMVINDO)" required style="text-transform: uppercase;">
+                    <input type="number" step="0.01" id="cupom-valor" placeholder="Valor (Ex: 5.00 ou 0.10)" required>
+                    
+                    <select id="cupom-tipo">
+                        <option value="fixo">Valor Fixo (R$)</option>
+                        <option value="percentual">Percentual (%)</option>
+                    </select>
+                    
+                    <input type="number" step="0.1" id="cupom-minimo" placeholder="Compra Mínima (R$)" required>
+                </div>
+                <button type="submit" class="btn-salvar-admin">Criar Cupom</button>
+            </form>
+        </div>
+
+        <div class="lista-admin">
+            <h2>Lista de Cupons</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Valor/Tipo</th>
+                        <th>Mínimo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-cupons"></tbody>
+            </table>
+        </div>
+
         <div class="lista-admin">
             <div class="header-pedidos">
                 <h2>Histórico de Pedidos 📦</h2>
@@ -136,6 +170,8 @@
         const tabelaBairros = document.getElementById('tabela-bairros');
         const tabelaUsuarios = document.getElementById('tabela-usuarios');
         const containerPedidos = document.getElementById('container-pedidos-admin');
+        const tabelaCupons = document.getElementById('tabela-cupons');
+        const formCupom = document.getElementById('form-cupom');
 
         const diasSemana = [
             { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' }, 
@@ -343,6 +379,59 @@
             }
         };
 
+        formCupom.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const codigo = document.getElementById('cupom-codigo').value.toUpperCase().trim();
+            const valor = parseFloat(document.getElementById('cupom-valor').value);
+            const tipo = document.getElementById('cupom-tipo').value;
+            const minimo = parseFloat(document.getElementById('cupom-minimo').value);
+
+            try {
+                // Criamos o documento com o ID sendo o próprio CÓDIGO
+                await setDoc(doc(db, "cupom", codigo), {
+                    ativo: true,
+                    valor: valor,
+                    tipo: tipo,
+                    minimo: minimo,
+                    dataCriacao: serverTimestamp()
+                });
+                alert("Cupom " + codigo + " salvo com sucesso!");
+                formCupom.reset();
+            } catch (error) {
+                console.error("Erro ao salvar cupom:", error);
+            }
+        });
+
+        // --- CARREGAR CUPONS EM TEMPO REAL ---
+        function carregarCupons() {
+            onSnapshot(collection(db, "cupom"), (snapshot) => {
+                tabelaCupons.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const c = docSnap.data();
+                    const id = docSnap.id;
+                    const statusCor = c.ativo ? '#27ae60' : '#ff4d4d';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${id}</strong></td>
+                        <td>${c.tipo === 'percentual' ? (c.valor * 100).toFixed(0) + '%' : 'R$ ' + c.valor.toFixed(2)}</td>
+                        <td>R$ ${c.minimo.toFixed(2)}</td>
+                        <td><span style="color: ${statusCor}; font-weight: bold;">${c.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                        <td>
+                            <button class="btn-acao-admin" onclick="alternarStatusCupom('${id}', ${c.ativo})">🔄</button>
+                            <button class="btn-excluir" onclick="excluirDoc('cupom', '${id}')">🗑️</button>
+                        </td>
+                    `;
+                    tabelaCupons.appendChild(tr);
+                });
+            });
+        }
+
+        // --- ALTERNAR STATUS ATIVO/INATIVO ---
+        window.alternarStatusCupom = async (id, statusAtual) => {
+            await updateDoc(doc(db, "cupom", id), { ativo: !statusAtual });
+        };
+        
         let unsubscribePedidos = null;
         function carregarPedidos(filtro = "todos") {
             if (unsubscribePedidos) unsubscribePedidos(); 
