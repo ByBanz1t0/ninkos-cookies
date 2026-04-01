@@ -23,7 +23,6 @@
             margin-bottom: 10px;
             display: block;
         }
-        /* Estilos para a área de cupom */
         .cupom-feedback { font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
@@ -130,25 +129,21 @@
 
         let carrinho = JSON.parse(localStorage.getItem('carrinhoNinkos')) || [];
         let valorFreteGlobal = 0;
-        let descontoAplicado = 0; // Variável para o valor em R$
-        let cupomAtivo = null;    // Dados do cupom vindo do Firebase
+        let descontoAplicado = 0;
+        let cupomAtivo = null;
         let bairroUsuario = "Não identificado";
         let usuarioLogado = null;
 
-        // Listener para mudar o frete quando trocar o método
+        // Listener para troca de método (Entrega vs Retirada)
         document.addEventListener('change', (e) => {
             if (e.target.name === 'metodo-recebimento') {
                 const enderecoInput = document.getElementById('cliente-endereco');
-                
                 if (e.target.value === 'retirada') {
-                    // Guarda o endereço antigo temporariamente se quiser, ou apenas avisa
-                    enderecoInput.value = "RETIRADA NO LOCAL (Rua Exemplo, 123)"; 
+                    enderecoInput.value = "RETIRADA NO LOCAL (Consulte o endereço)"; 
                 } else {
-                    // Aqui você precisaria disparar a lógica que busca o endereço do Firebase novamente
-                    location.reload(); // Forma mais simples de resetar o endereço original
+                    location.reload(); // Recarrega para puxar o endereço do perfil novamente
                 }
-                
-                renderizarCarrinho(); // Isso vai disparar o novo cálculo de frete (0 ou valor original)
+                renderizarCarrinho();
             }
         });
 
@@ -202,7 +197,7 @@
                     }
 
                     if (subtotalAtual < dados.minimo) {
-                        msg.innerText = `Compra mínima: R$ ${dados.minimo.toFixed(2)} 🍪`;
+                        msg.innerText = `Compra mínima: R$ ${dados.minimo.toFixed(2)}`;
                         msg.style.color = "orange";
                         return;
                     }
@@ -226,16 +221,9 @@
             const totalDisplay = document.getElementById('valor-total-carrinho');
             const linhaDesc = document.getElementById('linha-desconto');
             const valorDescDisplay = document.getElementById('valor-desconto');
-            const metodoatualmente = document.querySelector('input[name="metodo-recebimento"]:checked').value;
-            const freteFinal = metodoatualmente === 'retirada' ? 0 : valorFreteGlobal;
-            
-            const totalFinal = (subtotalGeral - descontoAplicado) + freteFinal;
-            
-            freteDisplay.innerText = freteFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            totalDisplay.innerText = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
             if (carrinho.length === 0) {
-                container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio. Que tal adicionar uns cookies? 🍪</p>';
+                container.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio. 🍪</p>';
                 resumo.style.display = 'none';
                 return;
             }
@@ -270,7 +258,7 @@
                 `;
             });
 
-            // Lógica de Desconto
+            // Processamento do Cupom
             if (cupomAtivo) {
                 descontoAplicado = cupomAtivo.tipo === "percentual" ? subtotalGeral * cupomAtivo.valor : cupomAtivo.valor;
                 linhaDesc.style.display = 'flex';
@@ -280,10 +268,14 @@
                 linhaDesc.style.display = 'none';
             }
 
-            const totalFinal = (subtotalGeral - descontoAplicado) + valorFreteGlobal;
+            // Lógica de Retirada vs Entrega
+            const metodo = document.querySelector('input[name="metodo-recebimento"]:checked').value;
+            const freteFinal = metodo === 'retirada' ? 0 : valorFreteGlobal;
+            
+            const totalFinal = (subtotalGeral - descontoAplicado) + freteFinal;
 
             subtotalDisplay.innerText = subtotalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            freteDisplay.innerText = valorFreteGlobal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            freteDisplay.innerText = freteFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             totalDisplay.innerText = totalFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
@@ -320,9 +312,10 @@
             const telefone = document.getElementById('cliente-telefone').value.trim();
             const endereco = document.getElementById('cliente-endereco').value.trim();
             const pagamento = document.getElementById('cliente-pagamento').value;
+            const metodo = document.querySelector('input[name="metodo-recebimento"]:checked').value;
 
             if (!nome || !telefone || !endereco || !pagamento) {
-                alert("Dados de entrega incompletos! Verifique seu perfil. 🍪");
+                alert("Preencha todos os dados antes de finalizar! 🍪");
                 return;
             }
 
@@ -336,7 +329,8 @@
                 return { nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco };
             });
 
-            const totalFinal = (subtotalCalculado - descontoAplicado) + valorFreteGlobal;
+            const freteFinal = metodo === 'retirada' ? 0 : valorFreteGlobal;
+            const totalFinal = (subtotalCalculado - descontoAplicado) + freteFinal;
 
             try {
                 await addDoc(collection(db, "pedidos"), {
@@ -344,12 +338,13 @@
                     clienteNome: nome,
                     clienteTelefone: telefone,
                     endereco: endereco,
-                    bairro: bairroUsuario,
+                    metodoRecebimento: metodo,
+                    bairro: metodo === 'retirada' ? "Retirada" : bairroUsuario,
                     formaPagamento: pagamento,
                     itens: itensParaBanco,
                     subtotal: subtotalCalculado,
                     desconto: descontoAplicado,
-                    frete: valorFreteGlobal,
+                    frete: freteFinal,
                     total: totalFinal,
                     cupom: cupomAtivo ? document.getElementById('input-cupom').value.toUpperCase() : null,
                     status: "realizado",
