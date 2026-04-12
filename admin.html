@@ -6,6 +6,360 @@
     <title>Painel Admin - Ninko's Cookies</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS EXCLUSIVOS DO PAINEL ADMIN (CARDS + MODAIS)
+           ============================================================ */
+
+        /* --- GRID DE CARDS DE SEÇÃO --- */
+        .admin-section-subtitle {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .admin-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            width: 95%;
+            max-width: 50rem;
+            margin: 0 auto 3rem;
+        }
+
+        .admin-section-card {
+            background: #ffffff;
+            border: 2px solid #f7b2b7;
+            border-radius: 1.3rem;
+            padding: 1.5rem 1rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(247, 178, 183, 0.2);
+            text-align: center;
+        }
+
+        .admin-section-card:hover {
+            border-color: #d63384;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(214, 51, 132, 0.15);
+        }
+
+        .admin-section-card:active {
+            transform: scale(0.97);
+        }
+
+        .admin-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fae5e7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: background 0.2s ease;
+        }
+
+        .admin-section-card:hover .admin-card-icon {
+            background: #f7b2b7;
+        }
+
+        .admin-card-label {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #333;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        .admin-card-desc {
+            font-size: 0.68rem;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        /* --- OVERLAY E MODAL --- */
+        .admin-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(214, 51, 132, 0.10);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .admin-overlay.ativo {
+            display: flex;
+        }
+
+        .admin-modal {
+            background: #ffffff;
+            border: 2px solid #f7b2b7;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 580px;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
+            animation: modalEntrar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalEntrar {
+            from { opacity: 0; transform: scale(0.9) translateY(24px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem 1rem;
+            border-bottom: 1px solid #f7b2b7;
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            border-radius: 1.5rem 1.5rem 0 0;
+            z-index: 2;
+        }
+
+        .admin-modal-header h2 {
+            font-size: 1rem;
+            color: #d63384;
+            margin: 0;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        .btn-fechar-modal {
+            background: #fae5e7;
+            border: none;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #d63384;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-fechar-modal:hover {
+            background: #d63384;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .admin-modal-body {
+            padding: 1.3rem 1.5rem 1.8rem;
+        }
+
+        /* --- CONTEÚDO INTERNO DOS MODAIS --- */
+        .modal-form-group {
+            margin-bottom: 0.9rem;
+        }
+
+        .modal-form-group label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #d63384;
+            margin-bottom: 5px;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        .admin-modal-body input,
+        .admin-modal-body textarea,
+        .admin-modal-body select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 0.6rem;
+            font-size: 0.8rem;
+            outline: none;
+            transition: all 0.2s;
+            background: #fff;
+            box-sizing: border-box;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        .admin-modal-body input:focus,
+        .admin-modal-body textarea:focus,
+        .admin-modal-body select:focus {
+            border-color: #f7b2b7;
+            background: #fff9fa;
+        }
+
+        .admin-modal-body textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .modal-separador {
+            border: none;
+            border-top: 1px solid #f0f0f0;
+            margin: 1.2rem 0 1rem;
+        }
+
+        .modal-subtitulo {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #333;
+            margin-bottom: 0.8rem;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        /* Botão principal dentro do modal */
+        .btn-salvar-modal {
+            display: block;
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #f7b2b7;
+            border-radius: 2rem;
+            background-color: #ffffff;
+            color: #000;
+            font-family: 'keepcalm', sans-serif;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .btn-salvar-modal:hover {
+            background-color: #f7b2b7;
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* Botão cancelar dentro do modal */
+        .btn-cancelar-modal {
+            display: block;
+            width: 100%;
+            padding: 0.6rem;
+            border: none;
+            background: none;
+            color: #aaa;
+            font-size: 0.72rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 0.3rem;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        /* --- TABELAS INTERNAS DOS MODAIS --- */
+        .modal-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .modal-tabela th {
+            padding: 8px 10px;
+            text-align: left;
+            color: #d63384;
+            border-bottom: 2px solid #f7b2b7;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'keepcalm', sans-serif;
+        }
+
+        .modal-tabela td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f5f5f5;
+            color: #444;
+            vertical-align: middle;
+        }
+
+        .modal-tabela tr:last-child td {
+            border-bottom: none;
+        }
+
+        .modal-tabela .img-tabela {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #f7b2b7;
+        }
+
+        /* --- SCROLLBAR DO MODAL --- */
+        .admin-modal::-webkit-scrollbar { width: 5px; }
+        .admin-modal::-webkit-scrollbar-track { background: #fdf0f1; }
+        .admin-modal::-webkit-scrollbar-thumb { background: #f7b2b7; border-radius: 10px; }
+
+        /* --- HORÁRIOS --- */
+        .grid-horarios-modal {
+            display: grid;
+            grid-template-columns: 90px 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .grid-horarios-modal span {
+            font-weight: bold;
+            color: #555;
+            font-family: 'keepcalm', sans-serif;
+            font-size: 0.8rem;
+        }
+
+        .grid-horarios-modal input[type="time"] {
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 0;
+        }
+
+        /* --- CONTAINER DE PEDIDOS NO MODAL --- */
+        #modal-container-pedidos {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        #modal-container-pedidos::-webkit-scrollbar { width: 5px; }
+        #modal-container-pedidos::-webkit-scrollbar-thumb { background: #f7b2b7; border-radius: 10px; }
+
+        @media (max-width: 480px) {
+            .admin-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .modal-grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .admin-modal-body {
+                padding: 1rem;
+            }
+            .grid-horarios-modal {
+                grid-template-columns: 70px 1fr 1fr;
+                gap: 6px;
+            }
+        }
+    </style>
 </head>
 <body class="admin-body">
 
@@ -13,7 +367,7 @@
         <header>
             <div class="header-side">
                 <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Voltar</a>
-            </div> 
+            </div>
             <div class="logo-container">
                 <a href="index.html"><img id="img-logo" src="img/logos/ninkos_logo.png" alt="Logo"></a>
             </div>
@@ -26,8 +380,9 @@
         </header>
     </div>
 
-    <main id="conteudo-protegido">
-        
+    <main id="conteudo-protegido" style="display:none;">
+
+        <!-- STATUS DA LOJA (permanece visível na tela principal) -->
         <div class="status-loja-container">
             <div class="status-info">
                 <h3>Status da Loja</h3>
@@ -39,179 +394,293 @@
             </div>
         </div>
 
-        <div class="form-admin">
-            <h1>Horários de Funcionamento Automático ⏰</h1>
-            <p style="text-align: center;">A loja fechará automaticamente fora destes períodos.</p>
-            <div id="container-inputs-horarios"></div>
-            <button type="button" id="btn-salvar-horarios" class="btn-salvar-admin">Atualizar Horários</button>
-        </div>
-        
-        <div class="form-admin">
-            <h1 id="titulo-form">Adicionar Novo Sabor 😋</h1>
-            <form id="form-produto">
-                <input type="hidden" id="produto-id"> 
-                <input type="text" id="nome" placeholder="Nome do Sabor" required>
-                <textarea id="descricao" placeholder="Descrição..." required></textarea>
-                <input type="text" id="preco" placeholder="Preço (Ex: 12.00)" required>
-                <select id="categoria">
-                    <option value="cookies">Cookies</option>
-                    <option value="milk-shakes">Milk Shakes</option>
-                </select>
-                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer;">
-                    <input type="checkbox" id="disponivel" checked style="width: auto; margin: 0;"> 
-                    <span>Disponível para venda</span>
-                </label>
-                <input type="text" id="imagemUrl" placeholder="Caminho da Imagem (Ex: img/produtos/cookie.jpg)" required>
-                <button type="submit" id="btn-submit" class="btn-salvar-admin">Salvar no Cardápio</button>
-                <button type="button" id="btn-cancelar" class="hidden">Cancelar Edição</button>
-            </form>
+        <!-- SUBTÍTULO DOS CARDS -->
+        <p class="admin-section-subtitle">Selecione uma seção para gerenciar</p>
+
+        <!-- GRID DE CARDS -->
+        <div class="admin-cards-grid">
+
+            <div class="admin-section-card" onclick="abrirModal('horarios')">
+                <div class="admin-card-icon">⏰</div>
+                <div class="admin-card-label">Horários</div>
+                <div class="admin-card-desc">Funcionamento automático por dia</div>
+            </div>
+
+            <div class="admin-section-card" onclick="abrirModal('cardapio')">
+                <div class="admin-card-icon">😋</div>
+                <div class="admin-card-label">Cardápio</div>
+                <div class="admin-card-desc">Adicionar e editar sabores</div>
+            </div>
+
+            <div class="admin-section-card" onclick="abrirModal('bairros')">
+                <div class="admin-card-icon">📍</div>
+                <div class="admin-card-label">Bairros & Frete</div>
+                <div class="admin-card-desc">Zonas de entrega e taxas</div>
+            </div>
+
+            <div class="admin-section-card" onclick="abrirModal('usuarios')">
+                <div class="admin-card-icon">👥</div>
+                <div class="admin-card-label">Usuários</div>
+                <div class="admin-card-desc">Gerenciar cargos e acessos</div>
+            </div>
+
+            <div class="admin-section-card" onclick="abrirModal('cupons')">
+                <div class="admin-card-icon">🎟️</div>
+                <div class="admin-card-label">Cupons</div>
+                <div class="admin-card-desc">Criar e ativar cupons de desconto</div>
+            </div>
+
+            <div class="admin-section-card" onclick="abrirModal('pedidos')">
+                <div class="admin-card-icon">📦</div>
+                <div class="admin-card-label">Pedidos</div>
+                <div class="admin-card-desc">Histórico e status em tempo real</div>
+            </div>
+
         </div>
 
-        <div class="lista-admin">
-            <h2>Sabores Atuais</h2>
+    </main>
+
+    <!-- ============================================================
+         OVERLAY + MODAL
+    ============================================================ -->
+    <div class="admin-overlay" id="admin-overlay">
+        <div class="admin-modal" id="admin-modal">
+            <div class="admin-modal-header">
+                <h2 id="admin-modal-titulo">Seção</h2>
+                <button class="btn-fechar-modal" onclick="fecharModal()">✕</button>
+            </div>
+            <div class="admin-modal-body" id="admin-modal-body">
+                <!-- conteúdo injetado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         CONTEÚDOS DOS MODAIS (templates ocultos)
+    ============================================================ -->
+
+    <!-- HORÁRIOS -->
+    <template id="tpl-horarios">
+        <p style="font-size:0.75rem;color:#999;text-align:center;margin-bottom:1.2rem;">
+            A loja fechará automaticamente fora destes períodos.
+        </p>
+        <div id="container-inputs-horarios-modal"></div>
+        <button type="button" id="btn-salvar-horarios" class="btn-salvar-modal">Atualizar Horários</button>
+    </template>
+
+    <!-- CARDÁPIO -->
+    <template id="tpl-cardapio">
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
+            <h2 style="margin-bottom:1rem;">Sabores Atuais</h2>
             <table>
                 <thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
                 <tbody id="tabela-produtos"></tbody>
             </table>
         </div>
+        <hr class="modal-separador">
+        <p class="modal-subtitulo" id="titulo-form">Adicionar Novo Sabor 😋</p>
+        <form id="form-produto">
+            <input type="hidden" id="produto-id">
+            <div class="modal-form-group"><label>Nome do Sabor</label>
+                <input type="text" id="nome" placeholder="Nome do Sabor" required>
+            </div>
+            <div class="modal-form-group"><label>Descrição</label>
+                <textarea id="descricao" placeholder="Descrição..." required></textarea>
+            </div>
+            <div class="modal-grid-2">
+                <div class="modal-form-group"><label>Preço (Ex: 12.00)</label>
+                    <input type="text" id="preco" placeholder="12.00" required>
+                </div>
+                <div class="modal-form-group"><label>Categoria</label>
+                    <select id="categoria">
+                        <option value="cookies">Cookies</option>
+                        <option value="milk-shakes">Milk Shakes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-form-group">
+                <label style="display:flex;align-items:center;gap:8px;color:#555;font-weight:normal;">
+                    <input type="checkbox" id="disponivel" checked style="width:auto;margin:0;">
+                    Disponível para venda
+                </label>
+            </div>
+            <div class="modal-form-group"><label>Caminho da Imagem</label>
+                <input type="text" id="imagemUrl" placeholder="img/produtos/cookie.jpg" required>
+            </div>
+            <button type="submit" id="btn-submit" class="btn-salvar-modal">Salvar no Cardápio</button>
+            <button type="button" id="btn-cancelar" class="btn-cancelar-modal hidden">Cancelar Edição</button>
+        </form>
+    </template>
 
-        <div class="form-admin">
-            <h1 id="titulo-bairro">Cadastrar Bairro e Frete 📍</h1>
-            <form id="form-bairro">
-                <input type="hidden" id="bairro-id">
-                <input type="text" id="bairro-nome" placeholder="Ex: Centro" required>
-                <input type="text" id="bairro-frete" placeholder="Valor do Frete (Ex: 7.00)" required>
-                <button type="submit" id="btn-bairro" class="btn-salvar-admin">Salvar Bairro</button>
-                <button type="button" id="btn-cancelar-bairro" class="hidden">Cancelar Edição</button>
-            </form>
-        </div>
-
-        <div class="lista-admin">
-            <h2>Bairros Atendidos</h2>
+    <!-- BAIRROS -->
+    <template id="tpl-bairros">
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
+            <h2 style="margin-bottom:1rem;">Bairros Atendidos</h2>
             <table>
                 <thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead>
                 <tbody id="tabela-bairros"></tbody>
             </table>
         </div>
+        <hr class="modal-separador">
+        <p class="modal-subtitulo" id="titulo-bairro">Cadastrar Bairro e Frete 📍</p>
+        <form id="form-bairro">
+            <input type="hidden" id="bairro-id">
+            <div class="modal-grid-2">
+                <div class="modal-form-group"><label>Nome do Bairro</label>
+                    <input type="text" id="bairro-nome" placeholder="Ex: Centro" required>
+                </div>
+                <div class="modal-form-group"><label>Valor do Frete (Ex: 7.00)</label>
+                    <input type="text" id="bairro-frete" placeholder="7.00" required>
+                </div>
+            </div>
+            <button type="submit" id="btn-bairro" class="btn-salvar-modal">Salvar Bairro</button>
+            <button type="button" id="btn-cancelar-bairro" class="btn-cancelar-modal hidden">Cancelar Edição</button>
+        </form>
+    </template>
 
-        <div class="lista-admin">
-            <h2>Gerenciar Usuários 👥</h2>
+    <!-- USUÁRIOS -->
+    <template id="tpl-usuarios">
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
+            <h2 style="margin-bottom:1rem;">Gerenciar Usuários 👥</h2>
             <table>
                 <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Ações</th></tr></thead>
                 <tbody id="tabela-usuarios"></tbody>
             </table>
         </div>
+    </template>
 
-        <div class="form-admin">
-            <h1 id="titulo-cupom">Gerenciar Cupons 🎟️</h1>
-            <form id="form-cupom">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                    <input type="text" id="cupom-codigo" placeholder="Código (Ex: BEMVINDO)" required style="text-transform: uppercase;">
-                    <input type="number" step="0.01" id="cupom-valor" placeholder="Valor (Ex: 5.00 ou 0.10)" required>
-                    
-                    <select id="cupom-tipo">
-                        <option value="fixo">Valor Fixo (R$)</option>
-                        <option value="percentual">Percentual (%)</option>
-                    </select>
-                    
-                    <input type="number" step="0.1" id="cupom-minimo" placeholder="Compra Mínima (R$)" required>
-                </div>
-                <button type="submit" class="btn-salvar-admin">Criar Cupom</button>
-            </form>
-        </div>
-
-        <div class="lista-admin">
-            <h2>Lista de Cupons</h2>
+    <!-- CUPONS -->
+    <template id="tpl-cupons">
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
+            <h2 style="margin-bottom:1rem;">Lista de Cupons</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Valor/Tipo</th>
-                        <th>Mínimo</th>
-                        <th>Status</th>
-                        <th>Ações</th>
+                        <th>Código</th><th>Valor/Tipo</th><th>Mínimo</th><th>Status</th><th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="tabela-cupons"></tbody>
             </table>
         </div>
-
-        <div class="lista-admin">
-            <div class="header-pedidos">
-                <h2>Histórico de Pedidos 📦</h2>
-                <select id="filtro-periodo">
-                    <option value="todos">Todo o Período</option>
-                    <option value="24h">Últimas 24 Horas</option>
-                    <option value="7d">Últimos 7 Dias</option>
-                    <option value="30d">Últimos 30 Dias</option>
-                </select>
+        <hr class="modal-separador">
+        <p class="modal-subtitulo" id="titulo-cupom">Gerenciar Cupons 🎟️</p>
+        <form id="form-cupom">
+            <div class="modal-grid-2">
+                <div class="modal-form-group"><label>Código (Ex: BEMVINDO)</label>
+                    <input type="text" id="cupom-codigo" placeholder="BEMVINDO" required style="text-transform:uppercase;">
+                </div>
+                <div class="modal-form-group"><label>Valor</label>
+                    <input type="number" step="0.01" id="cupom-valor" placeholder="5.00 ou 0.10" required>
+                </div>
+                <div class="modal-form-group"><label>Tipo</label>
+                    <select id="cupom-tipo">
+                        <option value="fixo">Valor Fixo (R$)</option>
+                        <option value="percentual">Percentual (%)</option>
+                    </select>
+                </div>
+                <div class="modal-form-group"><label>Compra Mínima (R$)</label>
+                    <input type="number" step="0.1" id="cupom-minimo" placeholder="30.00" required>
+                </div>
             </div>
-            <div id="container-pedidos-admin"></div>
-        </div>
+            <button type="submit" class="btn-salvar-modal">Criar Cupom</button>
+        </form>
+    </template>
 
-    </main>
+    <!-- PEDIDOS -->
+    <template id="tpl-pedidos">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+            <label style="font-size:0.75rem;color:#888;white-space:nowrap;">Filtrar por:</label>
+            <select id="filtro-periodo" style="padding:6px 10px;border:1px solid #f7b2b7;border-radius:1rem;font-size:0.75rem;flex:1;">
+                <option value="todos">Todo o Período</option>
+                <option value="24h">Últimas 24 Horas</option>
+                <option value="7d">Últimos 7 Dias</option>
+                <option value="30d">Últimos 30 Dias</option>
+            </select>
+        </div>
+        <div id="container-pedidos-admin"></div>
+    </template>
 
     <script type="module">
         import { db, auth } from "./firebase-config.js";
-        import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            collection, addDoc, onSnapshot, deleteDoc, doc,
+            updateDoc, query, orderBy, where, setDoc, getDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         if (Notification.permission !== "granted") { Notification.requestPermission(); }
+
         function notifyAdmin(title, body) {
             if (Notification.permission === "granted") {
-                new Notification(title, { body: body, icon: "img/logos/ninkos_logo.png" });
+                new Notification(title, { body, icon: "img/logos/ninkos_logo.png" });
                 new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
             }
         }
 
         const configRef = doc(db, "configuracoes", "status_loja");
-        const formProduto = document.getElementById('form-produto');
-        const formBairro = document.getElementById('form-bairro');
-        const tabelaProdutos = document.getElementById('tabela-produtos');
-        const tabelaBairros = document.getElementById('tabela-bairros');
-        const tabelaUsuarios = document.getElementById('tabela-usuarios');
-        const containerPedidos = document.getElementById('container-pedidos-admin');
-        const tabelaCupons = document.getElementById('tabela-cupons');
-        const formCupom = document.getElementById('form-cupom');
 
         const diasSemana = [
-            { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' }, 
-            { id: 'qua', nome: 'Quarta' }, { id: 'qui', nome: 'Quinta' }, 
-            { id: 'sex', nome: 'Sexta' }, { id: 'sab', nome: 'Sábado' }, { id: 'dom', nome: 'Domingo' }
+            { id: 'seg', nome: 'Segunda' }, { id: 'ter', nome: 'Terça' },
+            { id: 'qua', nome: 'Quarta' }, { id: 'qui', nome: 'Quinta' },
+            { id: 'sex', nome: 'Sexta' }, { id: 'sab', nome: 'Sábado' },
+            { id: 'dom', nome: 'Domingo' }
         ];
 
-        document.getElementById('container-inputs-horarios').innerHTML = diasSemana.map(dia => `
-            <div class="grid-horarios">
-                <span>${dia.nome}</span>
-                <input type="time" id="${dia.id}-inicio">
-                <input type="time" id="${dia.id}-fim">
-            </div>
-        `).join('');
+        /* ============================================================
+           MODAL — ABERTURA E FECHAMENTO
+        ============================================================ */
+        window.abrirModal = function(secao) {
+            const overlay = document.getElementById('admin-overlay');
+            const modalBody = document.getElementById('admin-modal-body');
+            const modalTitulo = document.getElementById('admin-modal-titulo');
 
-        async function carregarHorariosNaTela() {
-            const docSnap = await getDoc(configRef);
-            if (docSnap.exists() && docSnap.data().horarios) {
-                const h = docSnap.data().horarios;
-                diasSemana.forEach(dia => {
-                    if(h[dia.id]) {
-                        document.getElementById(`${dia.id}-inicio`).value = h[dia.id].inicio;
-                        document.getElementById(`${dia.id}-fim`).value = h[dia.id].fim;
-                    }
-                });
-            }
-        }
+            const titulos = {
+                horarios: '⏰ Horários de Funcionamento',
+                cardapio: '😋 Cardápio',
+                bairros: '📍 Bairros & Frete',
+                usuarios: '👥 Usuários',
+                cupons: '🎟️ Cupons',
+                pedidos: '📦 Histórico de Pedidos'
+            };
 
-        document.getElementById('btn-salvar-horarios').addEventListener('click', async () => {
-            const h = {};
-            diasSemana.forEach(dia => {
-                h[dia.id] = {
-                    inicio: document.getElementById(`${dia.id}-inicio`).value,
-                    fim: document.getElementById(`${dia.id}-fim`).value
-                };
-            });
-            await updateDoc(configRef, { horarios: h });
-            alert("Horários atualizados!");
+            modalTitulo.textContent = titulos[secao] || secao;
+
+            // Clona o template correspondente
+            const tpl = document.getElementById(`tpl-${secao}`);
+            modalBody.innerHTML = '';
+            modalBody.appendChild(tpl.content.cloneNode(true));
+
+            overlay.classList.add('ativo');
+            document.body.style.overflow = 'hidden';
+
+            // Inicializa o conteúdo dinâmico da seção aberta
+            if (secao === 'horarios') inicializarHorarios();
+            if (secao === 'cardapio') inicializarCardapio();
+            if (secao === 'bairros') inicializarBairros();
+            if (secao === 'usuarios') inicializarUsuarios();
+            if (secao === 'cupons') inicializarCupons();
+            if (secao === 'pedidos') inicializarPedidos();
+        };
+
+        window.fecharModal = function() {
+            document.getElementById('admin-overlay').classList.remove('ativo');
+            document.body.style.overflow = '';
+            if (unsubscribePedidos) { unsubscribePedidos(); unsubscribePedidos = null; }
+        };
+
+        // Fechar clicando fora do modal
+        document.getElementById('admin-overlay').addEventListener('click', function(e) {
+            if (e.target === this) window.fecharModal();
         });
 
+        // Fechar com Escape
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') window.fecharModal();
+        });
+
+        /* ============================================================
+           STATUS DA LOJA
+        ============================================================ */
         function monitorarStatusLoja() {
             onSnapshot(configRef, (docSnap) => {
                 if (docSnap.exists()) {
@@ -228,50 +697,101 @@
             if (docSnap.exists()) await updateDoc(configRef, { aberta: !docSnap.data().aberta });
         });
 
-        async function salvarProduto(e) {
-            e.preventDefault();
-            const id = document.getElementById('produto-id').value;
-            const dados = {
-                nome: document.getElementById('nome').value,
-                descricao: document.getElementById('descricao').value,
-                preco: parseFloat(document.getElementById('preco').value),
-                categoria: document.getElementById('categoria').value,
-                imagemUrl: document.getElementById('imagemUrl').value,
-                disponivel: document.getElementById('disponivel').checked
-            };
-            if (id) { await updateDoc(doc(db, "produtos", id), dados); resetForm(); } 
-            else { await addDoc(collection(db, "produtos"), dados); }
-            formProduto.reset();
+        /* ============================================================
+           HORÁRIOS
+        ============================================================ */
+        function inicializarHorarios() {
+            const container = document.getElementById('container-inputs-horarios-modal');
+            container.innerHTML = diasSemana.map(dia => `
+                <div class="grid-horarios-modal">
+                    <span>${dia.nome}</span>
+                    <input type="time" id="${dia.id}-inicio">
+                    <input type="time" id="${dia.id}-fim">
+                </div>
+            `).join('');
+
+            // Carrega horários salvos
+            getDoc(configRef).then(docSnap => {
+                if (docSnap.exists() && docSnap.data().horarios) {
+                    const h = docSnap.data().horarios;
+                    diasSemana.forEach(dia => {
+                        if (h[dia.id]) {
+                            document.getElementById(`${dia.id}-inicio`).value = h[dia.id].inicio;
+                            document.getElementById(`${dia.id}-fim`).value = h[dia.id].fim;
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('btn-salvar-horarios').addEventListener('click', async () => {
+                const h = {};
+                diasSemana.forEach(dia => {
+                    h[dia.id] = {
+                        inicio: document.getElementById(`${dia.id}-inicio`).value,
+                        fim: document.getElementById(`${dia.id}-fim`).value
+                    };
+                });
+                await updateDoc(configRef, { horarios: h });
+                alert("Horários atualizados!");
+            });
         }
 
-        function carregarProdutos() {
+        /* ============================================================
+           CARDÁPIO
+        ============================================================ */
+        function inicializarCardapio() {
+            const tabelaProdutos = document.getElementById('tabela-produtos');
+            const formProduto = document.getElementById('form-produto');
+
             onSnapshot(collection(db, "produtos"), (snapshot) => {
                 tabelaProdutos.innerHTML = "";
                 snapshot.forEach((docSnap) => {
                     const p = docSnap.data();
-                    const tr = document.createElement('tr');
-                    
-                    // Define a cor e o texto do status
                     const statusCor = p.disponivel !== false ? '#27ae60' : '#ff4d4d';
                     const statusTexto = p.disponivel !== false ? 'Disponível' : 'Indisponível';
-                    
+                    const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><img src="${p.imagemUrl}" class="img-tabela" style="${p.disponivel === false ? 'filter: grayscale(1); opacity: 0.5;' : ''}"></td>
+                        <td><img src="${p.imagemUrl}" class="img-tabela" style="${p.disponivel === false ? 'filter:grayscale(1);opacity:0.5;' : ''}"></td>
                         <td>${p.nome}</td>
                         <td>R$ ${p.preco.toFixed(2)}</td>
                         <td>
-                            <button class="btn-acao-admin" 
-                                    style="background-color: ${statusCor}; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
-                                    onclick="alternarDisponibilidade('${docSnap.id}', ${p.disponivel !== false})">
+                            <button class="btn-acao-admin"
+                                style="background-color:${statusCor};color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:0.65rem;"
+                                onclick="alternarDisponibilidade('${docSnap.id}', ${p.disponivel !== false})">
                                 ${statusTexto}
                             </button>
-                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}', '${p.nome}', '${p.descricao}', '${p.preco}', '${p.categoria}', '${p.imagemUrl}', ${p.disponivel !== false})">✏️</button>
-                            <button class="btn-excluir" onclick="excluirDoc('produtos', '${docSnap.id}')">🗑️</button>
-                        </td>
-                    `;
+                            <button class="btn-acao-admin" onclick="editarProduto('${docSnap.id}','${p.nome}','${p.descricao}','${p.preco}','${p.categoria}','${p.imagemUrl}',${p.disponivel !== false})">✏️</button>
+                            <button class="btn-excluir" onclick="excluirDoc('produtos','${docSnap.id}')">🗑️</button>
+                        </td>`;
                     tabelaProdutos.appendChild(tr);
                 });
             });
+
+            formProduto.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('produto-id').value;
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    descricao: document.getElementById('descricao').value,
+                    preco: parseFloat(document.getElementById('preco').value),
+                    categoria: document.getElementById('categoria').value,
+                    imagemUrl: document.getElementById('imagemUrl').value,
+                    disponivel: document.getElementById('disponivel').checked
+                };
+                if (id) { await updateDoc(doc(db, "produtos", id), dados); resetFormProduto(); }
+                else { await addDoc(collection(db, "produtos"), dados); }
+                formProduto.reset();
+            });
+
+            document.getElementById('btn-cancelar').addEventListener('click', resetFormProduto);
+        }
+
+        function resetFormProduto() {
+            const el = id => document.getElementById(id);
+            el('produto-id').value = "";
+            el('titulo-form').innerText = "Adicionar Novo Sabor 😋";
+            el('btn-cancelar').classList.add('hidden');
+            document.getElementById('form-produto').reset();
         }
 
         window.editarProduto = (id, nome, desc, preco, cat, img, disp) => {
@@ -281,31 +801,24 @@
             document.getElementById('preco').value = preco;
             document.getElementById('categoria').value = cat;
             document.getElementById('imagemUrl').value = img;
-            document.getElementById('disponivel').checked = disp; // Seta o checkbox na edição
-            document.getElementById('titulo-form').innerText = "Editando Sabor";
+            document.getElementById('disponivel').checked = disp;
+            document.getElementById('titulo-form').innerText = "Editando Sabor ✏️";
             document.getElementById('btn-cancelar').classList.remove('hidden');
+            document.getElementById('admin-modal').scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        function resetForm() {
-            document.getElementById('produto-id').value = "";
-            document.getElementById('titulo-form').innerText = "Adicionar Novo Sabor";
-            document.getElementById('btn-cancelar').classList.add('hidden');
-            formProduto.reset();
-        }
+        window.alternarDisponibilidade = async (id, statusAtual) => {
+            try { await updateDoc(doc(db, "produtos", id), { disponivel: !statusAtual }); }
+            catch (error) { console.error("Erro ao atualizar status:", error); }
+        };
 
-        formBairro.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('bairro-id').value;
-            const dados = {
-                nome: document.getElementById('bairro-nome').value,
-                frete: parseFloat(document.getElementById('bairro-frete').value)
-            };
-            if (id) { await updateDoc(doc(db, "bairros", id), dados); resetFormBairro(); } 
-            else { await addDoc(collection(db, "bairros"), dados); }
-            formBairro.reset();
-        });
+        /* ============================================================
+           BAIRROS
+        ============================================================ */
+        function inicializarBairros() {
+            const tabelaBairros = document.getElementById('tabela-bairros');
+            const formBairro = document.getElementById('form-bairro');
 
-        function carregarBairros() {
             onSnapshot(collection(db, "bairros"), (snapshot) => {
                 tabelaBairros.innerHTML = "";
                 snapshot.forEach((docSnap) => {
@@ -315,31 +828,49 @@
                         <td>${b.nome}</td>
                         <td>R$ ${b.frete.toFixed(2)}</td>
                         <td>
-                            <button class="btn-acao-admin" onclick="editarBairro('${docSnap.id}', '${b.nome}', '${b.frete}')">✏️</button>
-                            <button class="btn-excluir" onclick="excluirDoc('bairros', '${docSnap.id}')">🗑️</button>
-                        </td>
-                    `;
+                            <button class="btn-acao-admin" onclick="editarBairro('${docSnap.id}','${b.nome}','${b.frete}')">✏️</button>
+                            <button class="btn-excluir" onclick="excluirDoc('bairros','${docSnap.id}')">🗑️</button>
+                        </td>`;
                     tabelaBairros.appendChild(tr);
                 });
             });
+
+            formBairro.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('bairro-id').value;
+                const dados = {
+                    nome: document.getElementById('bairro-nome').value,
+                    frete: parseFloat(document.getElementById('bairro-frete').value)
+                };
+                if (id) { await updateDoc(doc(db, "bairros", id), dados); resetFormBairro(); }
+                else { await addDoc(collection(db, "bairros"), dados); }
+                formBairro.reset();
+            });
+
+            document.getElementById('btn-cancelar-bairro').addEventListener('click', resetFormBairro);
+        }
+
+        function resetFormBairro() {
+            document.getElementById('bairro-id').value = "";
+            document.getElementById('titulo-bairro').innerText = "Cadastrar Bairro e Frete 📍";
+            document.getElementById('btn-cancelar-bairro').classList.add('hidden');
+            document.getElementById('form-bairro').reset();
         }
 
         window.editarBairro = (id, nome, frete) => {
             document.getElementById('bairro-id').value = id;
             document.getElementById('bairro-nome').value = nome;
             document.getElementById('bairro-frete').value = frete;
-            document.getElementById('titulo-bairro').innerText = "Editando Bairro";
+            document.getElementById('titulo-bairro').innerText = "Editando Bairro ✏️";
             document.getElementById('btn-cancelar-bairro').classList.remove('hidden');
         };
 
-        function resetFormBairro() {
-            document.getElementById('bairro-id').value = "";
-            document.getElementById('titulo-bairro').innerText = "Cadastrar Bairro e Frete";
-            document.getElementById('btn-cancelar-bairro').classList.add('hidden');
-            formBairro.reset();
-        }
+        /* ============================================================
+           USUÁRIOS
+        ============================================================ */
+        function inicializarUsuarios() {
+            const tabelaUsuarios = document.getElementById('tabela-usuarios');
 
-        function carregarUsuarios() {
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
                 const currentUser = auth.currentUser;
@@ -353,10 +884,13 @@
                         <td>${u.email || '---'}</td>
                         <td><strong>${u.cargo || 'Cliente'}</strong></td>
                         <td>
-                            ${!isMe ? (!isAdmin ? `<button class="btn-acao-admin btn-promover" onclick="alterarCargo('${docSnap.id}', 'admin')">Tornar Admin</button>` : `<button class="btn-acao-admin btn-rebaixar" onclick="alterarCargo('${docSnap.id}', 'cliente')">Remover Admin</button>`) : '<span style="color: #888;">Logado</span>'}
-                            ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios', '${docSnap.id}')">🗑️</button>` : ''}
-                        </td>
-                    `;
+                            ${!isMe
+                                ? (!isAdmin
+                                    ? `<button class="btn-acao-admin btn-promover" onclick="alterarCargo('${docSnap.id}','admin')">Tornar Admin</button>`
+                                    : `<button class="btn-acao-admin btn-rebaixar" onclick="alterarCargo('${docSnap.id}','cliente')">Remover Admin</button>`)
+                                : '<span style="color:#aaa;font-size:0.7rem;">Logado</span>'}
+                            ${!isMe ? `<button class="btn-excluir" onclick="excluirDoc('usuarios','${docSnap.id}')">🗑️</button>` : ''}
+                        </td>`;
                     tabelaUsuarios.appendChild(tr);
                 });
             });
@@ -364,77 +898,73 @@
 
         window.alterarCargo = async (id, novoCargo) => {
             const mensagem = novoCargo === 'admin' ? "Promover a Administrador?" : "Rebaixar a Cliente?";
-            
-            if(confirm(mensagem)) {
+            if (confirm(mensagem)) {
                 try {
-                    await updateDoc(doc(db, "usuarios", id), { 
-                        cargo: novoCargo, 
-                        // Define true se for admin, false caso contrário
-                        isAdmin: novoCargo === 'admin' 
-                    });
-                    console.log("Usuário atualizado com sucesso!");
-                } catch (error) {
-                    console.error("Erro ao atualizar cargo:", error);
-                }
+                    await updateDoc(doc(db, "usuarios", id), { cargo: novoCargo, isAdmin: novoCargo === 'admin' });
+                } catch (error) { console.error("Erro ao atualizar cargo:", error); }
             }
         };
 
-        formCupom.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const codigo = document.getElementById('cupom-codigo').value.toUpperCase().trim();
-            const valor = parseFloat(document.getElementById('cupom-valor').value);
-            const tipo = document.getElementById('cupom-tipo').value;
-            const minimo = parseFloat(document.getElementById('cupom-minimo').value);
+        /* ============================================================
+           CUPONS
+        ============================================================ */
+        function inicializarCupons() {
+            const tabelaCupons = document.getElementById('tabela-cupons');
+            const formCupom = document.getElementById('form-cupom');
 
-            try {
-                // Criamos o documento com o ID sendo o próprio CÓDIGO
-                await setDoc(doc(db, "cupom", codigo), {
-                    ativo: true,
-                    valor: valor,
-                    tipo: tipo,
-                    minimo: minimo,
-                    dataCriacao: serverTimestamp()
-                });
-                alert("Cupom " + codigo + " salvo com sucesso!");
-                formCupom.reset();
-            } catch (error) {
-                console.error("Erro ao salvar cupom:", error);
-            }
-        });
-
-        // --- CARREGAR CUPONS EM TEMPO REAL ---
-        function carregarCupons() {
             onSnapshot(collection(db, "cupom"), (snapshot) => {
                 tabelaCupons.innerHTML = "";
                 snapshot.forEach((docSnap) => {
                     const c = docSnap.data();
                     const id = docSnap.id;
                     const statusCor = c.ativo ? '#27ae60' : '#ff4d4d';
-
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td><strong>${id}</strong></td>
                         <td>${c.tipo === 'percentual' ? (c.valor * 100).toFixed(0) + '%' : 'R$ ' + c.valor.toFixed(2)}</td>
                         <td>R$ ${c.minimo.toFixed(2)}</td>
-                        <td><span style="color: ${statusCor}; font-weight: bold;">${c.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                        <td><span style="color:${statusCor};font-weight:bold;">${c.ativo ? 'Ativo' : 'Inativo'}</span></td>
                         <td>
-                            <button class="btn-acao-admin" onclick="alternarStatusCupom('${id}', ${c.ativo})">🔄</button>
-                            <button class="btn-excluir" onclick="excluirDoc('cupom', '${id}')">🗑️</button>
-                        </td>
-                    `;
+                            <button class="btn-acao-admin" onclick="alternarStatusCupom('${id}',${c.ativo})">🔄</button>
+                            <button class="btn-excluir" onclick="excluirDoc('cupom','${id}')">🗑️</button>
+                        </td>`;
                     tabelaCupons.appendChild(tr);
                 });
             });
+
+            formCupom.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const codigo = document.getElementById('cupom-codigo').value.toUpperCase().trim();
+                const valor = parseFloat(document.getElementById('cupom-valor').value);
+                const tipo = document.getElementById('cupom-tipo').value;
+                const minimo = parseFloat(document.getElementById('cupom-minimo').value);
+                try {
+                    await setDoc(doc(db, "cupom", codigo), {
+                        ativo: true, valor, tipo, minimo, dataCriacao: serverTimestamp()
+                    });
+                    alert("Cupom " + codigo + " salvo com sucesso!");
+                    formCupom.reset();
+                } catch (error) { console.error("Erro ao salvar cupom:", error); }
+            });
         }
 
-        // --- ALTERNAR STATUS ATIVO/INATIVO ---
         window.alternarStatusCupom = async (id, statusAtual) => {
             await updateDoc(doc(db, "cupom", id), { ativo: !statusAtual });
         };
-        
+
+        /* ============================================================
+           PEDIDOS
+        ============================================================ */
         let unsubscribePedidos = null;
+
+        function inicializarPedidos() {
+            const filtro = document.getElementById('filtro-periodo');
+            carregarPedidos('todos');
+            filtro.addEventListener('change', (e) => carregarPedidos(e.target.value));
+        }
+
         function carregarPedidos(filtro = "todos") {
-            if (unsubscribePedidos) unsubscribePedidos(); 
+            if (unsubscribePedidos) unsubscribePedidos();
 
             let q = query(collection(db, "pedidos"), orderBy("data", "desc"));
 
@@ -444,7 +974,6 @@
                 if (filtro === "24h") dataLimite.setHours(agora.getHours() - 24);
                 else if (filtro === "7d") dataLimite.setDate(agora.getDate() - 7);
                 else if (filtro === "30d") dataLimite.setDate(agora.getDate() - 30);
-                
                 q = query(collection(db, "pedidos"), where("data", ">=", dataLimite), orderBy("data", "desc"));
             }
 
@@ -460,9 +989,13 @@
                     }
                 });
 
+                const containerPedidos = document.getElementById('container-pedidos-admin');
+                if (!containerPedidos) return;
+
                 containerPedidos.innerHTML = "";
+
                 if (snapshot.empty) {
-                    containerPedidos.innerHTML = `<p style="text-align:center; padding:20px; color:#888;">Nenhum pedido encontrado.</p>`;
+                    containerPedidos.innerHTML = `<p style="text-align:center;padding:20px;color:#aaa;">Nenhum pedido encontrado.</p>`;
                     return;
                 }
 
@@ -470,101 +1003,42 @@
                     const p = docSnap.data();
                     const id = docSnap.id;
                     const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
-                    
-                    const itensHTML = p.itens ? p.itens.map(item => 
-                        `<li style="font-size:0.85rem; color:#444;">${item.quantidade}x ${item.nome}</li>`
-                    ).join('') : '<li>Sem itens</li>';
-
-                    const cores = { 'realizado': '#f39c12', 'em produção': '#d63384', 'em rota': '#3498db', 'finalizado': '#27ae60', 'cancelado': '#ff4d4d' };
-
+                    const itensHTML = p.itens
+                        ? p.itens.map(item => `<li style="font-size:0.82rem;color:#555;">${item.quantidade}x ${item.nome}</li>`).join('')
+                        : '<li>Sem itens</li>';
+                    const cores = {
+                        'realizado': '#f39c12', 'em produção': '#d63384',
+                        'em rota': '#3498db', 'finalizado': '#27ae60', 'cancelado': '#ff4d4d'
+                    };
                     const div = document.createElement('div');
                     div.className = 'card-pedido';
                     div.style.borderLeft = `6px solid ${cores[p.status] || '#888'}`;
                     div.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid #f5f5f5;padding-bottom:5px;">
                             <strong>Pedido #${id.slice(-5).toUpperCase()}</strong>
-                            <span class="badge-status" style="background:${cores[p.status] || '#888'};">${p.status}</span>
+                            <span class="badge-status" style="background:${cores[p.status]||'#888'};color:white;padding:3px 8px;border-radius:8px;font-size:0.6rem;">${p.status}</span>
                         </div>
-                        <div style="font-size:0.9rem;">
+                        <div style="font-size:0.85rem;">
                             <p><strong>👤 Cliente:</strong> ${p.clienteNome}</p>
                             <p><strong>📞 Telefone:</strong> ${p.clienteTelefone}</p>
                             <p><strong>📍 Endereço:</strong> ${p.endereco}</p>
-                            <p><strong>🍪 Itens:</strong> <ul style="margin:5px 0px; padding-left: 25px">${itensHTML}</ul></p>
+                            <p><strong>🍪 Itens:</strong><ul style="margin:4px 0;padding-left:22px;">${itensHTML}</ul></p>
                             <p><strong>🛵 Frete:</strong> R$ ${p.frete.toFixed(2)}</p>
-                            <p style="color:#d63384; font-weight:bold;">Total: R$ ${p.total.toFixed(2)}</p>
+                            <p style="color:#d63384;font-weight:bold;">Total: R$ ${p.total.toFixed(2)}</p>
                         </div>
-                        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.75rem; color:#999;">${dataP}</span>
-                            <select onchange="atualizarStatusPedido('${id}', this.value)" style="width:auto; padding:3px; font-size:0.8rem;">
-                                <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
-                                <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
-                                <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
-                                <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizar</option>
-                                <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>Cancelar</option>
+                        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f5f5f5;padding-top:8px;">
+                            <span style="font-size:0.7rem;color:#bbb;">${dataP}</span>
+                            <select onchange="atualizarStatusPedido('${id}',this.value)" style="padding:4px 6px;border:1px solid #ddd;border-radius:8px;font-size:0.75rem;">
+                                <option value="realizado" ${p.status==='realizado'?'selected':''}>Realizado</option>
+                                <option value="em produção" ${p.status==='em produção'?'selected':''}>Em Produção</option>
+                                <option value="em rota" ${p.status==='em rota'?'selected':''}>Em Rota</option>
+                                <option value="finalizado" ${p.status==='finalizado'?'selected':''}>Finalizar</option>
+                                <option value="cancelado" ${p.status==='cancelado'?'selected':''}>Cancelar</option>
                             </select>
-                        </div>
-                    `;
+                        </div>`;
                     containerPedidos.appendChild(div);
                 });
             });
-        }
-
-        document.getElementById('filtro-periodo').addEventListener('change', (e) => {
-            carregarPedidos(e.target.value);
-        });
-
-        function imprimirNota(id, p) {
-            const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
-            const itensTexto = p.itens ? p.itens.map(item => 
-                `<tr>
-                    <td style="padding: 5px 0;">${item.quantidade}x ${item.nome}</td>
-                    <td style="text-align: right;">R$ ${(item.precoUnitario * item.quantidade).toFixed(2)}</td>
-                </tr>`
-            ).join('') : '<tr><td>Sem itens</td></tr>';
-
-            const janelaImpressao = window.open('', '', 'width=800,height=600');
-            janelaImpressao.document.write(`
-                <html>
-                <head>
-                    <title>Imprimir Pedido #${id.slice(-5).toUpperCase()}</title>
-                    <style>
-                        body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 10px; color: #000; }
-                        .topo { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
-                        .detalhes { font-size: 0.9rem; margin-bottom: 10px; }
-                        table { width: 100%; border-bottom: 1px dashed #000; margin-bottom: 10px; font-size: 0.85rem; }
-                        .total { font-weight: bold; font-size: 1.1rem; text-align: right; }
-                        .rodape { text-align: center; margin-top: 20px; font-size: 0.8rem; border-top: 1px dashed #000; padding-top: 10px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="topo">
-                        <h2 style="margin:0;">Ninko's Cookies</h2>
-                        <p style="margin:5px 0;">Pedido #${id.slice(-5).toUpperCase()}</p>
-                        <span>${dataP}</span>
-                    </div>
-                    <div class="detalhes">
-                        <strong>CLIENTE:</strong> ${p.clienteNome}<br>
-                        <strong>ENDEREÇO:</strong> ${p.endereco}<br>
-                        <strong>TAXA DE ENTREGA:</strong> R$ ${p.frete ? p.frete.toFixed(2) : '0.00'}<br>
-                        <strong>FORMA DE PAGAMENTO: </strong>${p.formaPagamento}
-                    </div>
-                    <table>
-                        <thead>
-                            <tr><th style="text-align:left;">Item</th><th style="text-align:right;">Subtotal</th></tr>
-                        </thead>
-                        <tbody>${itensTexto}</tbody>
-                    </table>
-                    <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
-                    <div class="rodape">
-                        Obrigado pela preferência! 🍪<br>
-                        Acompanhe seu pedido no site.
-                    </div>
-                </body>
-                </html>
-            `);
-            janelaImpressao.document.close();
-            janelaImpressao.print();
-            janelaImpressao.close();
         }
 
         window.atualizarStatusPedido = async (id, novoStatus) => {
@@ -576,7 +1050,6 @@
                 dados.motivoCancelamento = m;
             }
             await updateDoc(ref, dados);
-
             if (novoStatus === 'em produção') {
                 const docSnap = await getDoc(ref);
                 if (docSnap.exists()) {
@@ -587,37 +1060,57 @@
             }
         };
 
+        function imprimirNota(id, p) {
+            const dataP = p.data?.toDate().toLocaleString('pt-BR') || '---';
+            const itensTexto = p.itens ? p.itens.map(item =>
+                `<tr><td style="padding:5px 0;">${item.quantidade}x ${item.nome}</td>
+                 <td style="text-align:right;">R$ ${(item.precoUnitario * item.quantidade).toFixed(2)}</td></tr>`
+            ).join('') : '<tr><td>Sem itens</td></tr>';
+
+            const janela = window.open('', '', 'width=800,height=600');
+            janela.document.write(`
+                <html><head><title>Pedido #${id.slice(-5).toUpperCase()}</title>
+                <style>body{font-family:'Courier New',monospace;width:300px;padding:10px;color:#000;}
+                .topo{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:10px;}
+                table{width:100%;border-bottom:1px dashed #000;margin-bottom:10px;font-size:0.85rem;}
+                .total{font-weight:bold;font-size:1.1rem;text-align:right;}
+                .rodape{text-align:center;margin-top:20px;font-size:0.8rem;border-top:1px dashed #000;padding-top:10px;}</style>
+                </head><body>
+                <div class="topo"><h2 style="margin:0;">Ninko's Cookies</h2>
+                <p style="margin:5px 0;">Pedido #${id.slice(-5).toUpperCase()}</p><span>${dataP}</span></div>
+                <div style="font-size:0.9rem;margin-bottom:10px;">
+                <strong>CLIENTE:</strong> ${p.clienteNome}<br>
+                <strong>ENDEREÇO:</strong> ${p.endereco}<br>
+                <strong>TAXA DE ENTREGA:</strong> R$ ${p.frete ? p.frete.toFixed(2) : '0.00'}<br>
+                <strong>PAGAMENTO:</strong> ${p.formaPagamento}</div>
+                <table><thead><tr><th style="text-align:left;">Item</th><th style="text-align:right;">Subtotal</th></tr></thead>
+                <tbody>${itensTexto}</tbody></table>
+                <div class="total">TOTAL: R$ ${p.total.toFixed(2)}</div>
+                <div class="rodape">Obrigado pela preferência! 🍪</div>
+                </body></html>`);
+            janela.document.close();
+            janela.print();
+            janela.close();
+        }
+
+        /* ============================================================
+           EXCLUIR GENÉRICO
+        ============================================================ */
         window.excluirDoc = async (pasta, id) => {
-            if(confirm(`Excluir permanentemente?`)) await deleteDoc(doc(db, pasta, id));
+            if (confirm(`Excluir permanentemente?`)) await deleteDoc(doc(db, pasta, id));
         };
 
-        formProduto.addEventListener('submit', salvarProduto);
-        document.getElementById('btn-cancelar').addEventListener('click', resetForm);
-        document.getElementById('btn-cancelar-bairro').addEventListener('click', resetFormBairro);
-
+        /* ============================================================
+           AUTH
+        ============================================================ */
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('conteudo-protegido').style.display = "block";
                 monitorarStatusLoja();
-                carregarHorariosNaTela();
-                carregarProdutos();
-                carregarBairros();
-                carregarUsuarios();
-                carregarPedidos(); 
-                carregarCupons(); // <-- APENAS ISSO AQUI
-            } else { 
-                window.location.href = "login.html"; 
+            } else {
+                window.location.href = "login.html";
             }
         });
-
-        // Função para alternar rápido entre disponível/indisponível
-        window.alternarDisponibilidade = async (id, statusAtual) => {
-            try {
-                await updateDoc(doc(db, "produtos", id), { disponivel: !statusAtual });
-            } catch (error) {
-                console.error("Erro ao atualizar status:", error);
-            }
-        };
     </script>
 </body>
 </html>
