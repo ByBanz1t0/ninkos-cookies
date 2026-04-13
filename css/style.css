@@ -1546,6 +1546,30 @@ footer {
 }
 
 /* --- RESPONSIVO (ADMIN MODAL) --- */
+
+@media (max-width: 768px) {
+    header {
+        justify-content: flex-start !important; /* Alinha os itens do header à esquerda */
+        padding-left: 15px; /* Dá um respiro na borda */
+    }
+
+    .logo-container {
+        margin: 0 !important; /* Remove margens automáticas que centralizam */
+        flex: none !important; /* Impede que a logo tente ocupar o espaço todo */
+    }
+
+    #img-logo {
+        max-width: 120px; /* Ajusta o tamanho da logo para não ocupar a tela toda no celular */
+        height: auto;
+    }
+
+    /* Opcional: Se quiser esconder ou ajustar os botões laterais no celular */
+    .header-side {
+        display: flex;
+        align-items: center;
+    }
+}
+
 @media (max-width: 480px) {
     .admin-cards-grid {
         grid-template-columns: repeat(2, 1fr);
