@@ -282,7 +282,7 @@ nav ul {
 }
 
 .ativo {
-    background-color: #D3D3D333 !important; 
+    background-color: #d63384 !important; 
     border-color: #d63384 !important;
     color: white !important;
     transform: scale(1.05);
@@ -1560,4 +1560,27 @@ footer {
         grid-template-columns: 70px 1fr 1fr;
         gap: 6px;
     }
+}
+
+/* --- ÁREA DE SCROLL INTERNA DOS MODAIS ---
+   Padrão igual ao histórico de pedidos: caixa com borda, fundo off-white e scrollbar rosa */
+.modal-scroll-area {
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.5rem 0.625rem 0.5rem 0.5rem;
+    border: 0.0625rem solid #eee;
+    border-radius: 0.5rem;
+    background: #fdfdfd;
+    margin-bottom: 0.5rem;
+}
+
+.modal-scroll-area::-webkit-scrollbar {
+    width: 0.5rem;
+}
+.modal-scroll-area::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.modal-scroll-area::-webkit-scrollbar-thumb {
+    background: #f7b2b7;
+    border-radius: 0.625rem;
 }
