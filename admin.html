@@ -109,21 +109,25 @@
 
     <!-- HORÁRIOS -->
     <template id="tpl-horarios">
-        <p style="font-size:0.75rem;color:#999;text-align:center;margin-bottom:1.2rem;">
+        <p style="font-size:0.75rem;color:#999;text-align:center;margin-bottom:0.8rem;">
             A loja fechará automaticamente fora destes períodos.
         </p>
-        <div id="container-inputs-horarios-modal"></div>
+        <div class="modal-scroll-area">
+            <div id="container-inputs-horarios-modal"></div>
+        </div>
         <button type="button" id="btn-salvar-horarios" class="btn-salvar-modal">Atualizar Horários</button>
     </template>
 
     <!-- CARDÁPIO -->
     <template id="tpl-cardapio">
         <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
-            <h2 style="margin-bottom:1rem;">Sabores Atuais</h2>
-            <table>
-                <thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
-                <tbody id="tabela-produtos"></tbody>
-            </table>
+            <h2 style="margin-bottom:0.8rem;">Sabores Atuais</h2>
+            <div class="modal-scroll-area">
+                <table>
+                    <thead><tr><th>Foto</th><th>Nome</th><th>Preço</th><th>Ações</th></tr></thead>
+                    <tbody id="tabela-produtos"></tbody>
+                </table>
+            </div>
         </div>
         <hr class="modal-separador">
         <p class="modal-subtitulo" id="titulo-form">Adicionar Novo Sabor 😋</p>
@@ -163,11 +167,13 @@
     <!-- BAIRROS -->
     <template id="tpl-bairros">
         <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
-            <h2 style="margin-bottom:1rem;">Bairros Atendidos</h2>
-            <table>
-                <thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead>
-                <tbody id="tabela-bairros"></tbody>
-            </table>
+            <h2 style="margin-bottom:0.8rem;">Bairros Atendidos</h2>
+            <div class="modal-scroll-area">
+                <table>
+                    <thead><tr><th>Bairro</th><th>Taxa</th><th>Ações</th></tr></thead>
+                    <tbody id="tabela-bairros"></tbody>
+                </table>
+            </div>
         </div>
         <hr class="modal-separador">
         <p class="modal-subtitulo" id="titulo-bairro">Cadastrar Bairro e Frete 📍</p>
@@ -189,26 +195,30 @@
     <!-- USUÁRIOS -->
     <template id="tpl-usuarios">
         <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
-            <h2 style="margin-bottom:1rem;">Gerenciar Usuários 👥</h2>
-            <table>
-                <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Ações</th></tr></thead>
-                <tbody id="tabela-usuarios"></tbody>
-            </table>
+            <h2 style="margin-bottom:0.8rem;">Gerenciar Usuários 👥</h2>
+            <div class="modal-scroll-area">
+                <table>
+                    <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Ações</th></tr></thead>
+                    <tbody id="tabela-usuarios"></tbody>
+                </table>
+            </div>
         </div>
     </template>
 
     <!-- CUPONS -->
     <template id="tpl-cupons">
         <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
-            <h2 style="margin-bottom:1rem;">Lista de Cupons</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Código</th><th>Valor/Tipo</th><th>Mínimo</th><th>Status</th><th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-cupons"></tbody>
-            </table>
+            <h2 style="margin-bottom:0.8rem;">Lista de Cupons</h2>
+            <div class="modal-scroll-area">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th><th>Valor/Tipo</th><th>Mínimo</th><th>Status</th><th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-cupons"></tbody>
+                </table>
+            </div>
         </div>
         <hr class="modal-separador">
         <p class="modal-subtitulo" id="titulo-cupom">Gerenciar Cupons 🎟️</p>
@@ -245,7 +255,9 @@
                 <option value="30d">Últimos 30 Dias</option>
             </select>
         </div>
-        <div id="container-pedidos-admin"></div>
+        <div class="modal-scroll-area" style="max-height:24rem;">
+            <div id="container-pedidos-admin"></div>
+        </div>
     </template>
 
     <script type="module">
