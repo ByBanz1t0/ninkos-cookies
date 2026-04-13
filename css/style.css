@@ -1069,6 +1069,17 @@ footer {
     header {
         padding: 0.8rem 1rem;
         flex-direction: row;
+        /* Força o alinhamento de todos os itens para o início (esquerda) */
+        justify-content: flex-start !important; 
+        gap: 1rem;
+    }
+
+    .logo-container {
+        /* Remove qualquer margem automática que possa estar centralizando a logo */
+        margin: 0 !important;
+        flex: none !important;
+        display: flex;
+        align-items: center;
     }
 
     #img-logo {
@@ -1077,6 +1088,8 @@ footer {
 
     .auth-area {
         gap: 0.5rem;
+        /* Empurra a área de login/usuário para a direita, mantendo a logo na esquerda */
+        margin-left: auto; 
     }
 
     .btn-auth, #menu-user a {
@@ -1546,30 +1559,6 @@ footer {
 }
 
 /* --- RESPONSIVO (ADMIN MODAL) --- */
-
-@media (max-width: 768px) {
-    header {
-        justify-content: flex-start !important; /* Alinha os itens do header à esquerda */
-        padding-left: 15px; /* Dá um respiro na borda */
-    }
-
-    .logo-container {
-        margin: 0 !important; /* Remove margens automáticas que centralizam */
-        flex: none !important; /* Impede que a logo tente ocupar o espaço todo */
-    }
-
-    #img-logo {
-        max-width: 120px; /* Ajusta o tamanho da logo para não ocupar a tela toda no celular */
-        height: auto;
-    }
-
-    /* Opcional: Se quiser esconder ou ajustar os botões laterais no celular */
-    .header-side {
-        display: flex;
-        align-items: center;
-    }
-}
-
 @media (max-width: 480px) {
     .admin-cards-grid {
         grid-template-columns: repeat(2, 1fr);
