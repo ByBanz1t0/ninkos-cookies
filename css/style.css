@@ -1377,7 +1377,7 @@ footer {
     display: flex;         
     flex-direction: column;
     flex: 1;               /* OCUPA O ESPAÇO DISPONÍVEL */
-    overflow: hidden;      /* IMPEDE SCROLL AQUI */
+    overflow: auto;      /* IMPEDE SCROLL AQUI */
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
