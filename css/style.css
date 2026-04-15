@@ -1315,7 +1315,7 @@ footer {
     border: 2px solid #f7b2b7;
     border-radius: 1.5rem;
     width: 100%;
-    max-width: 900px;
+    max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
