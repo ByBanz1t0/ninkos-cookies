@@ -20,7 +20,7 @@ button, input, select, textarea {
 
 html {
     scroll-behavior: smooth;
-    overflow-y: scroll; 
+    overflow-y: auto; 
 }
 
 body {
@@ -1304,6 +1304,7 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    overflow-y: hidden !important; /* <--- ADICIONA ESTA LINHA */
 }
 
 .admin-overlay.ativo {
