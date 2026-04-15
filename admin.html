@@ -623,25 +623,21 @@
 
         function inicializarPedidos() {
             const filtroPeriodo = document.getElementById('filtro-periodo');
-            const filtroStatus = document.getElementById('filtro-status'); // Certifique-se de que o ID do select de status seja este
+            const filtroStatus = document.getElementById('filtro-status');
         
-            // Função auxiliar para disparar o carregamento pegando os valores atuais
             const dispararCarregamento = () => {
                 carregarPedidos(filtroPeriodo.value, filtroStatus.value);
             };
         
-            // Escuta mudanças em ambos os dropdowns
-            filtroPeriodo.addEventListener('change', dispararCarregamento);
-            filtroStatus.addEventListener('change', dispararCarregamento);
+            if (filtroPeriodo) filtroPeriodo.addEventListener('change', dispararCarregamento);
+            if (filtroStatus) filtroStatus.addEventListener('change', dispararCarregamento);
         
-            // Carregamento inicial
             carregarPedidos('todos', 'todos');
         }
         
         function carregarPedidos(filtroTempo = "todos", filtroStatus = "todos") {
             if (unsubscribePedidos) unsubscribePedidos();
         
-            // Criamos um array para armazenar as condições da busca
             let condicoes = [];
         
             // 1. Lógica de Filtro de Tempo
@@ -655,47 +651,41 @@
                 condicoes.push(where("data", ">=", dataLimite));
             }
         
-            // 2. Lógica de Filtro de Status (os itens da sua foto)
+            // 2. Lógica de Filtro de Status
             if (filtroStatus !== "todos") {
                 condicoes.push(where("status", "==", filtroStatus));
             }
         
-            // 3. Ordenação (Sempre por data decrescente)
+            // 3. Ordenação
             condicoes.push(orderBy("data", "desc"));
         
-            // Montagem da Query final usando o operador spread (...) para aplicar as condições
             const q = query(collection(db, "pedidos"), ...condicoes);
         
-            // Execução do Snapshot (Exemplo genérico do Firestore)
             unsubscribePedidos = onSnapshot(q, (snapshot) => {
-                // Sua lógica para renderizar os pedidos na tela aqui
-                console.log("Pedidos atualizados:", snapshot.docs.map(doc => doc.data()));
-            }, (error) => {
-                console.error("Erro ao carregar pedidos:", error);
-            });
-            }
-            unsubscribePedidos = onSnapshot(q, (snapshot) => {
+                // Notificação de novos pedidos
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const p = change.doc.data();
                         const agoraMs = new Date().getTime();
                         const dataPedidoMs = p.data?.toDate().getTime();
                         if (dataPedidoMs && (agoraMs - dataPedidoMs) < 30000) {
-                            notifyAdmin("Novo Pedido! 🍪", `Cliente: ${p.clienteNome}`);
+                            if (typeof notifyAdmin === "function") {
+                                notifyAdmin("Novo Pedido! 🍪", `Cliente: ${p.clienteNome}`);
+                            }
                         }
                     }
                 });
-
+        
                 const containerPedidos = document.getElementById('container-pedidos-admin');
                 if (!containerPedidos) return;
-
+        
                 containerPedidos.innerHTML = "";
-
+        
                 if (snapshot.empty) {
                     containerPedidos.innerHTML = `<p style="text-align:center;padding:20px;color:#aaa;">Nenhum pedido encontrado.</p>`;
                     return;
                 }
-
+        
                 snapshot.forEach((docSnap) => {
                     const p = docSnap.data();
                     const id = docSnap.id;
@@ -703,17 +693,23 @@
                     const itensHTML = p.itens
                         ? p.itens.map(item => `<li style="font-size:0.82rem;color:#555;">${item.quantidade}x ${item.nome}</li>`).join('')
                         : '<li>Sem itens</li>';
+        
+                    // Cores mapeadas conforme os status do seu banco
                     const cores = {
-                        'realizado': '#f39c12', 'em produção': '#d63384',
-                        'em rota': '#3498db', 'finalizado': '#27ae60', 'cancelado': '#ff4d4d'
+                        'realizado': '#f39c12', 
+                        'em produção': '#d63384',
+                        'em rota': '#3498db', 
+                        'finalizado': '#27ae60', 
+                        'cancelado': '#ff4d4d'
                     };
+        
                     const div = document.createElement('div');
                     div.className = 'card-pedido';
-                    div.style.borderLeft = `6px solid ${cores[p.status] || '#888'}`;
+                    div.style.borderLeft = `6px solid ${cores[p.status.toLowerCase()] || '#888'}`;
                     div.innerHTML = `
                         <div style="display:flex;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid #f5f5f5;padding-bottom:5px;">
                             <strong>Pedido #${id.slice(-5).toUpperCase()}</strong>
-                            <span class="badge-status" style="background:${cores[p.status]||'#888'};color:white;padding:3px 8px;border-radius:8px;font-size:0.6rem;">${p.status}</span>
+                            <span class="badge-status" style="background:${cores[p.status.toLowerCase()] || '#888'};color:white;padding:3px 8px;border-radius:8px;font-size:0.6rem;">${p.status}</span>
                         </div>
                         <div style="font-size:0.85rem;">
                             <p><strong>👤 Cliente:</strong> ${p.clienteNome}</p>
@@ -726,15 +722,17 @@
                         <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f5f5f5;padding-top:8px;">
                             <span style="font-size:0.7rem;color:#bbb;">${dataP}</span>
                             <select onchange="atualizarStatusPedido('${id}',this.value)" style="padding:4px 6px;border:1px solid #ddd;border-radius:8px;font-size:0.75rem;">
-                                <option value="realizado" ${p.status==='realizado'?'selected':''}>Realizado</option>
-                                <option value="em produção" ${p.status==='em produção'?'selected':''}>Em Produção</option>
-                                <option value="em rota" ${p.status==='em rota'?'selected':''}>Em Rota</option>
-                                <option value="finalizado" ${p.status==='finalizado'?'selected':''}>Finalizar</option>
-                                <option value="cancelado" ${p.status==='cancelado'?'selected':''}>Cancelar</option>
+                                <option value="realizado" ${p.status === 'realizado' ? 'selected' : ''}>Realizado</option>
+                                <option value="em produção" ${p.status === 'em produção' ? 'selected' : ''}>Em Produção</option>
+                                <option value="em rota" ${p.status === 'em rota' ? 'selected' : ''}>Em Rota</option>
+                                <option value="finalizado" ${p.status === 'finalizado' ? 'selected' : ''}>Finalizar</option>
+                                <option value="cancelado" ${p.status === 'cancelado' ? 'selected' : ''}>Cancelar</option>
                             </select>
                         </div>`;
                     containerPedidos.appendChild(div);
                 });
+            }, (error) => {
+                console.error("Erro ao carregar pedidos:", error);
             });
         }
         
