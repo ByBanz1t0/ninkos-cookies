@@ -673,7 +673,7 @@
             }, (error) => {
                 console.error("Erro ao carregar pedidos:", error);
             });
-        }
+            }
             unsubscribePedidos = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -736,7 +736,8 @@
                     containerPedidos.appendChild(div);
                 });
             });
-
+        }
+        
         window.atualizarStatusPedido = async (id, novoStatus) => {
             const ref = doc(db, "pedidos", id);
             let dados = { status: novoStatus, ultimaAtualizacao: serverTimestamp() };
