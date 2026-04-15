@@ -1315,11 +1315,15 @@ footer {
     border: 2px solid #f7b2b7;
     border-radius: 1.5rem;
     width: 100%;
-    max-width: 580px;
-    max-height: 88vh;
+    max-width: 900px;
+    max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
     animation: modalEntrar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    display: flex; /* <--- Adiciona isto */
+    flex-direction: column; /* <--- Adiciona isto */
+    overflow: hidden;
 }
 
 @keyframes modalEntrar {
@@ -1581,13 +1585,14 @@ footer {
 /* --- ÁREA DE SCROLL INTERNA DOS MODAIS ---
    Padrão igual ao histórico de pedidos: caixa com borda, fundo off-white e scrollbar rosa */
 .modal-scroll-area {
-    max-height: 18rem;
+    max-height: 60vh;
     overflow-y: auto;
     padding: 0.5rem 0.625rem 0.5rem 0.5rem;
     border: 0.0625rem solid #eee;
     border-radius: 0.5rem;
     background: #fdfdfd;
     margin-bottom: 0.5rem;
+    padding-right: 5px;
 }
 
 .modal-scroll-area::-webkit-scrollbar {
