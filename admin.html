@@ -120,7 +120,7 @@
 
     <!-- CARDÁPIO -->
     <template id="tpl-cardapio">
-        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;max-height:24rem;">
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
             <h2 style="margin-bottom:0.8rem;">Sabores Atuais</h2>
             <div class="modal-scroll-area">
                 <table>
@@ -466,7 +466,7 @@
             document.getElementById('disponivel').checked = disp;
             document.getElementById('titulo-form').innerText = "Editando Sabor ✏️";
             document.getElementById('btn-cancelar').classList.remove('hidden');
-            document.getElementById('admin-modal').scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('admin-modal-body').scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         window.alternarDisponibilidade = async (id, statusAtual) => {
