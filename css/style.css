@@ -1376,8 +1376,9 @@ footer {
     padding: 1.5rem;
     display: flex;         
     flex-direction: column;
-    flex: 1;               /* OCUPA O ESPAÇO DISPONÍVEL */
-    overflow: auto;      /* IMPEDE SCROLL AQUI */
+    flex: 1;
+    overflow: auto;
+    color: rgb(214, 51, 132);
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
