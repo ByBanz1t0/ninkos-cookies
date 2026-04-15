@@ -1314,15 +1314,15 @@ footer {
     background: #ffffff;
     border: 2px solid #f7b2b7;
     border-radius: 1.5rem;
-    width: 100%;
+    width: 95%;            /* Ajuste para telas menores */
     max-width: 580px;
-    /* Trava a altura para não criar as barras externas (setas vermelhas) */
-    max-height: 90vh; 
-    display: flex;         
+    max-height: 90vh;      /* LIMITA A ALTURA TOTAL */
+    display: flex;         /* ATIVA O MODO FLEX */
     flex-direction: column; 
-    overflow: hidden !important; 
+    overflow: hidden !important; /* MATA AS SETAS VERMELHAS EXTERNAS */
     box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
     position: relative;
+    animation: modalEntrar 0.3s ease;
 }
 
 @keyframes modalEntrar {
@@ -1376,8 +1376,8 @@ footer {
     padding: 1.5rem;
     display: flex;         
     flex-direction: column;
-    flex: 1;               /* Ocupa todo o espaço interno disponível */
-    overflow: hidden;      /* Garante que o corpo em si não role */
+    flex: 1;               /* OCUPA O ESPAÇO DISPONÍVEL */
+    overflow: hidden;      /* IMPEDE SCROLL AQUI */
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
@@ -1586,8 +1586,8 @@ footer {
 /* --- ÁREA DE SCROLL INTERNA DOS MODAIS ---
    Padrão igual ao histórico de pedidos: caixa com borda, fundo off-white e scrollbar rosa */
 .modal-scroll-area {
-    flex: 1;               /* Faz esta área crescer e ocupar o resto do modal */
-    overflow-y: auto !important; /* A ÚNICA barra de rolagem permitida */
+    flex: 1;               /* ELA ESTICA E EMPURRA O RESTO */
+    overflow-y: auto !important; /* ÚNICA BARRA PERMITIDA */
     margin-top: 1rem;      
     padding-right: 8px;    
     border: 1px solid #eee;
