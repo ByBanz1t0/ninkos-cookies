@@ -546,7 +546,7 @@
         function inicializarUsuarios() {
             const tabelaUsuarios = document.getElementById('tabela-usuarios');
 
-            let q = query(collection(db, "usuarios"), orderBy("asce"));
+            let q = query(collection(db, "usuarios"), orderBy("asc"));
 
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
