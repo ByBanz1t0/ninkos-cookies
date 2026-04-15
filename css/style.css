@@ -20,7 +20,7 @@ button, input, select, textarea {
 
 html {
     scroll-behavior: smooth;
-    overflow-y: auto; 
+    overflow-y: scroll; 
 }
 
 body {
@@ -1304,7 +1304,6 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    overflow-y: hidden !important; /* <--- ADICIONA ESTA LINHA */
 }
 
 .admin-overlay.ativo {
@@ -1316,14 +1315,11 @@ footer {
     border: 2px solid #f7b2b7;
     border-radius: 1.5rem;
     width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: hidden !important;
+    max-width: 580px;
+    max-height: 88vh;
+    overflow-y: auto;
     box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
     animation: modalEntrar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    display: flex; /* <--- Adiciona isto */
-    flex-direction: column; /* <--- Adiciona isto */
 }
 
 @keyframes modalEntrar {
@@ -1375,10 +1371,6 @@ footer {
 
 .admin-modal-body {
     padding: 1.3rem 1.5rem 1.8rem;
-    flex: 1; /* <--- Adiciona isto para ele ocupar o espaço correto */
-    overflow-y: visible !important;
-    display: flex;
-    flex-direction: column;
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
@@ -1587,14 +1579,13 @@ footer {
 /* --- ÁREA DE SCROLL INTERNA DOS MODAIS ---
    Padrão igual ao histórico de pedidos: caixa com borda, fundo off-white e scrollbar rosa */
 .modal-scroll-area {
-    max-height: 60vh;
-    overflow-y: auto !important;
+    max-height: 18rem;
+    overflow-y: auto;
     padding: 0.5rem 0.625rem 0.5rem 0.5rem;
     border: 0.0625rem solid #eee;
     border-radius: 0.5rem;
     background: #fdfdfd;
     margin-bottom: 0.5rem;
-    padding-right: 5px;
 }
 
 .modal-scroll-area::-webkit-scrollbar {
