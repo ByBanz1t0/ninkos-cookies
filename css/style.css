@@ -1587,7 +1587,7 @@ footer {
    Padrão igual ao histórico de pedidos: caixa com borda, fundo off-white e scrollbar rosa */
 .modal-scroll-area {
     display: block !important;
-    max-height: 350px !important;
+    max-height: 200px !important;
     flex: 1;               /* ELA ESTICA E EMPURRA O RESTO */
     overflow-y: auto !important; /* ÚNICA BARRA PERMITIDA */
     margin-top: 1rem;      
