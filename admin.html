@@ -548,13 +548,15 @@
 
             let q = query(collection(db, "usuarios"), orderBy("nome", "asc"));
 
-            onSnapshot(collection(db, "usuarios"), (snapshot) => {
+            onSnapshot(q, (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
                 const currentUser = auth.currentUser;
+        
                 snapshot.forEach((docSnap) => {
                     const u = docSnap.data();
                     const isAdmin = u.cargo === 'admin';
                     const isMe = currentUser && currentUser.uid === docSnap.id;
+                    
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${u.nome || '---'} ${isAdmin ? '⭐' : ''}</td>
