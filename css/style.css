@@ -1371,6 +1371,8 @@ footer {
 
 .admin-modal-body {
     padding: 1.3rem 1.5rem 1.8rem;
+    overflow-y: hidden; /* <--- Muda de 'auto' para 'hidden' */
+    flex: 1; /* <--- Adiciona isto para ele ocupar o espaço correto */
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
