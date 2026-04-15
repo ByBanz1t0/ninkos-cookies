@@ -533,6 +533,8 @@
         function inicializarUsuarios() {
             const tabelaUsuarios = document.getElementById('tabela-usuarios');
 
+            let q = query(collection(db, "usuarios"), orderBy("asce"));
+
             onSnapshot(collection(db, "usuarios"), (snapshot) => {
                 tabelaUsuarios.innerHTML = "";
                 const currentUser = auth.currentUser;
@@ -620,25 +622,58 @@
         let unsubscribePedidos = null;
 
         function inicializarPedidos() {
-            const filtro = document.getElementById('filtro-periodo');
-            carregarPedidos('todos');
-            filtro.addEventListener('change', (e) => carregarPedidos(e.target.value));
+            const filtroPeriodo = document.getElementById('filtro-periodo');
+            const filtroStatus = document.getElementById('filtro-status'); // Certifique-se de que o ID do select de status seja este
+        
+            // Função auxiliar para disparar o carregamento pegando os valores atuais
+            const dispararCarregamento = () => {
+                carregarPedidos(filtroPeriodo.value, filtroStatus.value);
+            };
+        
+            // Escuta mudanças em ambos os dropdowns
+            filtroPeriodo.addEventListener('change', dispararCarregamento);
+            filtroStatus.addEventListener('change', dispararCarregamento);
+        
+            // Carregamento inicial
+            carregarPedidos('todos', 'todos');
         }
-
-        function carregarPedidos(filtro = "todos") {
+        
+        function carregarPedidos(filtroTempo = "todos", filtroStatus = "todos") {
             if (unsubscribePedidos) unsubscribePedidos();
-
-            let q = query(collection(db, "pedidos"), orderBy("data", "desc"));
-
-            if (filtro !== "todos") {
+        
+            // Criamos um array para armazenar as condições da busca
+            let condicoes = [];
+        
+            // 1. Lógica de Filtro de Tempo
+            if (filtroTempo !== "todos") {
                 const agora = new Date();
                 let dataLimite = new Date();
-                if (filtro === "24h") dataLimite.setHours(agora.getHours() - 24);
-                else if (filtro === "7d") dataLimite.setDate(agora.getDate() - 7);
-                else if (filtro === "30d") dataLimite.setDate(agora.getDate() - 30);
-                q = query(collection(db, "pedidos"), where("data", ">=", dataLimite), orderBy("data", "desc"));
+                if (filtroTempo === "24h") dataLimite.setHours(agora.getHours() - 24);
+                else if (filtroTempo === "7d") dataLimite.setDate(agora.getDate() - 7);
+                else if (filtroTempo === "30d") dataLimite.setDate(agora.getDate() - 30);
+                
+                condicoes.push(where("data", ">=", dataLimite));
             }
-
+        
+            // 2. Lógica de Filtro de Status (os itens da sua foto)
+            if (filtroStatus !== "todos") {
+                condicoes.push(where("status", "==", filtroStatus));
+            }
+        
+            // 3. Ordenação (Sempre por data decrescente)
+            condicoes.push(orderBy("data", "desc"));
+        
+            // Montagem da Query final usando o operador spread (...) para aplicar as condições
+            const q = query(collection(db, "pedidos"), ...condicoes);
+        
+            // Execução do Snapshot (Exemplo genérico do Firestore)
+            unsubscribePedidos = onSnapshot(q, (snapshot) => {
+                // Sua lógica para renderizar os pedidos na tela aqui
+                console.log("Pedidos atualizados:", snapshot.docs.map(doc => doc.data()));
+            }, (error) => {
+                console.error("Erro ao carregar pedidos:", error);
+            });
+        }
             unsubscribePedidos = onSnapshot(q, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
