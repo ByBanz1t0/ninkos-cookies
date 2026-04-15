@@ -940,7 +940,7 @@ footer {
 
 /* --- CONTROLE DA LISTA DE PEDIDOS (Scroll) --- */
 #container-pedidos-admin {
-    max-height: 37.5rem;
+    max-height: 24rem;
     overflow-y: auto;
     padding-right: 0.625rem;
     border: 0.0625rem solid #eee;
