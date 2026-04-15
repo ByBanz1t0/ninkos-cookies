@@ -1318,13 +1318,12 @@ footer {
     width: 100%;
     max-width: 600px;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow-y: hidden !important;
     box-shadow: 0 20px 60px rgba(214, 51, 132, 0.18);
     animation: modalEntrar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     display: flex; /* <--- Adiciona isto */
     flex-direction: column; /* <--- Adiciona isto */
-    overflow: hidden;
 }
 
 @keyframes modalEntrar {
@@ -1377,7 +1376,7 @@ footer {
 .admin-modal-body {
     padding: 1.3rem 1.5rem 1.8rem;
     flex: 1; /* <--- Adiciona isto para ele ocupar o espaço correto */
-    overflow-y: hidden !important;
+    overflow-y: visible !important;
     display: flex;
     flex-direction: column;
 }
