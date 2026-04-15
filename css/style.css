@@ -1378,7 +1378,17 @@ footer {
     flex-direction: column;
     flex: 1;
     overflow: auto;
-    color: rgb(214, 51, 132);
+}
+
+.admin-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.admin-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.admin-modal-body::-webkit-scrollbar-thumb {
+    background-color: #f7b2b7;
+    border-radius: 10px;
 }
 
 /* --- CORREÇÃO DE COR DE TEXTO DENTRO DO MODAL ---
