@@ -947,8 +947,8 @@
                 const q = query(
                     collection(db, "pedidos"),
                     where("status", "in", ["finalizado"]), // Garante que pega apenas os concluídos
-                    where("dataPedido", ">=", inicio),
-                    where("dataPedido", "<=", fim)
+                    where("data", ">=", inicio),
+                    where("data", "<=", fim)
                 );
         
                 const snapshot = await getDocs(q);
