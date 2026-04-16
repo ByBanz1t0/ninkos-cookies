@@ -967,6 +967,7 @@
                     totalPeriodo += valor;
                     
                     const dataStr = p.data?.toDate().toLocaleDateString('pt-BR') || "---";
+                    const nome = p.clienteNome || "Cliente";
         
                     html += `
                         <tr>
