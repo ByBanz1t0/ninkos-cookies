@@ -432,10 +432,18 @@
             });
         }
 
-        document.getElementById('btn-toggle-loja').addEventListener('click', async () => {
-            const docSnap = await getDoc(configRef);
-            if (docSnap.exists()) await updateDoc(configRef, { aberta: !docSnap.data().aberta });
-        });
+        window.alternarStatusLoja = async () => {
+            try {
+                const docSnap = await getDoc(configRef);
+                if (docSnap.exists()) {
+                    const novoStatus = !docSnap.data().aberta;
+                    await updateDoc(configRef, { aberta: novoStatus });
+                    console.log("Status da loja atualizado para:", novoStatus);
+                }
+            } catch (error) {
+                console.error("Erro ao alternar status:", error);
+            }
+        };
 
         /* ============================================================
            HORÁRIOS
