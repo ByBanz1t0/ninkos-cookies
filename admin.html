@@ -297,11 +297,7 @@
                 </div>
                 <button class="btn-acao-admin" onclick="gerarRelatorio()" style="height: 35px; background-color: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">
                     Filtrar
-                </button>
-                <button onclick="exportarRelatorioExcel()" class="btn-salvar-admin" style="background-color: #27ae60; margin-left: 10px;">
-                    📥 Baixar Excel
-                </button>
-                
+                </button> 
             </div>
     
             <div class="modal-scroll-area">
@@ -324,6 +320,9 @@
                 <strong>Total do Período:</strong>
                 <span id="rel-faturamento-total" style="color: #27ae60; font-weight: bold;">R$ 0,00</span>
             </div>
+            <button onclick="exportarRelatorioExcel()" class="btn-salvar-admin" style="background-color: #27ae60; margin-left: 10px;">
+                📥 Baixar Excel
+            </button>
         </div>
     </template>
 
