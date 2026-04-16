@@ -415,9 +415,18 @@
             onSnapshot(configRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const aberta = docSnap.data().aberta;
-                    document.getElementById('label-status').innerText = aberta ? "LOJA ABERTA" : "LOJA FECHADA";
-                    document.getElementById('label-status').className = `status-indicador ${aberta ? 'aberta' : 'fechada'}`;
-                    document.getElementById('btn-toggle-loja').innerText = aberta ? "Fechar Loja" : "Abrir Loja";
+                    
+                    // 1. Capturamos os elementos primeiro
+                    const elLabel = document.getElementById('label-status');
+                    const elBtn = document.getElementById('btn-toggle-loja');
+        
+                    // 2. SÓ ATUALIZAMOS SE ELES EXISTIREM NA TELA
+                    // Isso evita o erro "Cannot set properties of null"
+                    if (elLabel && elBtn) {
+                        elLabel.innerText = aberta ? "LOJA ABERTA" : "LOJA FECHADA";
+                        elLabel.className = `status-indicador ${aberta ? 'aberta' : 'fechada'}`;
+                        elBtn.innerText = aberta ? "Fechar Loja" : "Abrir Loja";
+                    }
                 }
             });
         }
