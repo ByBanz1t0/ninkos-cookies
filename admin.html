@@ -277,20 +277,25 @@
 
     <!--  Relatórios -->
     <template id="tpl-relatorios">
-        <div class="lista-admin">
-            <h2>📊 Relatórios de Vendas</h2>
-            <div class="filtros-relatorio">
-                <input type="date" id="data-inicio">
-                <input type="date" id="data-fim">
-                <button class="btn-acao-admin" onclick="gerarRelatorio()">Gerar Relatório</button>
-            </div>
+        <div class="lista-admin" style="box-shadow:none;border:none;padding:0;margin:0;width:100%;max-width:100%;">
+            <h2 style="margin-bottom:0.8rem;">Relatórios de Vendas 📊</h2>
             
-            <div id="resultado-relatorio" class="modal-scroll-area hidden">
-                <div class="resumo-cards">
-                    <div class="card-mini">Total Bruto: <span id="rel-total">R$ 0,00</span></div>
-                    <div class="card-mini">Pedidos: <span id="rel-quantidade">0</span></div>
+            <div style="display: flex; gap: 10px; margin-bottom: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 0.8rem;">Início:</label>
+                    <input type="date" id="rel-data-inicio" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
                 </div>
-                <table class="tabela-relatorio">
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 0.8rem;">Fim:</label>
+                    <input type="date" id="rel-data-fim" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                <button class="btn-acao-admin" onclick="gerarRelatorio()" style="height: 35px; background-color: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">
+                    Filtrar
+                </button>
+            </div>
+    
+            <div class="modal-scroll-area">
+                <table>
                     <thead>
                         <tr>
                             <th>Data</th>
@@ -299,9 +304,15 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="corpo-relatorio"></tbody>
+                    <tbody id="tabela-relatorios-corpo">
+                        <tr><td colspan="4" style="text-align:center;">Selecione as datas e filtre.</td></tr>
+                    </tbody>
                 </table>
-                <button class="btn-acao-admin" onclick="exportarExcel()">Exportar Excel</button>
+            </div>
+    
+            <div style="margin-top: 1rem; padding: 10px; background: #f9f9f9; border-radius: 8px; display: flex; justify-content: space-between;">
+                <strong>Total do Período:</strong>
+                <span id="rel-faturamento-total" style="color: #27ae60; font-weight: bold;">R$ 0,00</span>
             </div>
         </div>
     </template>
