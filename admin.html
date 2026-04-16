@@ -913,53 +913,71 @@
         
         // A função gerarRelatorio que envia os dados para a tabela
         window.gerarRelatorio = async () => {
-            const inicio = new Date(document.getElementById('rel-data-inicio').value);
-            const fim = new Date(document.getElementById('rel-data-fim').value);
-            fim.setHours(23, 59, 59, 999); // Ajusta para o final do dia
-        
+            // 1. Captura os elementos
+            const elInicio = document.getElementById('rel-data-inicio');
+            const elFim = document.getElementById('rel-data-fim');
             const corpo = document.getElementById('tabela-relatorios-corpo');
             const faturamentoTxt = document.getElementById('rel-faturamento-total');
+        
+            // 2. VERIFICAÇÃO DE SEGURANÇA: Se algum for null, para aqui para não dar erro no console
+            if (!elInicio || !elFim || !corpo || !faturamentoTxt) {
+                console.warn("Elementos do relatório ainda não foram renderizados no DOM.");
+                return;
+            }
+        
+            const inicio = new Date(elInicio.value);
+            const fim = new Date(elFim.value);
             
-            corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Carregando...</td></tr>";
+            // Validação de data básica
+            if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
+                alert("Por favor, selecione datas válidas.");
+                return;
+            }
+        
+            fim.setHours(23, 59, 59, 999);
+            corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>⌛ Carregando dados...</td></tr>";
         
             try {
                 const q = query(
                     collection(db, "pedidos"),
-                    where("status", "==", "finalizado"),
+                    where("status", "in", ["finalizado"]), // Garante que pega apenas os concluídos
                     where("dataPedido", ">=", inicio),
                     where("dataPedido", "<=", fim)
                 );
         
                 const snapshot = await getDocs(q);
-                let total = 0;
-                corpo.innerHTML = "";
+                let totalPeriodo = 0;
+                let html = "";
         
                 if (snapshot.empty) {
-                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum pedido finalizado neste período.</td></tr>";
+                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum pedido encontrado.</td></tr>";
                     faturamentoTxt.innerText = "R$ 0,00";
                     return;
                 }
         
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    total += p.total || 0;
-                    const dataFormatada = p.dataPedido?.toDate().toLocaleDateString('pt-BR') || "---";
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
+                    const valor = parseFloat(p.total) || 0;
+                    totalPeriodo += valor;
                     
-                    corpo.innerHTML += `
+                    const dataStr = p.dataPedido?.toDate().toLocaleDateString('pt-BR') || "---";
+        
+                    html += `
                         <tr>
-                            <td>${dataFormatada}</td>
-                            <td>${p.nomeCliente || 'N/A'}</td>
-                            <td>R$ ${(p.total || 0).toFixed(2)}</td>
-                            <td style="color: #27ae60;">Finalizado</td>
+                            <td>${dataStr}</td>
+                            <td>${p.nomeCliente || 'Cliente'}</td>
+                            <td>R$ ${valor.toFixed(2)}</td>
+                            <td><span style="color:#27ae60">✔</span></td>
                         </tr>
                     `;
                 });
         
-                faturamentoTxt.innerText = `R$ ${total.toFixed(2)}`;
+                corpo.innerHTML = html;
+                faturamentoTxt.innerText = `R$ ${totalPeriodo.toFixed(2)}`;
         
             } catch (error) {
                 console.error("Erro ao gerar relatório:", error);
-                corpo.innerHTML = "<tr><td colspan='4' style='text-align:center; color:red;'>Erro ao buscar dados.</td></tr>";
+                corpo.innerHTML = "<tr><td colspan='4' style='text-align:center; color:red;'>Erro na consulta ao Firebase.</td></tr>";
             }
         };
         
