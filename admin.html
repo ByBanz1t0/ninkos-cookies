@@ -275,6 +275,37 @@
         </div>
     </template>
 
+    <!--  Relatórios -->
+    <template id="tpl-relatorios">
+        <div class="lista-admin">
+            <h2>📊 Relatórios de Vendas</h2>
+            <div class="filtros-relatorio">
+                <input type="date" id="data-inicio">
+                <input type="date" id="data-fim">
+                <button class="btn-acao-admin" onclick="gerarRelatorio()">Gerar Relatório</button>
+            </div>
+            
+            <div id="resultado-relatorio" class="modal-scroll-area hidden">
+                <div class="resumo-cards">
+                    <div class="card-mini">Total Bruto: <span id="rel-total">R$ 0,00</span></div>
+                    <div class="card-mini">Pedidos: <span id="rel-quantidade">0</span></div>
+                </div>
+                <table class="tabela-relatorio">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-relatorio"></tbody>
+                </table>
+                <button class="btn-acao-admin" onclick="exportarExcel()">Exportar Excel</button>
+            </div>
+        </div>
+    </template>
+
     <script type="module">
         import { db, auth } from "./firebase-config.js";
         import {
@@ -750,6 +781,8 @@
                 console.error("Erro ao carregar pedidos:", error);
             });
         }
+
+    
         
         window.atualizarStatusPedido = async (id, novoStatus) => {
             const ref = doc(db, "pedidos", id);
@@ -844,6 +877,46 @@
             janela.close();
         }
 
+        /* ============================================================
+           RELATÓRIOS
+        ============================================================ */
+
+        window.gerarRelatorio = async () => {
+            const inicio = new Date(document.getElementById('data-inicio').value);
+            const fim = new Date(document.getElementById('data-fim').value);
+            fim.setHours(23, 59, 59); // Garante que pega o dia inteiro
+        
+            const pedidosRef = collection(db, "pedidos");
+            // Filtramos apenas pedidos 'finalizados' para o relatório financeiro
+            const q = query(pedidosRef, 
+                where("status", "==", "finalizado"),
+                where("dataPedido", ">=", inicio),
+                where("dataPedido", "<=", fim)
+            );
+        
+            const snapshot = await getDocs(q);
+            const corpo = document.getElementById('corpo-relatorio');
+            let totalFaturado = 0;
+            corpo.innerHTML = "";
+        
+            snapshot.forEach(doc => {
+                const p = doc.data();
+                totalFaturado += p.total;
+                corpo.innerHTML += `
+                    <tr>
+                        <td>${p.dataPedido.toDate().toLocaleDateString()}</td>
+                        <td>${p.nomeCliente}</td>
+                        <td>R$ ${p.total.toFixed(2)}</td>
+                        <td>${p.status}</td>
+                    </tr>
+                `;
+            });
+        
+            document.getElementById('rel-total').innerText = `R$ ${totalFaturado.toFixed(2)}`;
+            document.getElementById('rel-quantidade').innerText = snapshot.size;
+            document.getElementById('resultado-relatorio').classList.remove('hidden');
+        };
+        
         /* ============================================================
            EXCLUIR GENÉRICO
         ============================================================ */
