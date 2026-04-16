@@ -350,26 +350,32 @@
             const overlay = document.getElementById('admin-overlay');
             const modalBody = document.getElementById('admin-modal-body');
             const modalTitulo = document.getElementById('admin-modal-titulo');
-
+        
             const titulos = {
                 horarios: '⏰ Horários de Funcionamento',
                 cardapio: '😋 Cardápio',
                 bairros: '📍 Bairros & Frete',
                 usuarios: '👥 Usuários',
                 cupons: '🎟️ Cupons',
-                pedidos: '📦 Histórico de Pedidos'
+                pedidos: '📦 Histórico de Pedidos',
+                relatorios: '📊 Relatórios de Vendas' // NOVO: Adicionado aqui
             };
-
+        
             modalTitulo.textContent = titulos[secao] || secao;
-
+        
             // Clona o template correspondente
             const tpl = document.getElementById(`tpl-${secao}`);
+            if (!tpl) {
+                console.error(`Template tpl-${secao} não encontrado!`);
+                return;
+            }
+            
             modalBody.innerHTML = '';
             modalBody.appendChild(tpl.content.cloneNode(true));
-
+        
             overlay.classList.add('ativo');
             document.body.style.overflow = 'hidden';
-
+        
             // Inicializa o conteúdo dinâmico da seção aberta
             if (secao === 'horarios') inicializarHorarios();
             if (secao === 'cardapio') inicializarCardapio();
@@ -377,6 +383,7 @@
             if (secao === 'usuarios') inicializarUsuarios();
             if (secao === 'cupons') inicializarCupons();
             if (secao === 'pedidos') inicializarPedidos();
+            if (secao === 'relatorios') inicializarRelatorios(); // NOVO: Chama a inicialização
         };
 
         window.fecharModal = function() {
@@ -892,40 +899,68 @@
            RELATÓRIOS
         ============================================================ */
 
+        function inicializarRelatorios() {
+            // Define a data de hoje como padrão nos inputs
+            const hoje = new Date().toISOString().split('T')[0];
+            const dataInicio = document.getElementById('rel-data-inicio');
+            const dataFim = document.getElementById('rel-data-fim');
+            
+            if (dataInicio && dataFim) {
+                dataInicio.value = hoje;
+                dataFim.value = hoje;
+            }
+        }
+        
+        // A função gerarRelatorio que envia os dados para a tabela
         window.gerarRelatorio = async () => {
-            const inicio = new Date(document.getElementById('data-inicio').value);
-            const fim = new Date(document.getElementById('data-fim').value);
-            fim.setHours(23, 59, 59); // Garante que pega o dia inteiro
+            const inicio = new Date(document.getElementById('rel-data-inicio').value);
+            const fim = new Date(document.getElementById('rel-data-fim').value);
+            fim.setHours(23, 59, 59, 999); // Ajusta para o final do dia
         
-            const pedidosRef = collection(db, "pedidos");
-            // Filtramos apenas pedidos 'finalizados' para o relatório financeiro
-            const q = query(pedidosRef, 
-                where("status", "==", "finalizado"),
-                where("dataPedido", ">=", inicio),
-                where("dataPedido", "<=", fim)
-            );
+            const corpo = document.getElementById('tabela-relatorios-corpo');
+            const faturamentoTxt = document.getElementById('rel-faturamento-total');
+            
+            corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Carregando...</td></tr>";
         
-            const snapshot = await getDocs(q);
-            const corpo = document.getElementById('corpo-relatorio');
-            let totalFaturado = 0;
-            corpo.innerHTML = "";
+            try {
+                const q = query(
+                    collection(db, "pedidos"),
+                    where("status", "==", "finalizado"),
+                    where("dataPedido", ">=", inicio),
+                    where("dataPedido", "<=", fim)
+                );
         
-            snapshot.forEach(doc => {
-                const p = doc.data();
-                totalFaturado += p.total;
-                corpo.innerHTML += `
-                    <tr>
-                        <td>${p.dataPedido.toDate().toLocaleDateString()}</td>
-                        <td>${p.nomeCliente}</td>
-                        <td>R$ ${p.total.toFixed(2)}</td>
-                        <td>${p.status}</td>
-                    </tr>
-                `;
-            });
+                const snapshot = await getDocs(q);
+                let total = 0;
+                corpo.innerHTML = "";
         
-            document.getElementById('rel-total').innerText = `R$ ${totalFaturado.toFixed(2)}`;
-            document.getElementById('rel-quantidade').innerText = snapshot.size;
-            document.getElementById('resultado-relatorio').classList.remove('hidden');
+                if (snapshot.empty) {
+                    corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhum pedido finalizado neste período.</td></tr>";
+                    faturamentoTxt.innerText = "R$ 0,00";
+                    return;
+                }
+        
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    total += p.total || 0;
+                    const dataFormatada = p.dataPedido?.toDate().toLocaleDateString('pt-BR') || "---";
+                    
+                    corpo.innerHTML += `
+                        <tr>
+                            <td>${dataFormatada}</td>
+                            <td>${p.nomeCliente || 'N/A'}</td>
+                            <td>R$ ${(p.total || 0).toFixed(2)}</td>
+                            <td style="color: #27ae60;">Finalizado</td>
+                        </tr>
+                    `;
+                });
+        
+                faturamentoTxt.innerText = `R$ ${total.toFixed(2)}`;
+        
+            } catch (error) {
+                console.error("Erro ao gerar relatório:", error);
+                corpo.innerHTML = "<tr><td colspan='4' style='text-align:center; color:red;'>Erro ao buscar dados.</td></tr>";
+            }
         };
         
         /* ============================================================
