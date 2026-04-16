@@ -30,15 +30,15 @@
 
     <main id="conteudo-protegido" style="display:none;">
 
-        <!-- STATUS DA LOJA (permanece visível na tela principal) -->
-        <div class="status-loja-container">
-            <div class="status-info">
-                <h3>Status da Loja</h3>
+        <!--  DA LOJA (permanece visível na tela principal) -->
+        <div class="-loja-container">
+            <div class="-info">
+                <h3> da Loja</h3>
                 <p>Controle se os clientes podem fazer pedidos.</p>
             </div>
-            <div class="status-controles">
-                <span id="label-status" class="status-indicador fechada">Carregando...</span>
-                <button id="btn-toggle-loja" class="btn-salvar-admin">Alterar Status</button>
+            <div class="-controles">
+                <span id="label-" class="-indicador fechada">Carregando...</span>
+                <button id="btn-toggle-loja" class="btn-salvar-admin">Alterar </button>
             </div>
         </div>
 
@@ -81,7 +81,7 @@
             <div class="admin-section-card" onclick="abrirModal('pedidos')">
                 <div class="admin-card-icon">📦</div>
                 <div class="admin-card-label">Pedidos</div>
-                <div class="admin-card-desc">Histórico e status em tempo real</div>
+                <div class="admin-card-desc">Histórico e  em tempo real</div>
             </div>
 
         </div>
@@ -753,19 +753,60 @@
         
         window.atualizarStatusPedido = async (id, novoStatus) => {
             const ref = doc(db, "pedidos", id);
+            
+            // 1. Buscamos o status atual para saber se a mudança é permitida
+            const docSnap = await getDoc(ref);
+            if (!docSnap.exists()) return;
+            
+            const pedidoAtual = docSnap.data();
+            const statusAtual = pedidoAtual.status;
+        
+            // 2. Definição da hierarquia para impedir "voltar no tempo"
+            const pesos = {
+                'realizado': 1,
+                'em produção': 2,
+                'em rota': 3,
+                'finalizado': 4,
+                'cancelado': 5
+            };
+        
+            // --- REGRAS DE BLOQUEIO ---
+        
+            // Regra: Se cancelado, não muda mais nada
+            if (statusAtual === 'cancelado') {
+                alert("Este pedido já foi cancelado e não pode ser alterado.");
+                return;
+            }
+        
+            // Regra: Não pode voltar para um status anterior (ex: de rota para produção)
+            // Exceto se for para cancelar (que é o peso 5, sempre maior)
+            if (pesos[novoStatus] < pesos[statusAtual] && novoStatus !== 'cancelado') {
+                alert(`Não é possível alterar de "${statusAtual}" para "${novoStatus}".`);
+                return;
+            }
+        
+            // Regra: Se finalizado, só pode ir para cancelado
+            if (statusAtual === 'finalizado' && novoStatus !== 'cancelado') {
+                alert("Pedidos finalizados só podem ser movidos para cancelado.");
+                return;
+            }
+        
+            // --- FIM DAS REGRAS ---
+        
             let dados = { status: novoStatus, ultimaAtualizacao: serverTimestamp() };
+        
             if (novoStatus === 'cancelado') {
                 const m = prompt("Motivo do cancelamento:");
                 if (!m) return;
                 dados.motivoCancelamento = m;
             }
+        
             await updateDoc(ref, dados);
+        
             if (novoStatus === 'em produção') {
-                const docSnap = await getDoc(ref);
-                if (docSnap.exists()) {
-                    if (confirm("Pedido aceito! Deseja imprimir a nota para a entrega?")) {
-                        imprimirNota(id, docSnap.data());
-                    }
+                // Como já buscamos o docSnap lá em cima, não precisamos buscar de novo
+                if (confirm("Pedido aceito! Deseja imprimir a nota para a entrega?")) {
+                    imprimirNota(id, pedidoAtual);
                 }
             }
         };
