@@ -934,8 +934,8 @@
                 return;
             }
         
-            const inicio = new Date(elInicio.value);
-            const fim = new Date(elFim.value);
+            const inicio = new Date(elInicio.value + "T00:00:00");
+            const fim = new Date(elFim.value + "T23:59:59");
             
             // Validação de data básica
             if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
@@ -949,7 +949,7 @@
             try {
                 const q = query(
                     collection(db, "pedidos"),
-                    where("status", "in", ["finalizado"]), // Garante que pega apenas os concluídos
+                    where("status", "in", ["finalizado", "cancelado"]), // Garante que pega apenas os concluídos
                     where("data", ">=", inicio),
                     where("data", "<=", fim)
                 );
