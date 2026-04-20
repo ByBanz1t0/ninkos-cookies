@@ -25,7 +25,7 @@ html {
 
 body {
     font-family: 'keepcalm', sans-serif;
-    background-color: #fae5e7;
+    background-color: #ffffff;
     color: #000;
     line-height: 1.6;
     font-size: 0.8rem;
@@ -689,8 +689,7 @@ footer {
     margin-top: 1rem;
 }
 
-.admin-body { 
-    background-color: #fae5e7; 
+.admin-body {  
     padding-bottom: 3.125rem;
     padding-top: 0 !important; 
 }
