@@ -472,7 +472,7 @@ footer {
 .carrinho-qtd {
     background-color: #d63384;
     color: white;
-    border-radius: 50%;
+    border-radius: 1rem;
     padding: 0.125rem 0.5rem;
     font-size: 0.72rem;
     margin-bottom: 0.125rem;
