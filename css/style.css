@@ -1253,23 +1253,6 @@ footer {
         z-index: 100;
     }
 }
-
-@media (max-width: 400px) {
-    #img-logo {
-        width: 3.75rem;
-    }
-    
-    body {
-        padding-top: 5.5;
-        font-size: 0.75rem; 
-    }
-    
-    header {
-        padding: 0.5rem;
-    }
-}
-
-
 /* ============================================================
    PAINEL ADMIN — CARDS DE SEÇÃO E MODAIS
    ============================================================ */
@@ -1631,21 +1614,29 @@ footer {
     margin-bottom: 0;
 }
 
-/* --- RESPONSIVO (ADMIN MODAL) --- */
-@media (max-width: 480px) {
-    .admin-cards-grid {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 400px) {
+    #img-logo {
+        width: 3.75rem;
     }
-    
-    .modal-grid-2 {
-        grid-template-columns: 1fr;
+    body {
+        padding-top: 5.5;
+        font-size: 0.75rem; 
     }
-    .admin-modal-body {
-        padding: 1rem;
+    header {
+        padding: 0.5rem;
     }
     .grid-horarios-modal {
         grid-template-columns: 70px 1fr 1fr;
         gap: 6px;
+    }
+    .admin-modal-body {
+        padding: 1rem;
+    }
+    .modal-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .admin-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
